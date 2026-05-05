@@ -1,0 +1,28 @@
+app:
+  name: NeedRadar
+  version: 0.1.0
+  debug: false
+
+database:
+  pool_size: 20
+  max_overflow: 10
+
+crawler:
+  max_concurrent: 5
+  request_delay: 2.0
+  timeout: 30
+  max_retries: 3
+  user_agent_rotation: true
+
+analysis:
+  batch_size: 50
+  max_requirements_per_run: 1000
+  similarity_threshold: 0.85
+  cluster_min_size: 3
+
+report:
+  top_n: 20
+  include_trends: true
+  export_formats:
+    - markdown
+    - pdf

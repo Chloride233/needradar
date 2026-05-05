@@ -1,0 +1,70 @@
+[project]
+name = "needradar"
+version = "0.1.0"
+description = "AI驱动的全网需求挖掘引擎"
+requires-python = ">=3.11"
+license = "MIT"
+
+dependencies = [
+    # Web framework
+    "fastapi>=0.115,<0.129",
+    "uvicorn[standard]>=0.34",
+
+    # Database
+    "sqlalchemy[asyncio]>=2.0,<2.1",
+    "asyncpg>=0.30",
+    "alembic>=1.14",
+
+    # Validation & config
+    "pydantic>=2.10",
+    "pydantic-settings>=2.7",
+    "python-dotenv>=1.0",
+
+    # LLM unified interface
+    "litellm>=1.81,<2.0",
+
+    # Vector database
+    "chromadb>=0.5,<1.0",
+
+    # Task queue
+    "celery[redis]>=5.4,<6.0",
+
+    # Crawling
+    "crawl4ai>=0.8.5",
+    "httpx>=0.28",
+
+    # Config
+    "pyyaml>=6.0",
+
+    # Logging
+    "loguru>=0.7",
+
+    # Scheduler
+    "apscheduler>=3.10,<4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.28",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

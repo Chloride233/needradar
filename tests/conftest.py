@@ -1,0 +1,74 @@
+import asyncio
+import tempfile
+from collections.abc import AsyncGenerator
+from pathlib import Path
+
+import pytest
+import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+from needradar.core.database import get_db
+from needradar.main import app
+from needradar.models.base import Base
+
+TEST_DATABASE_URL = "sqlite+aiosqlite://"
+
+test_engine = create_async_engine(TEST_DATABASE_URL, echo=False)
+test_session_factory = async_sessionmaker(
+    test_engine, class_=AsyncSession, expire_on_commit=False
+)
+
+
+@pytest.fixture(scope="session")
+def event_loop():
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()
+
+
+async def _override_get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with test_session_factory() as session:
+        yield session
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def setup_database(tmp_path_factory):
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    app.dependency_overrides[get_db] = _override_get_db
+
+    # Use a temp vault for tests
+    tmp_vault = tmp_path_factory.mktemp("vault")
+    for sub in ["01-原始素材库/灵感剪报", "01-原始素材库/高价值片段",
+                "02-需求池", "03-分析车间/大纲挑选", "03-分析车间/初稿打磨",
+                "03-分析车间/终稿确认", "04-报告归档"]:
+        (tmp_vault / sub).mkdir(parents=True, exist_ok=True)
+
+    import needradar.services.vault_store as vs_mod
+    original_root = vs_mod.vault._root
+    vs_mod.vault._root = tmp_vault
+    # Also patch the _dir method base
+    original_dirs = {}
+    for stage in ["素材", "需求", "大纲", "初稿", "终稿", "已归档"]:
+        original_dirs[stage] = None
+
+    yield
+
+    vs_mod.vault._root = original_root
+    app.dependency_overrides.pop(get_db, None)
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+
+@pytest_asyncio.fixture
+async def db_session() -> AsyncGenerator[AsyncSession, None]:
+    async with test_session_factory() as session:
+        yield session
+
+
+@pytest_asyncio.fixture
+async def client() -> AsyncGenerator[AsyncClient, None]:
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as c:
+        yield c

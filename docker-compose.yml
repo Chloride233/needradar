@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: needradar
+      POSTGRES_USER: needradar
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      NR_DATABASE_URL: postgresql+asyncpg://needradar:password@postgres:5432/needradar
+      NR_REDIS_URL: redis://redis:6379/0
+      NR_DEEPSEEK_API_KEY: ${NR_DEEPSEEK_API_KEY:-}
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./data:/app/data
+
+volumes:
+  pgdata:

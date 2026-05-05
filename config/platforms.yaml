@@ -1,0 +1,42 @@
+platforms:
+  github:
+    type: api
+    base_url: https://api.github.com
+    enabled: true
+    priority: 1
+    rate_limit: 5000
+
+  stackoverflow:
+    type: api
+    base_url: https://api.stackexchange.com
+    enabled: true
+    priority: 1
+    rate_limit: 300
+
+  juejin:
+    type: crawl
+    base_url: https://juejin.cn
+    enabled: true
+    priority: 2
+    requires_js: true
+
+  zhihu:
+    type: crawl
+    base_url: https://www.zhihu.com
+    enabled: false
+    priority: 3
+    requires_js: true
+
+  weibo:
+    type: crawl
+    base_url: https://weibo.com
+    enabled: false
+    priority: 3
+    requires_js: true
+
+  xiaohongshu:
+    type: crawl
+    base_url: https://www.xiaohongshu.com
+    enabled: false
+    priority: 3
+    requires_js: true

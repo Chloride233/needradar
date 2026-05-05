@@ -1,0 +1,97 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Runtime data
+data/
+chroma_data/
+
+# Database
+*.db
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / coverage
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Obsidian workspace
+vault/.obsidian/
+
+# Vault runtime data (keep .gitkeep and structural files)
+vault/01-原始素材库/*
+!vault/01-原始素材库/.gitkeep
+!vault/01-原始素材库/高价值片段/
+vault/01-原始素材库/高价值片段/*
+!vault/01-原始素材库/高价值片段/.gitkeep
+!vault/01-原始素材库/灵感剪报/
+vault/01-原始素材库/灵感剪报/*
+!vault/01-原始素材库/灵感剪报/.gitkeep
+vault/02-需求池/*
+!vault/02-需求池/.gitkeep
+vault/03-分析车间/*
+!vault/03-分析车间/.gitkeep
+!vault/03-分析车间/初稿打磨/
+vault/03-分析车间/初稿打磨/*
+!vault/03-分析车间/初稿打磨/.gitkeep
+!vault/03-分析车间/大纲挑选/
+vault/03-分析车间/大纲挑选/*
+!vault/03-分析车间/大纲挑选/.gitkeep
+!vault/03-分析车间/终稿确认/
+vault/03-分析车间/终稿确认/*
+!vault/03-分析车间/终稿确认/.gitkeep
+vault/04-报告归档/*
+!vault/04-报告归档/.gitkeep
+vault/05-工作日志/*
+!vault/05-工作日志/.gitkeep
+vault/06-关系图谱/*
+!vault/06-关系图谱/.gitkeep
+
+# Prompt optimizer backup
+*.bak
+
+# Tool caches (Claude Code, Playwright, Vite)
+.claude/
+.playwright-cli/
+.playwright/
+.vite/
+
+# Junk files
+bash.exe.stackdump
+=3.10
+api

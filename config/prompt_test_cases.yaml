@@ -1,0 +1,185 @@
+# Prompt 自优化测试数据集
+# 每条测试用例包含：原始讨论内容 + 期望提取结果
+# 用于评估 requirement_extraction prompt 的提取质量
+
+test_cases:
+  - id: strong_negative_zh
+    input:
+      title: "为什么没有一个好用的 AI 代码审查工具！！"
+      content: |
+        受够了手动 code review 了！我们团队 5 个人，每天至少要花 2 小时互相 review 代码。
+        试过 SonarQube，但那只是静态分析，根本理解不了业务逻辑。
+        也试过 CodeRabbit，但经常给出完全不相关的建议，还不如不看。
+        有没有一个能真正理解代码上下文的 AI review 工具？必须能集成到 GitLab CI 里。
+        愿意付费，只要能真的减少 review 时间。
+      platform: juejin
+    expected:
+      title_keywords: ["AI", "代码审查", "code review"]
+      sentiment: strong
+      emotion: negative
+      confidence_min: 0.7
+      pain_point_keywords: ["手动", "时间", "review"]
+      use_case_keywords: ["团队", "GitLab"]
+
+  - id: moderate_neutral_en
+    input:
+      title: "Looking for an AI tool to summarize meeting notes"
+      content: |
+        We have daily standups and weekly syncs that generate a lot of notes.
+        Currently using Otter.ai for transcription but the summaries are pretty basic.
+        Would be nice to have something that can extract action items, decisions,
+        and track follow-ups across multiple meetings. We use Notion for documentation
+        so integration there would be helpful. Not urgent but would save us some time.
+      platform: stackoverflow
+    expected:
+      title_keywords: ["AI", "meeting", "summarize", "notes"]
+      sentiment: moderate
+      emotion: neutral
+      confidence_min: 0.5
+      pain_point_keywords: ["summaries", "basic"]
+      use_case_keywords: ["meeting", "Notion", "standup"]
+
+  - id: strong_negative_zh_2
+    input:
+      title: "AI 写的文档完全不能用，浪费了我一整天"
+      content: |
+        用了某知名 AI 文档生成工具，生成的 API 文档全是错的。
+        参数类型对不上，返回值结构也是编的，示例代码根本跑不通。
+        我基于它写的文档去和前端对接，结果前端同事说完全看不懂。
+        最后只能全部手动重写，白白浪费一天。有没有靠谱的、能基于实际代码
+        生成准确文档的 AI 工具？至少参数定义要和源码一致吧！
+      platform: juejin
+    expected:
+      title_keywords: ["AI", "文档", "API"]
+      sentiment: strong
+      emotion: negative
+      confidence_min: 0.7
+      pain_point_keywords: ["错误", "编的", "手动重写", "浪费"]
+      use_case_keywords: ["API", "文档", "代码"]
+
+  - id: mild_positive_zh
+    input:
+      title: "觉得 Cursor 的代码补全挺有意思"
+      content: |
+        最近在用 Cursor 写 Python，感觉它的补全确实比 Copilot 好一点，
+        特别是能理解整个项目上下文的时候。不过也不是所有场景都好用，
+        复杂的业务逻辑还是需要自己写。总的来说是个不错的工具，
+        推荐大家试试，但不要期望太高。
+      platform: juejin
+    expected:
+      title_keywords: ["Cursor", "代码补全"]
+      sentiment: mild
+      emotion: positive
+      confidence_min: 0.3
+      pain_point_keywords: ["复杂", "业务逻辑"]
+      use_case_keywords: ["Python", "写代码"]
+
+  - id: moderate_negative_en
+    input:
+      title: "Need better AI image generation API for batch processing"
+      content: |
+        We're using DALL-E API for generating product images at scale.
+        The quality is good but the rate limits are killing us.
+        We need to generate about 10K images per day and keep hitting 429 errors.
+        Looking for alternatives with higher throughput. Midjourney doesn't have
+        a proper API. Stable Diffusion is an option but the quality isn't consistent.
+        Would prefer a managed service so we don't have to manage GPU infrastructure.
+      platform: github
+    expected:
+      title_keywords: ["AI", "image", "generation", "batch", "API"]
+      sentiment: moderate
+      emotion: negative
+      confidence_min: 0.6
+      pain_point_keywords: ["rate limit", "429", "throughput"]
+      use_case_keywords: ["product images", "batch", "10K"]
+
+  - id: strong_negative_zh_3
+    input:
+      title: "跪求一个能自动生成单元测试的 AI 工具"
+      content: |
+        我们项目的测试覆盖率只有 30%，老板要求月底前到 80%。
+        手动写测试根本来不及，有好几万行代码。
+        试过 GitHub Copilot 生成测试，但生成的用例太表面了，
+        边界条件根本不覆盖。有没有能分析代码逻辑、
+        自动生成有意义的测试用例（包括边界和异常场景）的 AI 工具？
+        必须支持 Java 和 Python。求求了，项目要延期了。
+      platform: juejin
+    expected:
+      title_keywords: ["AI", "单元测试", "自动生成"]
+      sentiment: strong
+      emotion: negative
+      confidence_min: 0.7
+      pain_point_keywords: ["覆盖率", "来不及", "延期", "边界"]
+      use_case_keywords: ["单元测试", "Java", "Python"]
+
+  - id: mild_neutral_en
+    input:
+      title: "What's the best AI chatbot framework in 2026?"
+      content: |
+        Just curious what everyone is using for building chatbots these days.
+        I've seen LangChain, LlamaIndex, and some newer ones.
+        Building a simple FAQ bot for a small e-commerce site.
+        Nothing fancy, just needs to answer product questions.
+      platform: stackoverflow
+    expected:
+      title_keywords: ["AI", "chatbot", "framework"]
+      sentiment: mild
+      emotion: neutral
+      confidence_min: 0.2
+      pain_point_keywords: []
+      use_case_keywords: ["chatbot", "FAQ", "e-commerce"]
+
+  - id: moderate_positive_zh
+    input:
+      title: "希望有一个 AI 辅助的 SQL 优化工具"
+      content: |
+        数据库查询性能一直是个头疼的问题。我们有个复杂的报表系统，
+        很多 SQL 查询要跑好几分钟。如果能有个 AI 工具分析慢查询，
+        给出优化建议（索引、改写、分区等），那就太好了。
+        现在用 EXPLAIN 手动分析太耗时间。最好能集成到 MySQL Workbench
+        或者 DBeaver 里。
+      platform: juejin
+    expected:
+      title_keywords: ["AI", "SQL", "优化"]
+      sentiment: moderate
+      emotion: positive
+      confidence_min: 0.5
+      pain_point_keywords: ["慢查询", "耗时间", "手动"]
+      use_case_keywords: ["SQL", "数据库", "报表"]
+
+  - id: strong_positive_en
+    input:
+      title: "This AI testing tool saved our sprint!"
+      content: |
+        Just wanted to share - we started using Testim AI for our E2E tests
+        and it's been incredible. Our QA team was drowning in manual regression
+        testing every sprint. Now the AI automatically generates and maintains
+        test scripts. When the UI changes, it self-heals the tests instead of
+        breaking. We went from 2 days of regression testing to 2 hours.
+        The only downside is it's expensive, but worth every penny for the
+        time saved. Would love if they had a cheaper tier for startups.
+      platform: github
+    expected:
+      title_keywords: ["AI", "testing"]
+      sentiment: strong
+      emotion: positive
+      confidence_min: 0.7
+      pain_point_keywords: ["expensive", "price", "startup"]
+      use_case_keywords: ["E2E", "testing", "regression", "QA"]
+
+  - id: no_requirement_zh
+    input:
+      title: "Transformer 架构中的 Attention 机制原理详解"
+      content: |
+        最近在深入学习 Transformer，整理了一下 Self-Attention 的计算过程。
+        首先是 Q、K、V 三个矩阵的生成，然后是 Scaled Dot-Product Attention。
+        Multi-Head Attention 是将多个 attention head 的结果拼接。
+        位置编码用正弦余弦函数或者可学习的方式。这是学习笔记，供大家参考。
+      platform: juejin
+    expected:
+      title_keywords: []
+      sentiment: mild
+      emotion: neutral
+      confidence_max: 0.3
+      pain_point_keywords: []
+      use_case_keywords: []
