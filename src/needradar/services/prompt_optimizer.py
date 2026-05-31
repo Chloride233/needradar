@@ -58,6 +58,8 @@ class OptimizationRun:
     status: str = "idle"  # idle | running | completed | failed
     current_iteration: int = 0
     max_iterations: int = 10
+    patience: int = 5  # early stop after N consecutive rounds without improvement
+    num_candidates: int = 3  # parallel candidates per round
     baseline_score: float = 0.0
     best_score: float = 0.0
     best_prompt: str = ""
@@ -65,6 +67,7 @@ class OptimizationRun:
     error: str = ""
     started_at: float = 0.0
     finished_at: float = 0.0
+    consecutive_no_improve: int = 0
 
 
 # ── Evaluation ────────────────────────────────────────────────────
@@ -226,12 +229,16 @@ class PromptOptimizer:
             "best_prompt": r.best_prompt[:2000] if r.best_prompt else None,
         }
 
-    def start(self, max_iterations: int = 10) -> bool:
+    def start(self, max_iterations: int = 10, patience: int = 5, num_candidates: int = 3) -> bool:
         if self._run.status == "running":
             return False
+        # Guard against excessive resource usage
+        num_candidates = min(num_candidates, 10)
         self._run = OptimizationRun(
             status="running",
             max_iterations=max_iterations,
+            patience=patience,
+            num_candidates=num_candidates,
             started_at=time.time(),
         )
         self._task = asyncio.create_task(self._run_loop())
@@ -245,9 +252,9 @@ class PromptOptimizer:
     async def _run_loop(self) -> None:
         try:
             # Switch to Pro for better prompt suggestions
-            self._original_preset_id = llm._active_preset_id
-            if llm._active_preset_id == "deepseek-v4-flash":
-                llm._active_preset_id = "deepseek-v4-pro"
+            self._original_preset_id = llm.active_preset_id
+            if llm.active_preset_id == "deepseek-v4-flash":
+                llm.activate_preset("deepseek-v4-pro")
                 logger.info("prompt_optimizer_switched_to_pro")
 
             # Backup current prompt
@@ -279,43 +286,63 @@ class PromptOptimizer:
                     break
 
                 self._run.current_iteration = i
+                last_iter = self._run.iterations[-1] if self._run.iterations else baseline_iter
 
-                # Ask LLM to propose improvements
-                new_prompt = await self._propose_improvement(
-                    current_prompt, baseline_iter if i == 1 else self._run.iterations[-1],
-                )
-                if not new_prompt:
-                    logger.info("prompt_optimizer_no_proposal", iteration=i)
+                # Generate multiple candidates in parallel with varied temperatures
+                temps = [0.7 + j * 0.15 for j in range(self._run.num_candidates)]
+                proposals = await asyncio.gather(*[
+                    self._propose_improvement(current_prompt, last_iter, temperature=t)
+                    for t in temps
+                ])
+                valid_proposals = [(j, p) for j, p in enumerate(proposals) if p is not None]
+
+                if not valid_proposals:
+                    logger.info("prompt_optimizer_no_proposal", iteration=i, tried=self._run.num_candidates)
+                    self._run.consecutive_no_improve += 1
+                    if self._run.consecutive_no_improve >= self._run.patience:
+                        logger.info("early_stopping", consecutive=self._run.consecutive_no_improve, patience=self._run.patience)
+                        break
                     continue
 
-                # Evaluate the new prompt
-                iter_result = await self._evaluate_iteration(
-                    i, f"improved_v{i}", new_prompt, test_cases,
-                )
+                # Evaluate all valid candidates, keep the best
+                best_candidate_result = None
+                best_candidate_prompt = None
+                for j, proposal in valid_proposals:
+                    result = await self._evaluate_iteration(
+                        i, f"improved_v{i}_c{j}", proposal, test_cases,
+                    )
+                    if best_candidate_result is None or result.score > best_candidate_result.score:
+                        best_candidate_result = result
+                        best_candidate_prompt = proposal
 
                 # Keep or revert
-                if iter_result.score > self._run.best_score:
-                    iter_result.improved = True
-                    self._run.best_score = iter_result.score
-                    self._run.best_prompt = new_prompt
-                    current_prompt = new_prompt
-                    # Persist the improved prompt
-                    _save_requirement_prompt(new_prompt)
+                if best_candidate_result.score > self._run.best_score:
+                    best_candidate_result.improved = True
+                    self._run.best_score = best_candidate_result.score
+                    self._run.best_prompt = best_candidate_prompt
+                    current_prompt = best_candidate_prompt
+                    _save_requirement_prompt(best_candidate_prompt)
+                    self._run.consecutive_no_improve = 0
                     logger.info(
                         "prompt_improved",
                         iteration=i,
-                        score=round(iter_result.score, 4),
+                        score=round(best_candidate_result.score, 4),
                     )
                 else:
-                    iter_result.improved = False
+                    best_candidate_result.improved = False
+                    self._run.consecutive_no_improve += 1
                     logger.info(
                         "prompt_not_improved",
                         iteration=i,
-                        score=round(iter_result.score, 4),
+                        score=round(best_candidate_result.score, 4),
                         best=round(self._run.best_score, 4),
+                        consecutive=self._run.consecutive_no_improve,
                     )
+                    if self._run.consecutive_no_improve >= self._run.patience:
+                        logger.info("early_stopping", consecutive=self._run.consecutive_no_improve, patience=self._run.patience)
+                        break
 
-                self._run.iterations.append(iter_result)
+                self._run.iterations.append(best_candidate_result)
 
             self._run.status = "completed"
             self._run.finished_at = time.time()
@@ -340,7 +367,7 @@ class PromptOptimizer:
         finally:
             # Restore original preset
             if self._original_preset_id:
-                llm._active_preset_id = self._original_preset_id
+                llm.activate_preset(self._original_preset_id)
                 logger.info("prompt_optimizer_restored_preset", preset=self._original_preset_id)
 
     async def _evaluate_iteration(
@@ -382,7 +409,7 @@ class PromptOptimizer:
         )
 
     async def _propose_improvement(
-        self, current_prompt: str, last_iter: IterationResult,
+        self, current_prompt: str, last_iter: IterationResult, temperature: float = 0.7,
     ) -> str | None:
         # Build failure summary
         failures = []
@@ -424,17 +451,22 @@ class PromptOptimizer:
                 {"role": "system", "content": "你是一个 prompt 工程专家，专注于优化 LLM 的结构化提取能力。"},
                 {"role": "user", "content": meta_prompt},
             ]
-            response = await llm.complete(messages, temperature=0.7, max_tokens=2000)
+            response = await llm.complete(messages, temperature=temperature, max_tokens=2000)
             # Strip markdown code fences from LLM output
             response = response.strip()
             if response.startswith("```"):
                 lines = response.split("\n")
                 lines = [l for l in lines if not l.strip().startswith("```")]
                 response = "\n".join(lines).strip()
-            # Basic validation: must contain the expected JSON fields
+            # Basic validation: must be parseable JSON with required fields
+            import json
             required_fields = ["title", "description", "sentiment", "emotion", "confidence", "use_case", "pain_point"]
-            if all(f in response for f in required_fields):
-                return response.strip()
+            try:
+                parsed = json.loads(response)
+                if all(f in parsed for f in required_fields):
+                    return response.strip()
+            except json.JSONDecodeError:
+                pass
             logger.warning("proposal_missing_fields", missing=[
                 f for f in required_fields if f not in response
             ])

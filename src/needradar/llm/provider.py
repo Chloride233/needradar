@@ -88,6 +88,12 @@ class LLMProvider:
     def active_preset_id(self) -> str | None:
         return self._active_preset_id
 
+    def activate_preset(self, preset_id: str) -> None:
+        """Temporarily switch the active preset without persisting to config."""
+        if preset_id not in PRESETS:
+            raise ValueError(f"Unknown preset: {preset_id}")
+        self._active_preset_id = preset_id
+
     def get_health(self, preset_id: str) -> dict:
         return self._health.get(preset_id, {})
 
@@ -258,27 +264,6 @@ class LLMProvider:
         except Exception as e:
             logger.error("llm_complete_failed", model=effective_model, error=str(e))
             raise
-
-    async def embed(self, texts: list[str]) -> list[list[float]]:
-        response = await litellm.aembedding(
-            model=settings.llm_embedding_model,
-            input=texts,
-        )
-        usage = response.usage
-        input_tokens = usage.prompt_tokens if usage else 0
-        total_tokens = usage.total_tokens if usage else 0
-        cost = calculate_cost(settings.llm_embedding_model, input_tokens, 0)
-        self._last_usage = {
-            "preset_id": self._active_preset_id or "default",
-            "model": settings.llm_embedding_model,
-            "call_type": "embedding",
-            "input_tokens": input_tokens,
-            "output_tokens": 0,
-            "cached_tokens": 0,
-            "total_tokens": total_tokens,
-            "cost_cny": cost,
-        }
-        return [item["embedding"] for item in response.data]
 
     def pop_last_usage(self) -> dict | None:
         u = self._last_usage

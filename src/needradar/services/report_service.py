@@ -33,7 +33,11 @@ class ReportService:
         title = f"需求洞察报告 — {keyword}"
 
         # Step 1: Vector retrieval (RAG)
-        retrieval_context = await self._retrieve(keyword)
+        try:
+            retrieval_context = await self._retrieve(keyword)
+        except Exception as e:
+            logger.warning("vector_retrieval_failed_fallback", keyword=keyword, error=str(e))
+            retrieval_context = self._retrieve_fallback(keyword)
 
         # Step 2: LLM analysis based on retrieved context
         ai_analysis = await self._analyze(keyword, retrieval_context)
@@ -73,6 +77,22 @@ class ReportService:
 
         return {"documents": documents, "top_titles": top_titles, "results": results}
 
+    @staticmethod
+    def _sanitize_wikilink_title(title: str) -> str:
+        """Remove characters that break wikilink syntax."""
+        return title.replace("|", "-").replace("[", "(").replace("]", ")")
+
+    def _retrieve_fallback(self, keyword: str) -> dict:
+        """Fallback: search vault directly when vector retrieval fails."""
+        needs, _ = vault.search("需求", keyword=keyword, page_size=50)
+        documents = [n.get("_body", "") for n in needs if n.get("_body")]
+        top_titles = []
+        for n in needs:
+            raw_title = n.get("标题") or n.get("_path", "")
+            safe_title = self._sanitize_wikilink_title(raw_title)
+            top_titles.append(f"[[02-需求池/{safe_title}|{safe_title}]]")
+        return {"documents": documents, "top_titles": top_titles, "results": []}
+
     async def _analyze(self, keyword: str, context: dict) -> str:
         documents = context.get("documents", [])
         if not documents:
@@ -100,55 +120,6 @@ class ReportService:
         except Exception as e:
             logger.error("rag_analysis_failed", error=str(e))
             return f"> AI 分析生成失败: {str(e)}\n"
-
-    def _build_stats(self, keyword: str, all_reqs: list[dict]) -> str:
-        total = len(all_reqs)
-        if total == 0:
-            return "- 总需求数: **0**\n"
-
-        platform_dist: dict[str, int] = {}
-        sentiment_dist: dict[str, int] = {}
-        for req in all_reqs:
-            p = req.get("来源平台", "unknown")
-            platform_dist[p] = platform_dist.get(p, 0) + 1
-            s = req.get("情感倾向", "moderate")
-            sentiment_dist[s] = sentiment_dist.get(s, 0) + 1
-
-        strong_pct = round(sentiment_dist.get("strong", 0) / total * 100, 1)
-
-        lines = [
-            f"- 总需求数: **{total}**",
-            f"- 数据源: {', '.join(platform_dist.keys())}",
-            f"- 强烈需求占比: **{strong_pct}%**",
-            "",
-            "### 平台分布",
-            "| 平台 | 需求数 | 占比 |",
-            "|------|--------|------|",
-        ]
-        for platform, count in sorted(platform_dist.items(), key=lambda x: -x[1]):
-            pct = round(count / total * 100, 1)
-            lines.append(f"| {platform} | {count} | {pct}% |")
-
-        lines += [
-            "",
-            "### 情感分布",
-            "| 强烈程度 | 数量 | 占比 |",
-            "|---------|------|------|",
-        ]
-        for sentiment, count in sorted(sentiment_dist.items(), key=lambda x: -x[1]):
-            pct = round(count / total * 100, 1)
-            lines.append(f"| {sentiment} | {count} | {pct}% |")
-
-        lines += ["", "### 高频需求 Top 10"]
-        top_reqs = sorted(all_reqs, key=lambda r: r.get("提及次数", 1), reverse=True)[:10]
-        for i, req in enumerate(top_reqs, 1):
-            rt = req.get("标题", "")
-            lines.append(
-                f"{i}. [[02-需求池/{rt}|{rt}]] "
-                f"({req.get('来源平台', '')} · {req.get('情感倾向', '')} · 提及{req.get('提及次数', 1)}次)"
-            )
-
-        return "\n".join(lines)
 
     def _build_stats_from_retrieval(self, context: dict) -> str:
         results = context.get("results", [])

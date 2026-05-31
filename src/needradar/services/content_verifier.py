@@ -118,22 +118,6 @@ class ContentVerifier:
         # Deduplicate by text similarity
         return self._deduplicate_claims(all_claims)
 
-    def _split_sections(self, body: str) -> dict[str, str]:
-        sections: dict[str, str] = {}
-        current_header = "preamble"
-        current_lines: list[str] = []
-        for line in body.split("\n"):
-            if re.match(r'^#{1,4}\s', line):
-                if current_lines:
-                    sections[current_header] = "\n".join(current_lines)
-                current_header = re.sub(r'^#{1,4}\s+', '', line).strip()
-                current_lines = []
-            else:
-                current_lines.append(line)
-        if current_lines:
-            sections[current_header] = "\n".join(current_lines)
-        return sections
-
     async def _llm_extract_claims_batch(self, body: str) -> list[Claim]:
         """Extract claims from entire report body in a single call."""
         if len(body.strip()) < 50:

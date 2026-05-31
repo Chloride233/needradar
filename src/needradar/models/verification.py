@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import enum
 
-from sqlalchemy import DateTime, Float, Integer, String, Text, JSON, func
+from sqlalchemy import DateTime, Float, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from needradar.models.base import Base, TimestampMixin
@@ -14,14 +14,6 @@ class VerificationStatus(str, enum.Enum):
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
-
-
-class ClaimVerdict(str, enum.Enum):
-    SUPPORTED = "supported"        # claim is backed by source data
-    PARTIALLY = "partially"        # partially supported
-    UNVERIFIABLE = "unverifiable"  # no evidence found
-    CONTRADICTED = "contradicted"  # contradicted by evidence
-    HALLUCINATION = "hallucination"  # clearly fabricated
 
 
 class VerificationResult(TimestampMixin, Base):

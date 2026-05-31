@@ -7,9 +7,10 @@ from needradar.llm.config_store import load_config, save_config, save_active_mod
 from needradar.llm.model_presets import PRESETS, ModelPreset
 
 
-def test_only_deepseek_preset():
-    assert len(PRESETS) == 1
+def test_deepseek_presets():
+    assert len(PRESETS) == 2
     assert "deepseek-v4-pro" in PRESETS
+    assert "deepseek-v4-flash" in PRESETS
 
 
 def test_preset_fields():

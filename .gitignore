@@ -49,6 +49,7 @@ coverage.xml
 # Frontend
 frontend/node_modules/
 frontend/dist/
+frontend/data/
 
 # Obsidian workspace
 vault/.obsidian/
@@ -84,6 +85,9 @@ vault/06-关系图谱/*
 
 # Prompt optimizer backup
 *.bak
+
+# Claude auto-backups
+.claude-backup-*/
 
 # Tool caches (Claude Code, Playwright, Vite)
 .claude/

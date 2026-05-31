@@ -12,8 +12,6 @@ dependencies = [
 
     # Database
     "sqlalchemy[asyncio]>=2.0,<2.1",
-    "asyncpg>=0.30",
-    "alembic>=1.14",
 
     # Validation & config
     "pydantic>=2.10",
@@ -26,11 +24,7 @@ dependencies = [
     # Vector database
     "chromadb>=0.5,<1.0",
 
-    # Task queue
-    "celery[redis]>=5.4,<6.0",
-
-    # Crawling
-    "crawl4ai>=0.8.5",
+    # HTTP client
     "httpx>=0.28",
 
     # Config

@@ -154,6 +154,7 @@ const platformList = [
   { label: 'GitHub', value: 'github', color: '#24292f' },
   { label: 'Stack Overflow', value: 'stackoverflow', color: '#f48024' },
   { label: '掘金', value: 'juejin', color: '#0d9488' },
+  { label: 'B站', value: 'bilibili', color: '#fb7299' },
 ]
 
 const presets = [
@@ -183,7 +184,7 @@ const jobs = ref<ScheduledJob[]>([])
 const pendingDelete = ref<ScheduledJob | null>(null)
 
 function formatPlatforms(platforms: string[]): string {
-  const map: Record<string, string> = { github: 'GitHub', stackoverflow: 'SO', juejin: '掘金' }
+  const map: Record<string, string> = { github: 'GitHub', stackoverflow: 'SO', juejin: '掘金', bilibili: 'B站' }
   return platforms.map(p => map[p] || p).join(' / ')
 }
 

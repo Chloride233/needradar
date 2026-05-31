@@ -14,6 +14,7 @@ class PlatformEnum(str, Enum):
     GITHUB = "github"
     STACKOVERFLOW = "stackoverflow"
     JUEJIN = "juejin"
+    BILIBILI = "bilibili"
 
 
 class SentimentEnum(str, Enum):

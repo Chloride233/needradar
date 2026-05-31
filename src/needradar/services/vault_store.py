@@ -49,7 +49,7 @@ class VaultStore:
         body = text[end + 3:].strip()
         try:
             meta = yaml.safe_load(fm_text) or {}
-        except yaml.YAMError:
+        except yaml.YAMLError:
             meta = {}
         return meta, body
 
@@ -158,17 +158,6 @@ class VaultStore:
         total = len(filtered)
         start = (page - 1) * page_size
         return filtered[start:start + page_size], total
-
-    def count_by_field(self, stage: str, field: str) -> dict[str, int]:
-        counts: dict[str, int] = {}
-        for _, meta, _ in self.list_files(stage):
-            val = meta.get(field, "unknown")
-            if isinstance(val, list):
-                for v in val:
-                    counts[str(v)] = counts.get(str(v), 0) + 1
-            else:
-                counts[str(val)] = counts.get(str(val), 0) + 1
-        return counts
 
     def top_keywords(self, stage: str, limit: int = 10) -> list[str]:
         all_files = self.list_files(stage)

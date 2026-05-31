@@ -18,6 +18,16 @@ async def lifespan(app: FastAPI):
     start_scheduler()
     await restore_jobs()
 
+    # Reset stale RUNNING tasks (left from interrupted server shutdown)
+    from sqlalchemy import update
+    from needradar.models.crawl_task import CrawlTask, TaskStatus
+    async with engine.begin() as conn:
+        await conn.execute(
+            update(CrawlTask)
+            .where(CrawlTask.status == TaskStatus.RUNNING)
+            .values(status=TaskStatus.FAILED, error_message="Server was interrupted during previous execution")
+        )
+
     logger.info("needradar_starting")
     yield
     stop_scheduler()
