@@ -1,10 +1,11 @@
 ---
 name: Bug Report
 about: 报告一个问题
+title: "Bug: "
 labels: bug
 ---
 
-## 问题描述
+## 描述
 
 简要描述问题。
 
@@ -14,7 +15,7 @@ labels: bug
 2. ...
 3. ...
 
-## 期望行为
+## 预期行为
 
 描述你期望发生的行为。
 
@@ -28,3 +29,7 @@ labels: bug
 - Python 版本:
 - Node 版本:
 - NeedRadar 版本:
+
+## 截图
+
+如有截图，请在此处粘贴。

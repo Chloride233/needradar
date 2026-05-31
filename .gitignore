@@ -95,6 +95,10 @@ vault/06-关系图谱/*
 .playwright/
 .vite/
 
+# Playwright output
+frontend/test-results/
+frontend/playwright-report/
+
 # Junk files
 bash.exe.stackdump
 =3.10

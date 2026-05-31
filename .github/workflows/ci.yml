@@ -15,8 +15,10 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -e ".[dev]"
+      - run: pip install pip-audit
+      - run: pip-audit
       - run: ruff check src/
-      - run: pytest tests/ -k "not health" --tb=short -q
+      - run: pytest tests/ -k "not health" --tb=short -q --cov=src/needradar --cov-fail-under=80 --cov-report=term
 
   frontend:
     runs-on: ubuntu-latest

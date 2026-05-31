@@ -1,6 +1,6 @@
 import { defineComponent, h } from 'vue'
 
-function svgIcon(paths: string, viewBox = '0 0 24 24') {
+export function svgIcon(paths: string, viewBox = '0 0 24 24') {
   return defineComponent({
     name: 'SvgIcon',
     render() {
