@@ -1,0 +1,120 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ── Docker 镜像构建 & 推送 ──
+  docker:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 登录 GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 提取 Docker 元数据
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,format=short
+
+      - name: 构建并推送 Docker 镜像
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── Docker Compose 冒烟测试 ──
+  smoke-test:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 拉取刚构建的镜像
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: 启动服务栈
+        run: |
+          docker compose -f docker-compose.yml up -d postgres redis
+          sleep 5
+
+      - name: 启动后端
+        run: |
+          docker run -d --name needradar-smoke \
+            --network host \
+            -e NR_DATABASE_URL="postgresql+asyncpg://needradar:password@localhost:5432/needradar" \
+            -e NR_REDIS_URL="redis://localhost:6379/0" \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          sleep 5
+
+      - name: 验证健康检查
+        run: |
+          curl -f --retry 5 --retry-delay 2 http://localhost:8000/api/v1/health || exit 1
+
+      - name: 验证 Dashboard API
+        run: |
+          curl -f http://localhost:8000/api/v1/dashboard || exit 1
+
+      - name: 清理
+        if: always()
+        run: |
+          docker stop needradar-smoke || true
+          docker rm needradar-smoke || true
+          docker compose -f docker-compose.yml down -v
+
+  # ── GitHub Release（仅 tag 触发） ──
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: smoke-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 生成变更日志
+        id: changelog
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -n "$PREV_TAG" ]; then
+            echo "## 自 $PREV_TAG 以来的变更" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            git log "$PREV_TAG..HEAD" --pretty=format:"- %s (%h)" >> CHANGELOG.md
+          else
+            echo "## 首次发布" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            git log --pretty=format:"- %s (%h)" >> CHANGELOG.md
+          fi
+          cat CHANGELOG.md
+
+      - name: 创建 GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG.md
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
