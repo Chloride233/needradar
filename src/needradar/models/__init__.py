@@ -2,7 +2,7 @@ from needradar.models.base import Base, TimestampMixin
 from needradar.models.crawl_task import CrawlTask, TaskStatus
 from needradar.models.fingerprint import CrawlFingerprint
 from needradar.models.llm_usage import LLMUsage
-from needradar.models.scheduled_job import ScheduledJob, JobStatus
+from needradar.models.scheduled_job import JobStatus, ScheduledJob
 from needradar.models.trending import TrendingProject, TrendingSince
 from needradar.models.verification import VerificationResult, VerificationStatus
 

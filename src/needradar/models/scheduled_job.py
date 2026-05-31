@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import enum
 
-from sqlalchemy import Boolean, Enum as SAEnum, Integer, String, Text
+from sqlalchemy import Enum as SAEnum
+from sqlalchemy import Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from needradar.models.base import Base, TimestampMixin

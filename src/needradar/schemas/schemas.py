@@ -6,7 +6,7 @@ from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field
 
 from needradar.models.crawl_task import TaskStatus
-
+from needradar.models.scheduled_job import JobStatus
 
 # --- Enums ---
 
@@ -129,8 +129,6 @@ class DashboardStats(BaseModel):
 
 
 # --- Scheduler ---
-
-from needradar.models.scheduled_job import JobStatus
 
 
 class ScheduledJobCreateRequest(BaseModel):

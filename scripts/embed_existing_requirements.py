@@ -54,7 +54,7 @@ async def main():
 
         try:
             await vs.add(ids=ids, documents=documents, metadatas=metas)
-        except Exception as e:
+        except Exception:
             # Handle duplicate IDs individually
             for id_, doc, m in zip(ids, documents, metas):
                 try:

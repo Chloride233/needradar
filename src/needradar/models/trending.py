@@ -1,7 +1,6 @@
-import datetime
 import enum
 
-from sqlalchemy import Boolean, DateTime, Integer, String, Text, func
+from sqlalchemy import Boolean, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from needradar.models.base import Base, TimestampMixin

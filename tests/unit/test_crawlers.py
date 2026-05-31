@@ -6,8 +6,7 @@ import pytest
 from needradar.crawlers.factory import create_crawler
 from needradar.crawlers.github import GitHubCrawler
 from needradar.crawlers.juejin import JuejinCrawler
-from needradar.crawlers.stackoverflow import StackOverflowCrawler
-from needradar.crawlers.stackoverflow import _strip_html
+from needradar.crawlers.stackoverflow import StackOverflowCrawler, _strip_html
 
 
 def test_create_crawler_factory():

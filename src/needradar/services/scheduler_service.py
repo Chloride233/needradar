@@ -108,9 +108,9 @@ async def _execute_scheduled_job(scheduled_job_id: int) -> None:
                 return
 
             # Create tasks via the tasks API's pipeline logic
-            from needradar.api.v1.tasks import _run_pipeline
             import asyncio
 
+            from needradar.api.v1.tasks import _run_pipeline
             from needradar.models.crawl_task import CrawlTask, TaskStatus
 
             tasks: list[CrawlTask] = []

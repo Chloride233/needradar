@@ -1,4 +1,3 @@
-import pytest
 
 from needradar.schemas.schemas import ExtractedRequirement, SentimentEnum
 

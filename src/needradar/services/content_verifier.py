@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, field, asdict
-from typing import Any
+from dataclasses import dataclass, field
 
 from loguru import logger
 
 from needradar.llm.provider import llm
 from needradar.services.vault_store import vault
-
 
 # ── Data structures ──
 
@@ -67,11 +65,6 @@ class ContentVerifier:
             logger.warning("verify_report_not_found", title=report_title)
             return VerificationOutput()
         meta, body = vault.read(path)
-        keyword = ""
-        kws = meta.get("关键词", [])
-        if isinstance(kws, list) and kws:
-            keyword = str(kws[0])
-
         # 2. Extract claims from report body
         claims = await self._extract_claims(body)
         self._pop_usage()

@@ -49,7 +49,7 @@ class BaseCrawler(ABC):
                     await asyncio.sleep(delay)
                     continue
                 raise
-            except (httpx.ConnectTimeout, httpx.ReadTimeout) as e:
+            except (httpx.ConnectTimeout, httpx.ReadTimeout):
                 if attempt < max_retries - 1:
                     delay = base_delay * (2 ** attempt)
                     logger.warning("timeout_retry", url=url, attempt=attempt + 1, delay=delay)

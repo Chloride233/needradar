@@ -1,6 +1,5 @@
-import datetime
 
-from sqlalchemy import DateTime, Float, Integer, String
+from sqlalchemy import Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from needradar.models.base import Base, TimestampMixin

@@ -10,7 +10,6 @@ class JuejinCrawler(BaseCrawler):
     PLATFORM = "juejin"
 
     async def crawl(self, keyword: str, max_items: int = 100) -> list[RawDiscussionItem]:
-        client = await self._get_client()
         url = "https://api.juejin.cn/search_api/v1/search"
         headers = {
             "Content-Type": "application/json",

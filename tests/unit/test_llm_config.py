@@ -1,9 +1,12 @@
-import json
-from pathlib import Path
 
 import pytest
 
-from needradar.llm.config_store import load_config, save_config, save_active_model, save_preset_config
+from needradar.llm.config_store import (
+    load_config,
+    save_active_model,
+    save_config,
+    save_preset_config,
+)
 from needradar.llm.model_presets import PRESETS, ModelPreset
 
 

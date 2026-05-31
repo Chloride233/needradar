@@ -4,8 +4,13 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import pool
 
-from needradar.models import Base  # noqa: F401 — ensures autogenerate detects all models
-from needradar.models import Cluster, CrawlTask, Report, Requirement  # noqa: F401
+from needradar.models import (  # noqa: F401
+    Base,  # noqa: F401 — ensures autogenerate detects all models
+    Cluster,
+    CrawlTask,
+    Report,
+    Requirement,
+)
 
 config = context.config
 if config.config_file_name is not None:

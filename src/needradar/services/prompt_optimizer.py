@@ -90,7 +90,7 @@ def _save_requirement_prompt(new_prompt: str) -> None:
     text = PROMPTS_PATH.read_text(encoding="utf-8")
     # Match: requirement_extraction: |  followed by indented block until next top-level key
     pattern = r'(requirement_extraction:\s*\|?\s*\n)((?:  .*\n|\n)*)(?=\n\S|\Z)'
-    replacement = f'requirement_extraction: |\n' + "".join(
+    replacement = 'requirement_extraction: |\n' + "".join(
         f"  {line}\n" if line.strip() else "\n"
         for line in new_prompt.strip().split("\n")
     )
@@ -456,7 +456,7 @@ class PromptOptimizer:
             response = response.strip()
             if response.startswith("```"):
                 lines = response.split("\n")
-                lines = [l for l in lines if not l.strip().startswith("```")]
+                lines = [line for line in lines if not line.strip().startswith("```")]
                 response = "\n".join(lines).strip()
             # Basic validation: must be parseable JSON with required fields
             import json

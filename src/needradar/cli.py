@@ -9,9 +9,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import sys
-import time
 
 from loguru import logger
 
@@ -23,11 +21,9 @@ def _setup_logging(verbose: bool) -> None:
 
 
 async def _run_pipeline(keyword: str, platforms: list[str]) -> None:
-    from needradar.core.database import async_session_factory
-    from needradar.models.base import Base
-
     # Ensure tables exist
-    from needradar.core.database import engine
+    from needradar.core.database import async_session_factory, engine
+    from needradar.models.base import Base
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -101,8 +97,9 @@ async def _show_status() -> None:
     print()
 
     # Show latest tasks
-    from needradar.core.database import async_session_factory
     from sqlalchemy import select
+
+    from needradar.core.database import async_session_factory
     from needradar.models.crawl_task import CrawlTask
 
     async with async_session_factory() as db:

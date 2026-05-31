@@ -19,7 +19,6 @@ class StackOverflowCrawler(BaseCrawler):
     PLATFORM = "stackoverflow"
 
     async def crawl(self, keyword: str, max_items: int = 100) -> list[RawDiscussionItem]:
-        client = await self._get_client()
         page_size = 100
         items: list[RawDiscussionItem] = []
         page = 1

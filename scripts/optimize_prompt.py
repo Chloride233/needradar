@@ -7,9 +7,8 @@
   python scripts/optimize_prompt.py 40 3 2             # 40 轮, 3 轮无提升停止, 2 候选/轮
   python scripts/optimize_prompt.py 10 3               # 10 轮, 3 轮无提升停止
 """
-import sys
-import time
 import asyncio
+import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
@@ -23,11 +22,11 @@ async def main():
     num_candidates = max(1, min(int(sys.argv[3]), 10)) if len(sys.argv) > 3 else 3
     opt = PromptOptimizer()
 
-    print(f"=== Prompt Optimization ===")
+    print("=== Prompt Optimization ===")
     print(f"Max rounds:  {max_iter}")
     print(f"Patience:    {patience} (early stop)")
     print(f"Candidates:  {num_candidates} per round")
-    print(f"Test set:    config/prompt_test_cases.yaml")
+    print("Test set:    config/prompt_test_cases.yaml")
     print()
 
     opt.start(max_iterations=max_iter, patience=patience, num_candidates=num_candidates)

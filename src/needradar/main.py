@@ -20,6 +20,7 @@ async def lifespan(app: FastAPI):
 
     # Reset stale RUNNING tasks (left from interrupted server shutdown)
     from sqlalchemy import update
+
     from needradar.models.crawl_task import CrawlTask, TaskStatus
     async with engine.begin() as conn:
         await conn.execute(
