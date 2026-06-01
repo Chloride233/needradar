@@ -110,6 +110,67 @@ report_generation: |
   4. 趋势洞察 - 需求之间的关联和趋势分析
   5. 建议与行动项 - 基于分析的可行建议
 
+vibe_code_scoring: |
+  你是一个技术可行性评估专家。评估以下需求集群是否适合一个使用 AI 工具（Claude、Cursor）的独立开发者来构建开源项目。
+
+  评估维度：
+  1. vibe_code_suitability (0-100): Web应用=85+, CLI工具=75+, 浏览器插件=70+, 移动App=50+, 系统级工具=20+
+  2. technical_feasibility (0-100): 一个人用AI工具能在80小时内做出MVP吗？
+  3. market_freshness (0-100): 100=蓝海市场无成熟竞品, 50=有竞品但有切入点, 10=红海已被大厂垄断
+
+  返回JSON: {"vibe_code_suitability": int, "technical_feasibility": int, "market_freshness": int, "reasoning": "简短理由"}
+
+vibe_code_scoring: |
+  你是一个技术可行性评估专家。评估以下需求集群是否适合一个使用 AI 工具（Claude、Cursor）的独立开发者来构建开源项目。
+
+  评估维度：
+  1. vibe_code_suitability (0-100): Web应用=85+, CLI工具=75+, 浏览器插件=70+, 移动App=50+, 系统级工具=20+
+  2. technical_feasibility (0-100): 一个人用AI工具能在80小时内做出MVP吗？
+  3. market_freshness (0-100): 100=蓝海市场无成熟竞品, 50=有竞品但有切入点, 10=红海已被大厂垄断
+
+  返回JSON: {"vibe_code_suitability": int, "technical_feasibility": int, "market_freshness": int, "reasoning": "简短理由"}
+
+proposal_generation: |
+  你是一个面向独立开发者的产品顾问。基于以下用户需求数据，生成一份完整的开源项目方案。
+
+  输出JSON：
+  {
+    "title": "项目名称（简洁有吸引力）",
+    "problem_statement": "用户的核心问题（2-3句话，用真实需求数据支撑）",
+    "target_user": "谁会使用这个产品（具体画像）",
+    "mvp_scope": [{"name": "功能名", "priority": "P0/P1/P2", "description": "功能描述"}],
+    "suggested_stack": {
+      "frontend": "具体框架+UI库",
+      "backend": "具体框架",
+      "database": "具体数据库+hosting",
+      "hosting": "具体部署平台",
+      "rationale": "为什么选这套（考虑独立开发者的维护成本）"
+    },
+    "effort_estimate": {"total_hours": 40, "breakdown": {"前端": 15, "后端": 15, "数据库": 5, "部署": 3, "测试": 2}},
+    "risks": ["风险1", "风险2"],
+    "monetization_hint": "可能的变现方向"
+  }
+
+  约束：
+  - 技术栈选型：优先 Next.js/Vercel/Supabase 或 Python/FastAPI/Streamlit。避免 K8s/微服务/自建基础设施。
+  - MVP工时：独立开发者用AI辅助，总工时不超过80小时。
+  - 所有建议必须可追溯到原始需求数据。
+
+noise_filter: |
+  你是一个技术需求筛选专家。分析以下网络讨论，判断它是否代表一个可以通过构建软件工具来解决的真实问题。
+
+  判断标准：
+  1. 讨论是否涉及软件开发、工具使用、或技术产品？
+  2. 是否有人表达了对某个功能/工具的需求或不满？
+  3. 这个问题能否被一个独立开发者用Web应用、CLI工具或浏览器插件解决？
+  4. 讨论是否包含足够的具体信息（非泛泛而谈、非纯广告、非无意义水贴）？
+
+  返回JSON: {"verdict": "relevant|noise|unsure", "reason": "判断理由（简短）", "confidence": 0.0-1.0}
+
+  如果讨论与技术完全无关（如生活话题、纯娱乐）、是招聘广告、或内容空洞无实质信息，返回noise。
+  如果讨论明确描述了可被软件解决的技术问题或工具需求，返回relevant。
+  如果不确定，返回unsure。
+
 report_analysis: |
   你是 NeedRadar 需求分析专家。基于以下从知识库检索到的用户需求数据，
   生成一份结构化的深度分析报告。

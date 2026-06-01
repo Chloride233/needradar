@@ -14,7 +14,8 @@ from needradar.llm.provider import llm
 from needradar.models.crawl_task import CrawlTask, TaskStatus
 from needradar.models.fingerprint import CrawlFingerprint
 from needradar.models.llm_usage import LLMUsage
-from needradar.schemas.schemas import ExtractedRequirement, RawDiscussionItem
+from needradar.schemas.schemas import ExtractedRequirement, NoiseVerdict, RawDiscussionItem
+from needradar.services.noise_filter import NoiseFilter
 from needradar.services.vault_store import vault
 
 MAX_PIPELINE_SECONDS = 30 * 60
@@ -122,8 +123,36 @@ class AnalysisService:
                 task.skipped_items = skipped
                 await self._save_fingerprints(keyword, task.platform, new_items)
 
-                crawl_results[task.id] = new_items
-                logger.info("crawl_done", platform=task.platform, total=len(raw_items), new=len(new_items), skipped=skipped)
+                # Archive raw items to vault
+                for item in new_items:
+                    try:
+                        vault.archive_raw(
+                            platform=item.platform,
+                            keyword=keyword,
+                            title=item.title,
+                            source_url=item.source_url,
+                            content=item.content,
+                            tags=item.tags,
+                        )
+                    except Exception as e:
+                        logger.warning("archive_raw_failed", url=item.source_url, error=str(e))
+
+                # Noise filter: reject obvious garbage
+                noise_filter = NoiseFilter(use_llm=False)
+                filtered = await noise_filter.filter_batch(new_items)
+                noise_items = [f for f in filtered if f.verdict == NoiseVerdict.NOISE]
+                clean_items = [f for f in filtered if f.verdict != NoiseVerdict.NOISE]
+                task.noise_count = len(noise_items)
+                task.extracted_count = len(clean_items)
+                task.filter_mode = "rule"
+
+                crawl_results[task.id] = clean_items
+                logger.info(
+                    "crawl_done", platform=task.platform,
+                    total=len(raw_items), new=len(new_items),
+                    skipped=skipped, noise=len(noise_items),
+                    clean=len(clean_items),
+                )
             except asyncio.TimeoutError:
                 task.status = TaskStatus.FAILED
                 task.error_message = "任务执行超时（30分钟限制）"
@@ -139,21 +168,27 @@ class AnalysisService:
 
         # Phase 2: Extract and store per task (sequential — shares LLM rate limit)
         for task in tasks:
-            raw_items = crawl_results.get(task.id, [])
-            if not raw_items or task.status == TaskStatus.FAILED:
+            filtered_items = crawl_results.get(task.id, [])
+            if task.status == TaskStatus.FAILED:
+                continue
+
+            if not filtered_items:
+                # All items filtered as noise — task is still complete
+                task.status = TaskStatus.COMPLETED
                 continue
 
             remaining = MAX_PIPELINE_SECONDS - 120
-            for item in raw_items:
+            for filtered in filtered_items:
                 if remaining <= 0:
-                    logger.warning("pipeline_timeout", platform=task.platform, processed=raw_items.index(item))
-                    task.error_message = f"处理超时，已处理 {raw_items.index(item)}/{len(raw_items)} 条"
+                    idx = filtered_items.index(filtered)
+                    logger.warning("pipeline_timeout", platform=task.platform, processed=idx)
+                    task.error_message = f"处理超时，已处理 {idx}/{len(filtered_items)} 条"
                     break
                 start_t = asyncio.get_event_loop().time()
                 try:
-                    await self._extract_and_store(keyword, item)
+                    await self._extract_and_store(keyword, filtered.item)
                 except Exception as e:
-                    logger.warning("item_extract_failed", url=item.source_url, error=str(e))
+                    logger.warning("item_extract_failed", url=filtered.item.source_url, error=str(e))
                 remaining -= asyncio.get_event_loop().time() - start_t
 
             if not task.error_message:
@@ -229,6 +264,8 @@ class AnalysisService:
         filepath = vault.write("需求", extracted.title, meta, body)
         logger.info("requirement_stored", title=extracted.title, path=str(filepath))
 
+        await self._link_derived(str(filepath), item)
+
         # Add to vector store for future dedup
         try:
             await self._get_vector_store().add(
@@ -240,6 +277,25 @@ class AnalysisService:
             logger.warning("vector_store_add_failed", error=str(e))
 
         return filepath
+
+    async def _link_derived(self, vault_path: str, item: RawDiscussionItem) -> None:
+        """Create EntityLink: requirement --[derived_from]--> raw_discussion."""
+        try:
+            from needradar.schemas.schemas import EntityLinkCreateRequest
+            from needradar.models.link import LinkType
+            from needradar.services.link_service import EntityLinkService
+
+            svc = EntityLinkService(self._db)
+            await svc.create(EntityLinkCreateRequest(
+                source_type="requirement",
+                source_id=vault_path,
+                link_type=LinkType.DERIVED_FROM,
+                target_type="raw_discussion",
+                target_id=item.source_url,
+                metadata={"title": item.title, "platform": item.platform},
+            ))
+        except Exception as e:
+            logger.warning("entity_link_failed", link_type="derived_from", error=str(e))
 
     def _record_usage(self) -> None:
         usage = llm.pop_last_usage()

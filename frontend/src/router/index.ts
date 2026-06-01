@@ -12,6 +12,10 @@ const router = createRouter({
     { path: '/scheduler', component: () => import('../views/SchedulerView.vue') },
     { path: '/usage', component: () => import('../views/UsageView.vue') },
     { path: '/settings', component: () => import('../views/SettingsView.vue') },
+    { path: '/opportunities', component: () => import('../views/OpportunitiesView.vue') },
+    { path: '/opportunity-detail', component: () => import('../views/OpportunityDetailView.vue') },
+    { path: '/requirement-detail', component: () => import('../views/RequirementDetailView.vue') },
+    { path: '/proposals/:id', component: () => import('../views/ProposalView.vue') },
     { path: '/:pathMatch(.*)*', component: () => import('../views/NotFoundView.vue') },
   ],
 })

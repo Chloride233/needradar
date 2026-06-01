@@ -157,6 +157,25 @@ class VaultStore:
         start = (page - 1) * page_size
         return filtered[start:start + page_size], total
 
+    def archive_raw(self, platform: str, keyword: str, title: str, source_url: str,
+                    content: str, tags: list[str] | None = None) -> Path:
+        """Archive raw crawled content to vault/01-原始素材库/灵感剪报/."""
+        from datetime import date
+        meta = {
+            "标题": title,
+            "阶段": "素材",
+            "来源平台": platform,
+            "来源URL": source_url,
+            "关键词": [keyword],
+            "标签": tags or [],
+            "抓取时间": str(date.today()),
+            "创建时间": str(date.today()),
+            "关联参考": [],
+            "发布平台": "内部",
+        }
+        body = f"## 原始内容\n\n{content}"
+        return self.write("素材", title, meta, body)
+
     def top_keywords(self, stage: str, limit: int = 10) -> list[str]:
         all_files = self.list_files(stage)
         kw_counts: dict[str, int] = {}

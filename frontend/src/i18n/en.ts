@@ -1,17 +1,11 @@
 export default {
   nav: {
-    dashboard: 'Dashboard',
-    tasks: 'Tasks',
-    requirements: 'Requirements',
-    reports: 'Reports',
+    dashboard: 'Discover',
     trending: 'Trending',
-    verification: 'Verification',
-    scheduler: 'Scheduler',
-    usage: 'Usage',
-    settings: 'Settings',
+    opportunities: 'Opportunities',
   },
   status: {
-    online: 'System Online',
-    offline: 'Disconnected',
+    online: 'Online',
+    offline: 'Offline',
   },
 }

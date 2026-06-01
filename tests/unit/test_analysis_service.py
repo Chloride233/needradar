@@ -27,8 +27,8 @@ def fake_item():
     return RawDiscussionItem(
         platform="github",
         source_url="http://github.com/test/1",
-        title="Need AI features",
-        content="Users want AI-powered code review",
+        title="Need AI-powered code review features in CI pipeline",
+        content="Users want AI-powered code review to improve development efficiency and reduce manual overhead in pull request workflows",
         author="dev1",
     )
 
@@ -358,7 +358,7 @@ class TestRunPipeline:
             assert len(tasks) == 1
             assert tasks[0].keyword == "python"
             assert tasks[0].platform == "github"
-            assert tasks[0].status == TaskStatus.RUNNING
+            assert tasks[0].status == TaskStatus.COMPLETED  # empty crawl completes
 
     @pytest.mark.asyncio
     async def test_multi_platform(self, db_session, fake_item, fake_extracted):
@@ -460,7 +460,7 @@ class TestRunPipeline:
         with patch("needradar.services.analysis_service.create_crawler") as mc:
             mc.return_value = mock_crawler
             tasks = await svc.run_pipeline("python", ["github"])
-            assert tasks[0].status == TaskStatus.RUNNING
+            assert tasks[0].status == TaskStatus.COMPLETED  # empty crawl completes
             mock_crawler.close.assert_called_once()
 
     @pytest.mark.asyncio

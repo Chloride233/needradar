@@ -26,5 +26,8 @@ class CrawlTask(TimestampMixin, Base):
     total_items: Mapped[int] = mapped_column(Integer, default=0)
     new_items: Mapped[int] = mapped_column(Integer, default=0)
     skipped_items: Mapped[int] = mapped_column(Integer, default=0)
+    noise_count: Mapped[int] = mapped_column(Integer, default=0)
+    extracted_count: Mapped[int] = mapped_column(Integer, default=0)
+    filter_mode: Mapped[str] = mapped_column(String(20), default="off")
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     report_path: Mapped[str | None] = mapped_column(Text, nullable=True)
