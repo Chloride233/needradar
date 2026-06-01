@@ -45,6 +45,8 @@ class XiaohongshuCrawler(BaseCrawler):
             notes = self._parse_ssr(html, seen_ids)
             if not notes and cookie:
                 notes = await self._api_fallback(keyword, page, cookie, seen_ids)
+            if not notes:
+                notes = await self._playwright_fallback(keyword, page, seen_ids)
 
             if not notes:
                 break
@@ -122,6 +124,76 @@ class XiaohongshuCrawler(BaseCrawler):
                 content=(desc or title)[:5000],
                 author=author, tags=tags,
             ))
+        return items
+
+    async def _playwright_fallback(
+        self, keyword: str, page: int, seen_ids: set[str]
+    ) -> list[RawDiscussionItem]:
+        """Third fallback: headless browser renders the search result page.
+
+        Requires `pip install playwright && playwright install chromium`.
+        If Playwright is not installed, returns empty list silently.
+        """
+        try:
+            from playwright.async_api import async_playwright
+        except ImportError:
+            logger.debug("playwright_not_installed, skipping browser fallback")
+            return []
+
+        items: list[RawDiscussionItem] = []
+        try:
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(headless=True)
+                context = await browser.new_context(
+                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                )
+                page_obj = await context.new_page()
+
+                url = f"https://www.xiaohongshu.com/search_result?keyword={keyword}&page={page}"
+                await page_obj.goto(url, wait_until="domcontentloaded", timeout=30000)
+
+                # Wait for note cards to render
+                try:
+                    await page_obj.wait_for_selector(
+                        "section.note-item, .feeds-page .note-item, [class*='note']",
+                        timeout=10000,
+                    )
+                except Exception:
+                    await page_obj.wait_for_timeout(3000)
+
+                notes = await page_obj.query_selector_all(
+                    "section.note-item, a[href*='/explore/'], [class*='note-item']"
+                )
+                for el in notes[:30]:
+                    note_id = ""
+                    href = await el.get_attribute("href") or ""
+                    if "/explore/" in href:
+                        note_id = href.split("/explore/")[-1].split("?")[0].rstrip("/")
+
+                    title_el = await el.query_selector(".title, [class*='title'], .note-title")
+                    title = await title_el.inner_text() if title_el else ""
+                    desc_el = await el.query_selector(".desc, [class*='desc'], .note-desc")
+                    desc = await desc_el.inner_text() if desc_el else ""
+                    author_el = await el.query_selector(".author .name, [class*='author'] [class*='name']")
+                    author = await author_el.inner_text() if author_el else ""
+
+                    if not (title or desc) or note_id in seen_ids:
+                        continue
+                    seen_ids.add(note_id)
+
+                    items.append(RawDiscussionItem(
+                        platform="xiaohongshu",
+                        source_url=f"https://www.xiaohongshu.com/explore/{note_id}",
+                        title=title.strip()[:200] if title else desc.strip()[:200],
+                        content=desc.strip()[:5000] if desc else title.strip()[:5000],
+                        author=author.strip(),
+                    ))
+
+                await browser.close()
+                logger.info("xhs_playwright", keyword=keyword, page=page, count=len(items))
+        except Exception as e:
+            logger.warning("xhs_playwright_failed", error=str(e))
+
         return items
 
     async def _api_fallback(
