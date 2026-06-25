@@ -219,12 +219,19 @@ async function loadGateDetail(gateId: number) {
 async function approveGate() {
   submitting.value = true
   try {
-    await fetch(`/api/v1/gates/${currentGate.value.id}/approve`, {
+    const resp = await fetch(`/api/v1/gates/${currentGate.value.id}/approve`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ note: reviewerNote.value }),
     })
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: 'Unknown error' }))
+      alert(`批准失败: ${err.detail || resp.statusText}`)
+      return
+    }
     await loadGates()
+  } catch (e: any) {
+    alert(`网络错误: ${e.message}`)
   } finally {
     submitting.value = false
   }
@@ -233,12 +240,19 @@ async function approveGate() {
 async function rejectGate() {
   submitting.value = true
   try {
-    await fetch(`/api/v1/gates/${currentGate.value.id}/reject`, {
+    const resp = await fetch(`/api/v1/gates/${currentGate.value.id}/reject`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reason: reviewerNote.value }),
     })
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: 'Unknown error' }))
+      alert(`批驳失败: ${err.detail || resp.statusText}`)
+      return
+    }
     await loadGates()
+  } catch (e: any) {
+    alert(`网络错误: ${e.message}`)
   } finally {
     submitting.value = false
   }
@@ -247,20 +261,30 @@ async function rejectGate() {
 async function editGate() {
   submitting.value = true
   try {
-    // Build edits from items
-    const edits = items.value.map((item: any, idx: number) => ({
-      feedback_type: item.approved ? 'item_edited' : 'item_removed',
-      entity_type: currentGate.value.gate_type === 'material' ? 'raw_item' : 'requirement',
-      entity_id: item.source_url || item.vault_path || `item_${idx}`,
-      before: item,
-      after: item.approved ? item : null,
-    }))
-    await fetch(`/api/v1/gates/${currentGate.value.id}/edit`, {
+    // Only include edits for items that were actually changed (unchecked = removed)
+    const edits = items.value
+      .filter((item: any) => !item.approved)
+      .map((item: any, idx: number) => ({
+        feedback_type: 'item_removed',
+        entity_type: currentGate.value.gate_type === 'material' ? 'raw_item' : 'requirement',
+        entity_id: item.source_url || item.vault_path || `item_${idx}`,
+        before: item,
+        after: null,
+        reason: 'Human rejected at gate review',
+      }))
+    const resp = await fetch(`/api/v1/gates/${currentGate.value.id}/edit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ edits, note: reviewerNote.value }),
     })
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: 'Unknown error' }))
+      alert(`编辑失败: ${err.detail || resp.statusText}`)
+      return
+    }
     await loadGates()
+  } catch (e: any) {
+    alert(`网络错误: ${e.message}`)
   } finally {
     submitting.value = false
   }
