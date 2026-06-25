@@ -129,6 +129,70 @@ async def _run_pipeline(keyword: str, platforms: list[str]) -> None:
     logger.info("Pipeline complete!")
 
 
+async def _run_agent_pipeline(keyword: str, platforms: list[str]) -> None:
+    """Run pipeline in agent mode with quality gates."""
+    from needradar.core.database import async_session_factory, engine
+    from needradar.models import Base
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    logger.info(f"Starting agent pipeline: keyword={keyword} platforms={platforms}")
+
+    async with async_session_factory() as db:
+        from needradar.services.pipeline_orchestrator import PipelineOrchestrator
+        orchestrator = PipelineOrchestrator(db)
+        run = await orchestrator.start(keyword, platforms)
+        logger.info(f"Pipeline started: run_id={run.id}")
+        logger.info("Pipeline will pause at quality gates. Use the API or web UI to review and approve.")
+        logger.info(f"  GET  /api/v1/gates?pipeline_run_id={run.id}")
+        logger.info(f"  POST /api/v1/gates/{{gate_id}}/approve")
+
+
+async def _list_gates(status: str | None = None, run_id: int | None = None) -> None:
+    """List quality gates."""
+    from needradar.core.database import async_session_factory, engine
+    from needradar.models import Base
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    from needradar.models.quality_gate import QualityGate
+    from sqlalchemy import select
+
+    async with async_session_factory() as db:
+        stmt = select(QualityGate).order_by(QualityGate.created_at.desc())
+        if status:
+            stmt = stmt.where(QualityGate.status == status)
+        if run_id:
+            stmt = stmt.where(QualityGate.pipeline_run_id == run_id)
+        result = await db.execute(stmt)
+        gates = result.scalars().all()
+
+        if not gates:
+            print("No gates found.")
+            return
+
+        print(f"{'ID':>4} {'Run':>4} {'Type':<12} {'Status':<16} {'Items':>5} {'Decision':<10}")
+        print("-" * 60)
+        for g in gates:
+            import json
+            items = json.loads(g.items_json) if g.items_json else []
+            print(f"{g.id:>4} {g.pipeline_run_id:>4} {g.gate_type:<12} {g.status:<16} {len(items):>5} {g.human_decision or '-':<10}")
+
+
+async def _distill(run_id: int) -> None:
+    """Manually trigger knowledge distillation for a pipeline run."""
+    from needradar.core.database import async_session_factory, engine
+    from needradar.models import Base
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async with async_session_factory() as db:
+        from needradar.services.knowledge_distiller import KnowledgeDistiller
+        distiller = KnowledgeDistiller(db)
+        await distiller.distill_all(run_id)
+        logger.info(f"Distillation complete for run {run_id}")
+
+
 async def _generate_report(keyword: str) -> None:
     from needradar.services.report_service import get_report_service
     rs = get_report_service()
@@ -191,6 +255,10 @@ def main() -> None:
         "--platforms", default="github,stackoverflow,juejin",
         help="Comma-separated platforms (default: github,stackoverflow,juejin)",
     )
+    run_parser.add_argument(
+        "--agent", action="store_true",
+        help="Use agent mode with quality gates (pause for human review)",
+    )
 
     # report: generate report from existing data
     report_parser = sub.add_parser("report", help="Generate report from existing requirements")
@@ -199,16 +267,32 @@ def main() -> None:
     # status: show current state
     sub.add_parser("status", help="Show vault status and recent tasks")
 
+    # gates: list quality gates
+    gates_parser = sub.add_parser("gates", help="List quality gates")
+    gates_parser.add_argument("--status", help="Filter by status (awaiting_review/approved/rejected)")
+    gates_parser.add_argument("--run-id", type=int, help="Filter by pipeline run ID")
+
+    # distill: manually trigger knowledge distillation
+    distill_parser = sub.add_parser("distill", help="Run knowledge distillation for a pipeline run")
+    distill_parser.add_argument("run_id", type=int, help="Pipeline run ID")
+
     args = parser.parse_args()
     _setup_logging(args.verbose)
 
     if args.command == "run":
         platforms = [p.strip() for p in args.platforms.split(",")]
-        asyncio.run(_run_pipeline(args.keyword, platforms))
+        if args.agent:
+            asyncio.run(_run_agent_pipeline(args.keyword, platforms))
+        else:
+            asyncio.run(_run_pipeline(args.keyword, platforms))
     elif args.command == "report":
         asyncio.run(_generate_report(args.keyword))
     elif args.command == "status":
         asyncio.run(_show_status())
+    elif args.command == "gates":
+        asyncio.run(_list_gates(status=args.status, run_id=args.run_id))
+    elif args.command == "distill":
+        asyncio.run(_distill(args.run_id))
     else:
         parser.print_help()
 
