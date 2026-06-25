@@ -125,6 +125,12 @@ class PipelineOrchestrator:
 
     # ── Internal Phase Execution ──
 
+    # Phase chain: defines what runs after each non-gate phase completes
+    _phase_chain: dict[PhaseName, PhaseName] = {
+        PhaseName.ARCHIVING: PhaseName.DISTILLING,
+        PhaseName.DISTILLING: PhaseName.COMPLETED,
+    }
+
     async def _run_from_phase(self, run_id: int, phase: PhaseName) -> None:
         """Resume pipeline from a given phase.
 
@@ -152,6 +158,12 @@ class PipelineOrchestrator:
                     run.current_phase = PhaseName.COMPLETED.value
                     await db.commit()
                     logger.info("pipeline_completed", run_id=run_id)
+
+                # Auto-advance non-gate phases (archiving -> distilling -> completed)
+                next_phase = self._phase_chain.get(phase)
+                if next_phase and run.status not in ("failed", "completed", "rejected"):
+                    asyncio.create_task(self._run_from_phase(run_id, next_phase))
+
             except Exception as e:
                 run.status = "failed"
                 run.error_message = str(e)[:2000]
@@ -314,10 +326,18 @@ class PipelineOrchestrator:
         """Execute report generation and verification, then create insight gate."""
         await self._record_phase(run, PhaseName.REPORTING, PhaseStatus.RUNNING, db=db)
 
-        # Generate report
-        from needradar.services.report_service import get_report_service
-        rs = get_report_service()
-        report_path = await rs.generate_report(run.keyword)
+        # Generate report (gracefully handle empty data and timeouts)
+        report_path = None
+        try:
+            from needradar.services.report_service import get_report_service
+            rs = get_report_service()
+            report_path = await asyncio.wait_for(
+                rs.generate_report(run.keyword), timeout=120,
+            )
+        except asyncio.TimeoutError:
+            logger.warning("report_generation_timeout", keyword=run.keyword)
+        except Exception as e:
+            logger.warning("report_generation_failed", keyword=run.keyword, error=str(e))
 
         # Verify report
         verification_result = None
