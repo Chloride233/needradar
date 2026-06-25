@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 
 import chromadb
@@ -65,6 +66,7 @@ class ChromaVectorStore(VectorStore):
         except Exception as e1:
             logger.warning("vector_add_failed", error=str(e1), retrying=True)
             # Light retry: just retry the operation once
+            await asyncio.sleep(0.1)
             try:
                 self._collection.add(ids=ids, documents=documents, metadatas=metadatas)
                 return
@@ -89,6 +91,7 @@ class ChromaVectorStore(VectorStore):
         except Exception as e1:
             logger.warning("vector_query_failed", error=str(e1), retrying=True)
             # Light retry
+            await asyncio.sleep(0.1)
             try:
                 return self._do_query(query_texts, n_results, where)
             except Exception as e2:

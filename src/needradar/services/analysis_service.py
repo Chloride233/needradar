@@ -184,12 +184,13 @@ class AnalysisService:
                     logger.warning("pipeline_timeout", platform=task.platform, processed=idx)
                     task.error_message = f"处理超时，已处理 {idx}/{len(filtered_items)} 条"
                     break
-                start_t = asyncio.get_event_loop().time()
+                import time as _time
+                start_t = _time.monotonic()
                 try:
                     await self.extract_and_store(keyword, filtered.item)
                 except Exception as e:
                     logger.warning("item_extract_failed", url=filtered.item.source_url, error=str(e))
-                remaining -= asyncio.get_event_loop().time() - start_t
+                remaining -= _time.monotonic() - start_t
 
             if not task.error_message:
                 task.status = TaskStatus.COMPLETED

@@ -155,7 +155,7 @@ async def trigger_job(job_id: int, db: AsyncSession = Depends(get_db)):
     if not job:
         raise HTTPException(status_code=404, detail="定时任务不存在")
 
-    asyncio.get_event_loop().create_task(_execute_scheduled_job(job.id))
+    asyncio.create_task(_execute_scheduled_job(job.id))
     logger.info("scheduler_job_triggered", job_id=job_id)
 
     await db.refresh(job)
