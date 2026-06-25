@@ -4,15 +4,16 @@ from __future__ import annotations
 
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import get_db
 from needradar.models.feedback import FeedbackRecord
 from needradar.models.quality_gate import GateStatus, QualityGate
 from needradar.schemas.agent_schemas import FeedbackListResponse, FeedbackResponse
+from needradar.services.pipeline_orchestrator import PipelineOrchestrator
 
 router = APIRouter(prefix="/gates", tags=["gates"])
 
@@ -61,24 +62,32 @@ async def list_gates(
     pipeline_run_id: int | None = None,
     status: str | None = None,
     gate_type: str | None = None,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
-    """List quality gates with optional filters."""
+    """List quality gates with optional filters and pagination."""
     stmt = select(QualityGate)
+    count_stmt = select(func.count()).select_from(QualityGate)
+
     if pipeline_run_id:
         stmt = stmt.where(QualityGate.pipeline_run_id == pipeline_run_id)
+        count_stmt = count_stmt.where(QualityGate.pipeline_run_id == pipeline_run_id)
     if status:
         stmt = stmt.where(QualityGate.status == status)
+        count_stmt = count_stmt.where(QualityGate.status == status)
     if gate_type:
         stmt = stmt.where(QualityGate.gate_type == gate_type)
-    stmt = stmt.order_by(QualityGate.created_at.desc())
+        count_stmt = count_stmt.where(QualityGate.gate_type == gate_type)
 
+    total = (await db.execute(count_stmt)).scalar() or 0
+    stmt = stmt.order_by(QualityGate.created_at.desc()).offset((page - 1) * page_size).limit(page_size)
     result = await db.execute(stmt)
     gates = result.scalars().all()
 
     return GateListResponse(
         items=[_to_gate_response(g) for g in gates],
-        total=len(gates),
+        total=total,
     )
 
 
@@ -97,7 +106,6 @@ async def get_gate(gate_id: int, db: AsyncSession = Depends(get_db)):
 @router.post("/{gate_id}/approve", response_model=GateResponse)
 async def approve_gate(gate_id: int, req: GateApproveRequest, db: AsyncSession = Depends(get_db)):
     """Approve a gate and advance the pipeline."""
-    from needradar.services.pipeline_orchestrator import PipelineOrchestrator
     orchestrator = PipelineOrchestrator(db)
     try:
         await orchestrator.resume_after_gate(gate_id, "approve", note=req.note)
@@ -110,7 +118,6 @@ async def approve_gate(gate_id: int, req: GateApproveRequest, db: AsyncSession =
 @router.post("/{gate_id}/reject", response_model=GateResponse)
 async def reject_gate(gate_id: int, req: GateRejectRequest, db: AsyncSession = Depends(get_db)):
     """Reject a gate and stop the pipeline."""
-    from needradar.services.pipeline_orchestrator import PipelineOrchestrator
     orchestrator = PipelineOrchestrator(db)
     try:
         await orchestrator.resume_after_gate(gate_id, "reject", note=req.reason)
@@ -123,7 +130,6 @@ async def reject_gate(gate_id: int, req: GateRejectRequest, db: AsyncSession = D
 @router.post("/{gate_id}/edit", response_model=GateResponse)
 async def edit_gate(gate_id: int, req: GateEditRequest, db: AsyncSession = Depends(get_db)):
     """Submit edits and approve the gate."""
-    from needradar.services.pipeline_orchestrator import PipelineOrchestrator
     orchestrator = PipelineOrchestrator(db)
     try:
         await orchestrator.resume_after_gate(gate_id, "edit", edits=req.edits, note=req.note)

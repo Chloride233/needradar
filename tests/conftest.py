@@ -24,6 +24,9 @@ def event_loop():
     yield loop
     loop.close()
 
+# NOTE: above fixture is deprecated in pytest-asyncio >= 0.24.
+# Migrate to loop_scope="session" on fixtures when upgrading.
+
 
 async def _override_get_db() -> AsyncGenerator[AsyncSession, None]:
     async with test_session_factory() as session:
