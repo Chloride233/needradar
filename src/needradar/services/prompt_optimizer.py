@@ -186,6 +186,7 @@ class PromptOptimizer:
         self._run = OptimizationRun()
         self._task: asyncio.Task | None = None
         self._original_preset_id: str | None = None
+        self._lock = asyncio.Lock()
 
     @property
     def status(self) -> dict:
@@ -230,7 +231,7 @@ class PromptOptimizer:
         }
 
     def start(self, max_iterations: int = 10, patience: int = 5, num_candidates: int = 3) -> bool:
-        if self._run.status == "running":
+        if self._run.status == "running" or self._lock.locked():
             return False
         # Guard against excessive resource usage
         num_candidates = min(num_candidates, 10)
@@ -252,7 +253,7 @@ class PromptOptimizer:
         prompt_test_cases.yaml, this mode derives test cases from
         FeedbackRecord entries — human corrections at quality gates.
         """
-        if self._run.status == "running":
+        if self._run.status == "running" or self._lock.locked():
             return False
         num_candidates = min(num_candidates, 10)
         self._run = OptimizationRun(
@@ -363,90 +364,91 @@ class PromptOptimizer:
 
     async def _run_optimization_loop(self, test_cases: list[dict], version_prefix: str) -> None:
         """Shared optimization loop used by both golden-test and feedback modes."""
-        try:
-            self._original_preset_id = llm.active_preset_id
-            if llm.active_preset_id == "deepseek-v4-flash":
-                llm.activate_preset("deepseek-v4-pro")
-                logger.info("prompt_optimizer_switched_to_pro")
+        async with self._lock:
+            try:
+                self._original_preset_id = llm.active_preset_id
+                if llm.active_preset_id == "deepseek-v4-flash":
+                    llm.activate_preset("deepseek-v4-pro")
+                    logger.info("prompt_optimizer_switched_to_pro")
 
-            shutil.copy2(PROMPTS_PATH, BACKUP_PATH)
-            logger.info("prompt_optimizer_started", backup=str(BACKUP_PATH), test_cases=len(test_cases))
+                shutil.copy2(PROMPTS_PATH, BACKUP_PATH)
+                logger.info("prompt_optimizer_started", backup=str(BACKUP_PATH), test_cases=len(test_cases))
 
-            prompts = _load_prompts()
-            current_prompt = prompts.get("requirement_extraction", "")
-            self._run.best_prompt = current_prompt
+                prompts = _load_prompts()
+                current_prompt = prompts.get("requirement_extraction", "")
+                self._run.best_prompt = current_prompt
 
-            baseline_iter = await self._evaluate_iteration(
-                0, "baseline", current_prompt, test_cases,
-            )
-            self._run.baseline_score = baseline_iter.score
-            self._run.best_score = baseline_iter.score
-            self._run.iterations.append(baseline_iter)
-            self._run.current_iteration = 0
+                baseline_iter = await self._evaluate_iteration(
+                    0, "baseline", current_prompt, test_cases,
+                )
+                self._run.baseline_score = baseline_iter.score
+                self._run.best_score = baseline_iter.score
+                self._run.iterations.append(baseline_iter)
+                self._run.current_iteration = 0
 
-            for i in range(1, self._run.max_iterations + 1):
-                if self._run.status != "running":
-                    break
-
-                self._run.current_iteration = i
-                last_iter = self._run.iterations[-1]
-
-                temps = [0.7 + j * 0.15 for j in range(self._run.num_candidates)]
-                proposals = await asyncio.gather(*[
-                    self._propose_improvement(current_prompt, last_iter, temperature=t)
-                    for t in temps
-                ])
-                valid_proposals = [(j, p) for j, p in enumerate(proposals) if p is not None]
-
-                if not valid_proposals:
-                    self._run.consecutive_no_improve += 1
-                    if self._run.consecutive_no_improve >= self._run.patience:
-                        break
-                    continue
-
-                best_candidate_result = None
-                best_candidate_prompt = None
-                for j, proposal in valid_proposals:
-                    result = await self._evaluate_iteration(
-                        i, f"{version_prefix}_v{i}_c{j}", proposal, test_cases,
-                    )
-                    if best_candidate_result is None or result.score > best_candidate_result.score:
-                        best_candidate_result = result
-                        best_candidate_prompt = proposal
-
-                if best_candidate_result.score > self._run.best_score:
-                    best_candidate_result.improved = True
-                    self._run.best_score = best_candidate_result.score
-                    self._run.best_prompt = best_candidate_prompt
-                    current_prompt = best_candidate_prompt
-                    _save_requirement_prompt(best_candidate_prompt)
-                    self._run.consecutive_no_improve = 0
-                    logger.info("prompt_improved", iteration=i, score=round(best_candidate_result.score, 4))
-                else:
-                    best_candidate_result.improved = False
-                    self._run.consecutive_no_improve += 1
-                    if self._run.consecutive_no_improve >= self._run.patience:
+                for i in range(1, self._run.max_iterations + 1):
+                    if self._run.status != "running":
                         break
 
-                self._run.iterations.append(best_candidate_result)
+                    self._run.current_iteration = i
+                    last_iter = self._run.iterations[-1]
 
-            self._run.status = "completed"
-            self._run.finished_at = time.time()
-            from needradar.services.analysis_service import invalidate_prompts_cache
-            invalidate_prompts_cache()
-            logger.info("prompt_optimizer_done", baseline=round(self._run.baseline_score, 4), best=round(self._run.best_score, 4))
+                    temps = [0.7 + j * 0.15 for j in range(self._run.num_candidates)]
+                    proposals = await asyncio.gather(*[
+                        self._propose_improvement(current_prompt, last_iter, temperature=t)
+                        for t in temps
+                    ])
+                    valid_proposals = [(j, p) for j, p in enumerate(proposals) if p is not None]
 
-        except asyncio.CancelledError:
-            self._run.status = "stopped"
-            self._run.finished_at = time.time()
-        except Exception as e:
-            self._run.status = "failed"
-            self._run.error = str(e)
-            self._run.finished_at = time.time()
-            logger.error("prompt_optimizer_failed", error=str(e))
-        finally:
-            if self._original_preset_id:
-                llm.activate_preset(self._original_preset_id)
+                    if not valid_proposals:
+                        self._run.consecutive_no_improve += 1
+                        if self._run.consecutive_no_improve >= self._run.patience:
+                            break
+                        continue
+
+                    best_candidate_result = None
+                    best_candidate_prompt = None
+                    for j, proposal in valid_proposals:
+                        result = await self._evaluate_iteration(
+                            i, f"{version_prefix}_v{i}_c{j}", proposal, test_cases,
+                        )
+                        if best_candidate_result is None or result.score > best_candidate_result.score:
+                            best_candidate_result = result
+                            best_candidate_prompt = proposal
+
+                    if best_candidate_result.score > self._run.best_score:
+                        best_candidate_result.improved = True
+                        self._run.best_score = best_candidate_result.score
+                        self._run.best_prompt = best_candidate_prompt
+                        current_prompt = best_candidate_prompt
+                        _save_requirement_prompt(best_candidate_prompt)
+                        self._run.consecutive_no_improve = 0
+                        logger.info("prompt_improved", iteration=i, score=round(best_candidate_result.score, 4))
+                    else:
+                        best_candidate_result.improved = False
+                        self._run.consecutive_no_improve += 1
+                        if self._run.consecutive_no_improve >= self._run.patience:
+                            break
+
+                    self._run.iterations.append(best_candidate_result)
+
+                self._run.status = "completed"
+                self._run.finished_at = time.time()
+                from needradar.services.analysis_service import invalidate_prompts_cache
+                invalidate_prompts_cache()
+                logger.info("prompt_optimizer_done", baseline=round(self._run.baseline_score, 4), best=round(self._run.best_score, 4))
+
+            except asyncio.CancelledError:
+                self._run.status = "stopped"
+                self._run.finished_at = time.time()
+            except Exception as e:
+                self._run.status = "failed"
+                self._run.error = str(e)
+                self._run.finished_at = time.time()
+                logger.error("prompt_optimizer_failed", error=str(e))
+            finally:
+                if self._original_preset_id:
+                    llm.activate_preset(self._original_preset_id)
 
     async def _propose_improvement(
         self, current_prompt: str, last_iter: IterationResult, temperature: float = 0.7,

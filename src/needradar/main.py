@@ -29,6 +29,15 @@ async def lifespan(app: FastAPI):
             .values(status=TaskStatus.FAILED, error_message="Server was interrupted during previous execution")
         )
 
+    # Check API key configuration
+    from needradar.core.config import settings
+    if not settings.deepseek_api_key and not settings.openai_api_key:
+        logger.warning("no_llm_api_key", hint="Set NR_DEEPSEEK_API_KEY or NR_OPENAI_API_KEY in .env")
+    elif not settings.deepseek_api_key:
+        logger.info("deepseek_not_configured", hint="Using OpenAI as primary LLM")
+    if settings.llm_fallback_model and "claude" in settings.llm_fallback_model and not settings.anthropic_api_key:
+        logger.warning("fallback_model_unconfigured", model=settings.llm_fallback_model, hint="Set NR_ANTHROPIC_API_KEY for fallback")
+
     logger.info("needradar_starting")
     yield
     stop_scheduler()

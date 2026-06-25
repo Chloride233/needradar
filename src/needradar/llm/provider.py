@@ -194,15 +194,26 @@ class LLMProvider:
         effective_max_tokens = max_tokens or preset.max_tokens
         effective_temperature = temperature if temperature is not None else preset.temperature
 
-        response = await litellm.acompletion(
-            model=effective_model,
-            messages=messages,
-            max_tokens=effective_max_tokens,
-            temperature=effective_temperature,
-            response_format=response_format,
-            api_base=preset.base_url,
-            api_key=preset.api_key,
-        )
+        try:
+            response = await litellm.acompletion(
+                model=effective_model,
+                messages=messages,
+                max_tokens=effective_max_tokens,
+                temperature=effective_temperature,
+                response_format=response_format,
+                api_base=preset.base_url,
+                api_key=preset.api_key,
+            )
+        except Exception as e:
+            logger.warning("preset_call_failed", preset=preset.id, error=str(e))
+            logger.info("falling_back_to_default", model=settings.llm_default_model)
+            # Remove shared prefix before fallback (different model, no cache benefit)
+            if messages and messages[0].get("content", "").startswith("你是 NeedRadar"):
+                messages = messages[1:]
+            return await self._call_default(
+                messages, max_tokens=max_tokens, temperature=temperature,
+                response_format=response_format,
+            )
         usage = response.usage
         input_tokens = usage.prompt_tokens if usage else 0
         output_tokens = usage.completion_tokens if usage else 0

@@ -129,7 +129,7 @@ async def _execute_scheduled_job(scheduled_job_id: int) -> None:
             await db.commit()
 
             # Run pipeline in background
-            asyncio.get_event_loop().create_task(_run_pipeline(job.keyword, task_ids))
+            asyncio.create_task(_run_pipeline(job.keyword, task_ids))
             logger.info("scheduled_job_dispatched", job_id=scheduled_job_id, task_ids=task_ids)
 
     except Exception as e:

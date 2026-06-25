@@ -61,23 +61,22 @@ class ChromaVectorStore(VectorStore):
         metadatas: list[dict] | None = None,
     ) -> None:
         try:
-            self._collection.add(
-                ids=ids,
-                documents=documents,
-                metadatas=metadatas,
-            )
-        except Exception:
-            logger.warning("vector_add_failed_retrying")
-            self._reset_collection()
+            self._collection.add(ids=ids, documents=documents, metadatas=metadatas)
+        except Exception as e1:
+            logger.warning("vector_add_failed", error=str(e1), retrying=True)
+            # Light retry: just retry the operation once
             try:
-                self._collection.add(
-                    ids=ids,
-                    documents=documents,
-                    metadatas=metadatas,
-                )
-            except Exception as e:
-                logger.error("vector_add_retry_failed", error=str(e))
-                raise
+                self._collection.add(ids=ids, documents=documents, metadatas=metadatas)
+                return
+            except Exception as e2:
+                logger.warning("vector_add_retry_failed", error=str(e2), resetting=True)
+                # Heavy retry: reset client and retry
+                self._reset_collection()
+                try:
+                    self._collection.add(ids=ids, documents=documents, metadatas=metadatas)
+                except Exception as e3:
+                    logger.error("vector_add_reset_failed", error=str(e3))
+                    raise
 
     async def query(
         self,
@@ -87,14 +86,20 @@ class ChromaVectorStore(VectorStore):
     ) -> list[SearchResult]:
         try:
             return self._do_query(query_texts, n_results, where)
-        except Exception:
-            logger.warning("vector_query_failed_retrying")
-            self._reset_collection()
+        except Exception as e1:
+            logger.warning("vector_query_failed", error=str(e1), retrying=True)
+            # Light retry
             try:
                 return self._do_query(query_texts, n_results, where)
-            except Exception as e:
-                logger.error("vector_query_retry_failed", error=str(e))
-                return []
+            except Exception as e2:
+                logger.warning("vector_query_retry_failed", error=str(e2), resetting=True)
+                # Heavy retry: reset client
+                try:
+                    self._reset_collection()
+                    return self._do_query(query_texts, n_results, where)
+                except Exception as e3:
+                    logger.error("vector_query_reset_failed", error=str(e3))
+                    return []
 
     def _do_query(
         self,

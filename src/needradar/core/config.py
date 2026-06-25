@@ -22,7 +22,6 @@ class Settings(BaseSettings):
     llm_default_model: str = "gpt-4o"
     llm_default_max_tokens: int = 4096
     llm_default_temperature: float = 0.3
-    llm_embedding_model: str = "text-embedding-3-small"
     llm_fallback_model: str = "claude-sonnet-4-20250514"
 
     # DeepSeek
