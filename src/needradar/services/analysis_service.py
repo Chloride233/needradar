@@ -186,7 +186,7 @@ class AnalysisService:
                     break
                 start_t = asyncio.get_event_loop().time()
                 try:
-                    await self._extract_and_store(keyword, filtered.item)
+                    await self.extract_and_store(keyword, filtered.item)
                 except Exception as e:
                     logger.warning("item_extract_failed", url=filtered.item.source_url, error=str(e))
                 remaining -= asyncio.get_event_loop().time() - start_t
@@ -207,7 +207,7 @@ class AnalysisService:
         await self._db.commit()
         return tasks
 
-    async def _extract_and_store(self, keyword: str, item: RawDiscussionItem) -> Path | None:
+    async def extract_and_store(self, keyword: str, item: RawDiscussionItem) -> Path | None:
         prompts = _load_prompts()
         extraction_prompt = prompts.get("requirement_extraction", "")
         full_prompt = self._build_system_prompt(extraction_prompt)

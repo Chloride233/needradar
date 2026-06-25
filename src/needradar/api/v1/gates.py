@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from needradar.core.database import get_db
 from needradar.models.feedback import FeedbackRecord
 from needradar.models.quality_gate import GateStatus, QualityGate
+from needradar.schemas.agent_schemas import FeedbackListResponse, FeedbackResponse
 
 router = APIRouter(prefix="/gates", tags=["gates"])
 
@@ -51,24 +52,6 @@ class GateRejectRequest(BaseModel):
 class GateEditRequest(BaseModel):
     edits: list[dict] = []
     note: str = ""
-
-
-class FeedbackResponse(BaseModel):
-    id: int
-    pipeline_run_id: int
-    gate_id: int
-    feedback_type: str
-    entity_type: str
-    entity_id: str
-    before: dict | None = None
-    after: dict | None = None
-    reason: str | None = None
-    created_at: str = ""
-
-
-class FeedbackListResponse(BaseModel):
-    items: list[FeedbackResponse]
-    total: int
 
 
 # ── Endpoints ──
@@ -166,13 +149,12 @@ async def list_gate_feedback(gate_id: int, db: AsyncSession = Depends(get_db)):
 # ── Helpers ──
 
 def _to_gate_response(g: QualityGate) -> GateResponse:
-    items = json.loads(g.items_json) if g.items_json else []
     return GateResponse(
         id=g.id,
         pipeline_run_id=g.pipeline_run_id,
         gate_type=g.gate_type,
         status=g.status,
-        items_count=len(items),
+        items_count=g.items_count or 0,
         human_decision=g.human_decision,
         reviewer_note=g.reviewer_note,
         reviewed_at=g.reviewed_at,

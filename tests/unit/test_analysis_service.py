@@ -249,7 +249,7 @@ class TestRecordUsage:
 
 
 # ---------------------------------------------------------------------------
-# _extract_and_store
+# extract_and_store
 # ---------------------------------------------------------------------------
 
 class TestExtractAndStore:
@@ -269,7 +269,7 @@ class TestExtractAndStore:
             ml.pop_last_usage.return_value = None
             mv.write.return_value = __import__("pathlib").Path("/v/file.md")
 
-            result = await svc._extract_and_store("python", fake_item)
+            result = await svc.extract_and_store("python", fake_item)
             assert result is not None
             ml.extract_structured.assert_called_once()
             mv.write.assert_called_once()
@@ -294,7 +294,7 @@ class TestExtractAndStore:
             mv.find_by_title.return_value = __import__("pathlib").Path("/v/existing.md")
             mv.read.return_value = ({"提及次数": 1, "相似来源": []}, "body")
 
-            result = await svc._extract_and_store("python", fake_item)
+            result = await svc.extract_and_store("python", fake_item)
             assert result is None
             mv.update_frontmatter.assert_called_once()
             mv.write.assert_not_called()
@@ -315,7 +315,7 @@ class TestExtractAndStore:
             mv.find_by_title.return_value = __import__("pathlib").Path("/v/existing.md")
             mv.read.return_value = ({"提及次数": 1}, "body")
 
-            result = await svc._extract_and_store("python", fake_item)
+            result = await svc.extract_and_store("python", fake_item)
             assert result is None
             mv.update_frontmatter.assert_called_once()
 
@@ -335,7 +335,7 @@ class TestExtractAndStore:
             ml.pop_last_usage.return_value = None
             mv.write.return_value = __import__("pathlib").Path("/v/file.md")
 
-            result = await svc._extract_and_store("python", fake_item)
+            result = await svc.extract_and_store("python", fake_item)
             assert result is not None  # vault store succeeded despite vector failure
             mv.write.assert_called_once()
 

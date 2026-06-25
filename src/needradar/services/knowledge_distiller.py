@@ -41,6 +41,8 @@ class KnowledgeDistiller:
         await self.distill_noise_patterns(run_id)
         await self.distill_extraction_rules(run_id)
 
+        # Single commit for all distillation results
+        await self._db.commit()
         logger.info("distill_completed", run_id=run_id)
 
     async def distill_platform_quality(self, run_id: int) -> None:
@@ -177,8 +179,7 @@ class KnowledgeDistiller:
                 source_count=1,
             )
             self._db.add(entry)
-
-        await self._db.commit()
+        # Note: commit is handled by the caller (distill_all)
 
         # Also write to vault for human readability
         try:

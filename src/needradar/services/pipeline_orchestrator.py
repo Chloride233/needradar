@@ -381,7 +381,7 @@ class PipelineOrchestrator:
         """Extract a single requirement from a raw item."""
         from needradar.services.analysis_service import AnalysisService
         svc = AnalysisService(db or self._db)
-        return await svc._extract_and_store(keyword, item)
+        return await svc.extract_and_store(keyword, item)
 
     async def _create_gate(self, run: PipelineRun, gate_type: GateType, items: list[dict], db: AsyncSession | None = None) -> QualityGate:
         """Create a quality gate and pause the pipeline."""
@@ -405,14 +405,36 @@ class PipelineOrchestrator:
         self, run: PipelineRun, phase: PhaseName, status: PhaseStatus, result: dict | None = None,
         db: AsyncSession | None = None,
     ) -> PipelinePhase:
-        """Record a pipeline phase execution."""
+        """Record or update a pipeline phase execution."""
         _db = db or self._db
+        now = datetime.now(timezone.utc).isoformat()
+
+        # Try to find existing phase record for this run+phase
+        existing_result = await _db.execute(
+            select(PipelinePhase).where(
+                PipelinePhase.pipeline_run_id == run.id,
+                PipelinePhase.phase == phase.value,
+            )
+        )
+        existing = existing_result.scalar_one_or_none()
+
+        if existing:
+            existing.status = status.value
+            if status == PhaseStatus.RUNNING:
+                existing.started_at = now
+            elif status in (PhaseStatus.COMPLETED, PhaseStatus.FAILED):
+                existing.completed_at = now
+            if result:
+                existing.result_json = json.dumps(result, ensure_ascii=False)
+            await _db.commit()
+            return existing
+
         phase_record = PipelinePhase(
             pipeline_run_id=run.id,
             phase=phase.value,
             status=status.value,
-            started_at=datetime.now(timezone.utc).isoformat() if status == PhaseStatus.RUNNING else None,
-            completed_at=datetime.now(timezone.utc).isoformat() if status in (PhaseStatus.COMPLETED, PhaseStatus.FAILED) else None,
+            started_at=now if status == PhaseStatus.RUNNING else None,
+            completed_at=now if status in (PhaseStatus.COMPLETED, PhaseStatus.FAILED) else None,
             result_json=json.dumps(result, ensure_ascii=False) if result else None,
         )
         _db.add(phase_record)
