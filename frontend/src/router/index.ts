@@ -16,6 +16,7 @@ const router = createRouter({
     { path: '/opportunity-detail', component: () => import('../views/OpportunityDetailView.vue') },
     { path: '/requirement-detail', component: () => import('../views/RequirementDetailView.vue') },
     { path: '/proposals/:id', component: () => import('../views/ProposalView.vue') },
+    { path: '/gates/:runId', component: () => import('../views/GateReviewView.vue') },
     { path: '/:pathMatch(.*)*', component: () => import('../views/NotFoundView.vue') },
   ],
 })

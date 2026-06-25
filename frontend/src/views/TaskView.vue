@@ -29,6 +29,17 @@
             {{ p.label }}
           </label>
         </div>
+        <div class="mode-toggle">
+          <label class="toggle-label" :class="{ active: !agentMode }">
+            <input type="radio" :value="false" v-model="agentMode" class="toggle-input" />
+            自动模式
+          </label>
+          <label class="toggle-label" :class="{ active: agentMode }">
+            <input type="radio" :value="true" v-model="agentMode" class="toggle-input" />
+            Agent 模式
+            <span class="agent-badge">质量门</span>
+          </label>
+        </div>
         <button class="create-btn" :class="{ loading: creating }" @click="createTask" :disabled="creating" aria-label="开始挖掘">
           <svg v-if="!creating" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -172,6 +183,7 @@ marked.setOptions({ breaks: true, gfm: true })
 const keyword = ref('')
 const platforms = ref(['github', 'stackoverflow', 'juejin'])
 const creating = ref(false)
+const agentMode = ref(false)
 const suggestions = ref<any[]>([])
 const loadingSuggestions = ref(false)
 const viewingReport = ref(false)
@@ -238,8 +250,17 @@ async function createTask() {
   if (!keyword.value.trim()) return
   creating.value = true
   try {
-    await api.post('/tasks', { keyword: keyword.value, platforms: platforms.value })
+    const params: any = { keyword: keyword.value, platforms: platforms.value }
+    if (agentMode.value) {
+      params.mode = 'agent'
+    }
+    const resp = await api.post('/tasks?mode=' + (agentMode.value ? 'agent' : 'auto'), { keyword: keyword.value, platforms: platforms.value })
     keyword.value = ''
+    // If agent mode, show gate review link
+    if (agentMode.value && resp.data?.items?.length > 0) {
+      // Find the pipeline run ID from the tasks
+      // For now, just reload tasks
+    }
     await loadTasks()
   } finally {
     creating.value = false
@@ -912,4 +933,46 @@ onUnmounted(stopSSE)
 .report-markdown :deep(p) { margin-bottom: 10px; }
 .report-markdown :deep(ul), .report-markdown :deep(ol) { padding-left: 24px; margin-bottom: 12px; }
 .report-markdown :deep(hr) { border: none; border-top: 1px solid var(--slate-200); margin: 20px 0; }
+
+/* ── Mode Toggle ── */
+.mode-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px solid var(--card-border, #2a2a2a);
+}
+
+.toggle-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-label.active {
+  background: rgba(245,166,35,0.1);
+  color: #f5a623;
+  font-weight: 500;
+}
+
+.toggle-input { display: none; }
+
+.agent-badge {
+  font-size: 10px;
+  background: rgba(245,166,35,0.2);
+  color: #f5a623;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
 </style>
