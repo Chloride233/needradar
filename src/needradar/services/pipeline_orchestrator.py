@@ -22,7 +22,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import async_session_factory
 from needradar.models.crawl_task import CrawlTask, TaskStatus
-from needradar.models.feedback import EntityType as FeedbackEntityType, FeedbackRecord, FeedbackType
+from needradar.models.feedback import FeedbackRecord, FeedbackType
 from needradar.models.knowledge import KnowledgeCategory, KnowledgeEntry
 from needradar.models.pipeline_phase import PhaseName, PhaseStatus, PipelinePhase
 from needradar.models.pipeline_run import PipelineRun
@@ -84,31 +84,27 @@ class PipelineOrchestrator:
         if not run:
             raise ValueError(f"PipelineRun {gate.pipeline_run_id} not found")
 
+        # Validate decision
+        valid_decisions = {"approve", "reject", "edit"}
+        if decision not in valid_decisions:
+            raise ValueError(f"Invalid decision '{decision}'. Must be one of: {valid_decisions}")
+
         gate.human_decision = decision
         gate.reviewer_note = note
         gate.reviewed_at = datetime.now(timezone.utc).isoformat()
 
-        if decision == "approve":
-            gate.status = GateStatus.APPROVED.value
-            # Record feedback for any edits
-            if edits:
-                await self._record_edits(gate, edits)
-            # Apply edits (promote/reject items)
-            await self._apply_gate_edits(run, gate, edits or [])
-
-        elif decision == "reject":
+        if decision == "reject":
             gate.status = GateStatus.REJECTED.value
             run.status = "rejected"
             run.gate_status = "rejected"
             await self._db.commit()
             return
 
-        elif decision == "edit":
-            gate.status = GateStatus.EDITING.value
-            if edits:
-                await self._record_edits(gate, edits)
-                await self._apply_gate_edits(run, gate, edits)
-            gate.status = GateStatus.APPROVED.value
+        # "approve" and "edit" both mean approve; "edit" includes corrections
+        gate.status = GateStatus.APPROVED.value
+        if edits:
+            await self._record_edits(gate, edits)
+        await self._apply_gate_edits(run, gate, edits or [])
 
         run.gate_status = "approved"
         await self._db.commit()
@@ -130,37 +126,42 @@ class PipelineOrchestrator:
     # ── Internal Phase Execution ──
 
     async def _run_from_phase(self, run_id: int, phase: PhaseName) -> None:
-        """Resume pipeline from a given phase."""
-        run = await self._db.get(PipelineRun, run_id)
-        if not run:
-            return
+        """Resume pipeline from a given phase.
 
-        try:
-            if phase == PhaseName.CRAWLING:
-                await self._phase_crawl(run)
-            elif phase == PhaseName.EXTRACTING:
-                await self._phase_extract(run)
-            elif phase == PhaseName.REPORTING:
-                await self._phase_report(run)
-            elif phase == PhaseName.ARCHIVING:
-                await self._phase_archive(run)
-            elif phase == PhaseName.DISTILLING:
-                await self._phase_distill(run)
-            elif phase == PhaseName.COMPLETED:
-                run.status = "completed"
-                run.current_phase = PhaseName.COMPLETED.value
-                await self._db.commit()
-                logger.info("pipeline_completed", run_id=run_id)
-        except Exception as e:
-            run.status = "failed"
-            run.error_message = str(e)[:2000]
-            run.current_phase = PhaseName.FAILED.value
-            await self._db.commit()
-            logger.error("pipeline_phase_failed", run_id=run_id, phase=phase.value, error=str(e))
+        IMPORTANT: Opens its own DB session. Background tasks MUST NOT
+        use the request-scoped session from the API handler.
+        """
+        async with async_session_factory() as db:
+            run = await db.get(PipelineRun, run_id)
+            if not run:
+                return
 
-    async def _phase_crawl(self, run: PipelineRun) -> None:
+            try:
+                if phase == PhaseName.CRAWLING:
+                    await self._phase_crawl(run, db)
+                elif phase == PhaseName.EXTRACTING:
+                    await self._phase_extract(run, db)
+                elif phase == PhaseName.REPORTING:
+                    await self._phase_report(run, db)
+                elif phase == PhaseName.ARCHIVING:
+                    await self._phase_archive(run, db)
+                elif phase == PhaseName.DISTILLING:
+                    await self._phase_distill(run, db)
+                elif phase == PhaseName.COMPLETED:
+                    run.status = "completed"
+                    run.current_phase = PhaseName.COMPLETED.value
+                    await db.commit()
+                    logger.info("pipeline_completed", run_id=run_id)
+            except Exception as e:
+                run.status = "failed"
+                run.error_message = str(e)[:2000]
+                run.current_phase = PhaseName.FAILED.value
+                await db.commit()
+                logger.error("pipeline_phase_failed", run_id=run_id, phase=phase.value, error=str(e))
+
+    async def _phase_crawl(self, run: PipelineRun, db: AsyncSession) -> None:
         """Execute crawl phase, then create material gate."""
-        await self._record_phase(run, PhaseName.CRAWLING, PhaseStatus.RUNNING)
+        await self._record_phase(run, PhaseName.CRAWLING, PhaseStatus.RUNNING, db=db)
 
         from needradar.crawlers.factory import create_crawler
         from needradar.services.noise_filter import NoiseFilter
@@ -170,7 +171,7 @@ class PipelineOrchestrator:
         task_ids = json.loads(run.task_ids_json)
         tasks = []
         for tid in task_ids:
-            task = await self._db.get(CrawlTask, tid)
+            task = await db.get(CrawlTask, tid)
             if task:
                 tasks.append(task)
 
@@ -180,7 +181,7 @@ class PipelineOrchestrator:
             crawler = create_crawler(task.platform)
             try:
                 task.status = TaskStatus.RUNNING
-                await self._db.commit()
+                await db.commit()
 
                 raw_items = await asyncio.wait_for(
                     crawler.crawl(keyword), timeout=30 * 60
@@ -189,7 +190,7 @@ class PipelineOrchestrator:
 
                 # Incremental filter
                 from needradar.models.fingerprint import CrawlFingerprint
-                known_result = await self._db.execute(
+                known_result = await db.execute(
                     select(CrawlFingerprint.source_url).where(
                         CrawlFingerprint.keyword == keyword,
                         CrawlFingerprint.platform == task.platform,
@@ -202,7 +203,7 @@ class PipelineOrchestrator:
 
                 # Save fingerprints
                 for item in new_items:
-                    self._db.add(CrawlFingerprint(
+                    db.add(CrawlFingerprint(
                         keyword=keyword, platform=task.platform, source_url=item.source_url,
                     ))
 
@@ -246,22 +247,22 @@ class PipelineOrchestrator:
                 except Exception:
                     pass
 
-        await self._db.commit()
+        await db.commit()
 
         # Create material gate
-        await self._create_gate(run, GateType.MATERIAL, all_clean_items)
+        await self._create_gate(run, GateType.MATERIAL, all_clean_items, db=db)
         await self._record_phase(run, PhaseName.CRAWLING, PhaseStatus.COMPLETED, {
             "total_items": sum(t.total_items or 0 for t in tasks),
             "new_items": sum(t.new_items or 0 for t in tasks),
             "clean_items": len(all_clean_items),
-        })
+        }, db=db)
 
-    async def _phase_extract(self, run: PipelineRun) -> None:
+    async def _phase_extract(self, run: PipelineRun, db: AsyncSession) -> None:
         """Execute extraction phase on approved items, then create requirement gate."""
-        await self._record_phase(run, PhaseName.EXTRACTING, PhaseStatus.RUNNING)
+        await self._record_phase(run, PhaseName.EXTRACTING, PhaseStatus.RUNNING, db=db)
 
         # Find the material gate and get approved items
-        gate_result = await self._db.execute(
+        gate_result = await db.execute(
             select(QualityGate).where(
                 QualityGate.pipeline_run_id == run.id,
                 QualityGate.gate_type == GateType.MATERIAL.value,
@@ -269,7 +270,7 @@ class PipelineOrchestrator:
         )
         material_gate = gate_result.scalar_one_or_none()
         if not material_gate or not material_gate.items_json:
-            await self._record_phase(run, PhaseName.EXTRACTING, PhaseStatus.COMPLETED, {"extracted": 0})
+            await self._record_phase(run, PhaseName.EXTRACTING, PhaseStatus.COMPLETED, {"extracted": 0}, db=db)
             return
 
         items = json.loads(material_gate.items_json)
@@ -287,7 +288,7 @@ class PipelineOrchestrator:
                     content=item_data.get("content_preview", ""),
                     tags=[],
                 )
-                req_path = await self._extract_single(run.keyword, raw_item)
+                req_path = await self._extract_single(run.keyword, raw_item, db=db)
                 if req_path:
                     from needradar.services.vault_store import vault
                     meta, body = vault.read(req_path)
@@ -304,14 +305,14 @@ class PipelineOrchestrator:
                 logger.warning("extract_failed", url=item_data.get("source_url"), error=str(e))
 
         # Create requirement gate
-        await self._create_gate(run, GateType.REQUIREMENT, extracted_requirements)
+        await self._create_gate(run, GateType.REQUIREMENT, extracted_requirements, db=db)
         await self._record_phase(run, PhaseName.EXTRACTING, PhaseStatus.COMPLETED, {
             "extracted": len(extracted_requirements),
-        })
+        }, db=db)
 
-    async def _phase_report(self, run: PipelineRun) -> None:
+    async def _phase_report(self, run: PipelineRun, db: AsyncSession) -> None:
         """Execute report generation and verification, then create insight gate."""
-        await self._record_phase(run, PhaseName.REPORTING, PhaseStatus.RUNNING)
+        await self._record_phase(run, PhaseName.REPORTING, PhaseStatus.RUNNING, db=db)
 
         # Generate report
         from needradar.services.report_service import get_report_service
@@ -343,65 +344,69 @@ class PipelineOrchestrator:
             "verification": verification_result,
             "approved": True,
         }]
-        await self._create_gate(run, GateType.INSIGHT, gate_items)
+        await self._create_gate(run, GateType.INSIGHT, gate_items, db=db)
         await self._record_phase(run, PhaseName.REPORTING, PhaseStatus.COMPLETED, {
             "report_path": str(report_path) if report_path else None,
             "verification": verification_result,
-        })
+        }, db=db)
 
-    async def _phase_archive(self, run: PipelineRun) -> None:
+    async def _phase_archive(self, run: PipelineRun, db: AsyncSession) -> None:
         """Archive completed tasks."""
-        await self._record_phase(run, PhaseName.ARCHIVING, PhaseStatus.RUNNING)
+        await self._record_phase(run, PhaseName.ARCHIVING, PhaseStatus.RUNNING, db=db)
         # Mark tasks as completed
         task_ids = json.loads(run.task_ids_json)
         for tid in task_ids:
-            task = await self._db.get(CrawlTask, tid)
+            task = await db.get(CrawlTask, tid)
             if task and task.status != TaskStatus.FAILED:
                 task.status = TaskStatus.COMPLETED
-        await self._db.commit()
-        await self._record_phase(run, PhaseName.ARCHIVING, PhaseStatus.COMPLETED)
+        await db.commit()
+        await self._record_phase(run, PhaseName.ARCHIVING, PhaseStatus.COMPLETED, db=db)
 
-    async def _phase_distill(self, run: PipelineRun) -> None:
+    async def _phase_distill(self, run: PipelineRun, db: AsyncSession) -> None:
         """Distill knowledge from this pipeline run."""
-        await self._record_phase(run, PhaseName.DISTILLING, PhaseStatus.RUNNING)
+        await self._record_phase(run, PhaseName.DISTILLING, PhaseStatus.RUNNING, db=db)
 
         try:
             from needradar.services.knowledge_distiller import KnowledgeDistiller
-            distiller = KnowledgeDistiller(self._db)
+            distiller = KnowledgeDistiller(db)
             await distiller.distill_all(run.id)
         except Exception as e:
             logger.warning("distill_failed", run_id=run.id, error=str(e))
 
-        await self._record_phase(run, PhaseName.DISTILLING, PhaseStatus.COMPLETED)
+        await self._record_phase(run, PhaseName.DISTILLING, PhaseStatus.COMPLETED, db=db)
 
     # ── Helpers ──
 
-    async def _extract_single(self, keyword: str, item: RawDiscussionItem):
+    async def _extract_single(self, keyword: str, item: RawDiscussionItem, db: AsyncSession | None = None):
         """Extract a single requirement from a raw item."""
         from needradar.services.analysis_service import AnalysisService
-        svc = AnalysisService(self._db)
+        svc = AnalysisService(db or self._db)
         return await svc._extract_and_store(keyword, item)
 
-    async def _create_gate(self, run: PipelineRun, gate_type: GateType, items: list[dict]) -> QualityGate:
+    async def _create_gate(self, run: PipelineRun, gate_type: GateType, items: list[dict], db: AsyncSession | None = None) -> QualityGate:
         """Create a quality gate and pause the pipeline."""
+        _db = db or self._db
         gate = QualityGate(
             pipeline_run_id=run.id,
             gate_type=gate_type.value,
             status=GateStatus.AWAITING_REVIEW.value,
             items_json=json.dumps(items, ensure_ascii=False),
+            items_count=len(items),
         )
-        self._db.add(gate)
+        _db.add(gate)
         run.current_phase = f"{gate_type.value}_gate"
         run.gate_status = "awaiting_review"
         run.status = "paused"
-        await self._db.commit()
+        await _db.commit()
         logger.info("gate_created", run_id=run.id, gate_type=gate_type.value, items=len(items))
         return gate
 
     async def _record_phase(
         self, run: PipelineRun, phase: PhaseName, status: PhaseStatus, result: dict | None = None,
+        db: AsyncSession | None = None,
     ) -> PipelinePhase:
         """Record a pipeline phase execution."""
+        _db = db or self._db
         phase_record = PipelinePhase(
             pipeline_run_id=run.id,
             phase=phase.value,
@@ -410,8 +415,8 @@ class PipelineOrchestrator:
             completed_at=datetime.now(timezone.utc).isoformat() if status in (PhaseStatus.COMPLETED, PhaseStatus.FAILED) else None,
             result_json=json.dumps(result, ensure_ascii=False) if result else None,
         )
-        self._db.add(phase_record)
-        await self._db.commit()
+        _db.add(phase_record)
+        await _db.commit()
         return phase_record
 
     async def _record_edits(self, gate: QualityGate, edits: list[dict]) -> None:
@@ -449,11 +454,6 @@ class PipelineOrchestrator:
             GateType.INSIGHT: PhaseName.ARCHIVING,
         }
         return mapping.get(gate_type)
-
-
-# ── Singleton ──
-
-_orchestrator: PipelineOrchestrator | None = None
 
 
 def get_orchestrator(db: AsyncSession) -> PipelineOrchestrator:

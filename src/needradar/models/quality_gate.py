@@ -34,6 +34,7 @@ class QualityGate(TimestampMixin, Base):
         String(20), default=GateStatus.PENDING.value
     )
     items_json: Mapped[str | None] = mapped_column(Text, nullable=True)  # items under review
+    items_count: Mapped[int] = mapped_column(Integer, default=0)
     human_decision: Mapped[str | None] = mapped_column(String(20), nullable=True)
     human_edits_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     reviewer_note: Mapped[str | None] = mapped_column(Text, nullable=True)

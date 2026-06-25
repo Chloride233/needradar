@@ -20,7 +20,7 @@ from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from needradar.models.feedback import EntityType as FeedbackEntityType, FeedbackRecord, FeedbackType
+from needradar.models.feedback import FeedbackRecord, FeedbackType
 from needradar.models.knowledge import KnowledgeCategory, KnowledgeEntry
 from needradar.models.quality_gate import GateType, QualityGate
 from needradar.models.pipeline_run import PipelineRun

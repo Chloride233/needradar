@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import enum
 
-from sqlalchemy import DateTime, Float, Integer, String, Text, func
+from sqlalchemy import DateTime, Float, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from needradar.models.base import Base, TimestampMixin
@@ -18,6 +18,9 @@ class KnowledgeCategory(str, enum.Enum):
 
 class KnowledgeEntry(TimestampMixin, Base):
     __tablename__ = "knowledge_entries"
+    __table_args__ = (
+        UniqueConstraint("category", "key", name="uq_knowledge_cat_key"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     category: Mapped[str] = mapped_column(String(30), nullable=False, index=True)

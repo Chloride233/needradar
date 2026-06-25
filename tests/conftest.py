@@ -45,7 +45,8 @@ async def setup_database(tmp_path_factory):
     tmp_vault = tmp_path_factory.mktemp("vault")
     for sub in ["01-原始素材库/灵感剪报", "01-原始素材库/高价值片段",
                 "02-需求池", "03-分析车间/大纲挑选", "03-分析车间/初稿打磨",
-                "03-分析车间/终稿确认", "04-报告归档"]:
+                "03-分析车间/终稿确认", "04-报告归档", "07-知识沉淀/平台质量",
+                "07-知识沉淀/关键词效果", "07-知识沉淀/噪声模式", "07-知识沉淀/提取规则"]:
         (tmp_vault / sub).mkdir(parents=True, exist_ok=True)
 
     import needradar.services.vault_store as vs_mod
