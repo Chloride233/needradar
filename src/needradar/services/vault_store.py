@@ -188,5 +188,48 @@ class VaultStore:
         sorted_kw = sorted(kw_counts.items(), key=lambda x: -x[1])
         return [kw for kw, _ in sorted_kw[:limit]]
 
+    # ── Knowledge Layer (07-知识沉淀) ──
+
+    _knowledge_dir_map = {
+        "platform_quality": "平台质量",
+        "keyword_effectiveness": "关键词效果",
+        "noise_pattern": "噪声模式",
+        "extraction_rule": "提取规则",
+        "prompt_pattern": "Prompt模式",
+    }
+
+    def write_knowledge(self, category: str, key: str, value: dict) -> Path:
+        """Write a knowledge entry to vault/07-知识沉淀/{category}/{key}.md."""
+        subdir = self._knowledge_dir_map.get(category, category)
+        directory = self._root / "07-知识沉淀" / subdir
+        directory.mkdir(parents=True, exist_ok=True)
+        filename = self._safe_filename(key) + ".md"
+        filepath = directory / filename
+
+        from datetime import date
+        import json as _json
+        meta = {
+            "标题": key,
+            "阶段": "知识",
+            "类别": category,
+            "创建时间": str(date.today()),
+        }
+        body = f"## 知识条目\n\n```json\n{_json.dumps(value, ensure_ascii=False, indent=2)}\n```"
+        content = f"---\n{self._render_frontmatter(meta)}---\n\n{body}\n"
+        filepath.write_text(content, encoding="utf-8")
+        return filepath
+
+    def read_knowledge(self, category: str) -> list[tuple[Path, dict, str]]:
+        """Read all knowledge entries for a category."""
+        subdir = self._knowledge_dir_map.get(category, category)
+        directory = self._root / "07-知识沉淀" / subdir
+        if not directory.exists():
+            return []
+        results = []
+        for f in sorted(directory.glob("*.md")):
+            meta, body = self._read_cached(f)
+            results.append((f, meta, body))
+        return results
+
 
 vault = VaultStore()

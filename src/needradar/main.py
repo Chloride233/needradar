@@ -10,7 +10,7 @@ from needradar.core.security import setup_middlewares
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    from needradar.models.base import Base
+    from needradar.models import Base  # imports all models to register with metadata
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 

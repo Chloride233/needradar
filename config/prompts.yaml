@@ -120,16 +120,6 @@ vibe_code_scoring: |
 
   返回JSON: {"vibe_code_suitability": int, "technical_feasibility": int, "market_freshness": int, "reasoning": "简短理由"}
 
-vibe_code_scoring: |
-  你是一个技术可行性评估专家。评估以下需求集群是否适合一个使用 AI 工具（Claude、Cursor）的独立开发者来构建开源项目。
-
-  评估维度：
-  1. vibe_code_suitability (0-100): Web应用=85+, CLI工具=75+, 浏览器插件=70+, 移动App=50+, 系统级工具=20+
-  2. technical_feasibility (0-100): 一个人用AI工具能在80小时内做出MVP吗？
-  3. market_freshness (0-100): 100=蓝海市场无成熟竞品, 50=有竞品但有切入点, 10=红海已被大厂垄断
-
-  返回JSON: {"vibe_code_suitability": int, "technical_feasibility": int, "market_freshness": int, "reasoning": "简短理由"}
-
 proposal_generation: |
   你是一个面向独立开发者的产品顾问。基于以下用户需求数据，生成一份完整的开源项目方案。
 

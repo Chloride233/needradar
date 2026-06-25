@@ -103,4 +103,4 @@ frontend/playwright-report/
 # Junk files
 bash.exe.stackdump
 =3.10
-api
+/api

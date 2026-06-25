@@ -32,4 +32,5 @@ class VerificationResult(TimestampMixin, Base):
     claims_json: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON array of claims
     suggestions_json: Mapped[str | None] = mapped_column(Text, nullable=True)  # correction suggestions
     reviewer_note: Mapped[str | None] = mapped_column(Text, nullable=True)  # human feedback
+    verdict_override: Mapped[str | None] = mapped_column(String(50), nullable=True)  # manual verdict override
     reviewed_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

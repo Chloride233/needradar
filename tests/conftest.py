@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from needradar.core.database import get_db
 from needradar.main import app
-from needradar.models.base import Base
+from needradar.models import Base  # imports all models to register with Base.metadata
 
 TEST_DATABASE_URL = "sqlite+aiosqlite://"
 
@@ -36,6 +36,11 @@ async def setup_database(tmp_path_factory):
         await conn.run_sync(Base.metadata.create_all)
     app.dependency_overrides[get_db] = _override_get_db
 
+    # Patch async_session_factory so background tasks use the test DB
+    import needradar.core.database as db_mod
+    original_factory = db_mod.async_session_factory
+    db_mod.async_session_factory = test_session_factory
+
     # Use a temp vault for tests
     tmp_vault = tmp_path_factory.mktemp("vault")
     for sub in ["01-原始素材库/灵感剪报", "01-原始素材库/高价值片段",
@@ -54,6 +59,7 @@ async def setup_database(tmp_path_factory):
     yield
 
     vs_mod.vault._root = original_root
+    db_mod.async_session_factory = original_factory
     app.dependency_overrides.pop(get_db, None)
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
