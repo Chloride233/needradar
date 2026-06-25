@@ -16,6 +16,7 @@ from needradar.api.v1.pipeline import router as pipeline_router
 from needradar.api.v1.proposals import router as proposals_router
 from needradar.api.v1.verification import router as verification_router
 from needradar.api.v1.gates import router as gates_router
+from needradar.api.v1.feedback import router as feedback_router
 
 router = APIRouter(prefix="/api/v1")
 
@@ -71,3 +72,4 @@ router.include_router(verification_router)
 router.include_router(scheduler_router)
 router.include_router(prompt_optimizer_router)
 router.include_router(gates_router)
+router.include_router(feedback_router)

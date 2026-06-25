@@ -244,6 +244,27 @@ class PromptOptimizer:
         self._task = asyncio.create_task(self._run_loop())
         return True
 
+    def start_from_feedback(self, max_iterations: int = 10, patience: int = 5,
+                            num_candidates: int = 3, min_feedback: int = 1) -> bool:
+        """Start optimization using human feedback as test cases.
+
+        Instead of (or in addition to) the golden test cases from
+        prompt_test_cases.yaml, this mode derives test cases from
+        FeedbackRecord entries — human corrections at quality gates.
+        """
+        if self._run.status == "running":
+            return False
+        num_candidates = min(num_candidates, 10)
+        self._run = OptimizationRun(
+            status="running",
+            max_iterations=max_iterations,
+            patience=patience,
+            num_candidates=num_candidates,
+            started_at=time.time(),
+        )
+        self._task = asyncio.create_task(self._run_loop_from_feedback(min_feedback))
+        return True
+
     def stop(self) -> None:
         if self._task and not self._task.done():
             self._task.cancel()
@@ -407,6 +428,115 @@ class PromptOptimizer:
             total=len(results),
             results=results,
         )
+
+    async def _run_loop_from_feedback(self, min_feedback: int = 1) -> None:
+        """Run optimization loop using feedback-derived test cases."""
+        try:
+            self._original_preset_id = llm.active_preset_id
+            if llm.active_preset_id == "deepseek-v4-flash":
+                llm.activate_preset("deepseek-v4-pro")
+                logger.info("prompt_optimizer_switched_to_pro")
+
+            shutil.copy2(PROMPTS_PATH, BACKUP_PATH)
+            logger.info("prompt_optimizer_feedback_started", backup=str(BACKUP_PATH))
+
+            # Derive test cases from feedback
+            from needradar.core.database import async_session_factory
+            from needradar.services.feedback_service import FeedbackService
+            async with async_session_factory() as db:
+                svc = FeedbackService(db)
+                test_cases = await svc.derive_test_cases_from_feedback(
+                    min_corrections=min_feedback,
+                )
+
+            if not test_cases:
+                self._run.status = "failed"
+                self._run.error = f"Not enough feedback (need {min_feedback}). Record more gate corrections first."
+                self._run.finished_at = time.time()
+                return
+
+            # Merge with golden test cases if available
+            try:
+                golden = _load_test_cases()
+                test_cases = golden + test_cases
+                logger.info("merged_test_cases", golden=len(golden), feedback=len(test_cases) - len(golden))
+            except Exception:
+                pass
+
+            # Run the same optimization loop
+            prompts = _load_prompts()
+            current_prompt = prompts.get("requirement_extraction", "")
+            self._run.best_prompt = current_prompt
+
+            baseline_iter = await self._evaluate_iteration(
+                0, "baseline", current_prompt, test_cases,
+            )
+            self._run.baseline_score = baseline_iter.score
+            self._run.best_score = baseline_iter.score
+            self._run.iterations.append(baseline_iter)
+            self._run.current_iteration = 0
+
+            for i in range(1, self._run.max_iterations + 1):
+                if self._run.status != "running":
+                    break
+
+                self._run.current_iteration = i
+                last_iter = self._run.iterations[-1]
+
+                temps = [0.7 + j * 0.15 for j in range(self._run.num_candidates)]
+                proposals = await asyncio.gather(*[
+                    self._propose_improvement(current_prompt, last_iter, temperature=t)
+                    for t in temps
+                ])
+                valid_proposals = [(j, p) for j, p in enumerate(proposals) if p is not None]
+
+                if not valid_proposals:
+                    self._run.consecutive_no_improve += 1
+                    if self._run.consecutive_no_improve >= self._run.patience:
+                        break
+                    continue
+
+                best_candidate_result = None
+                best_candidate_prompt = None
+                for j, proposal in valid_proposals:
+                    result = await self._evaluate_iteration(
+                        i, f"feedback_v{i}_c{j}", proposal, test_cases,
+                    )
+                    if best_candidate_result is None or result.score > best_candidate_result.score:
+                        best_candidate_result = result
+                        best_candidate_prompt = proposal
+
+                if best_candidate_result.score > self._run.best_score:
+                    best_candidate_result.improved = True
+                    self._run.best_score = best_candidate_result.score
+                    self._run.best_prompt = best_candidate_prompt
+                    current_prompt = best_candidate_prompt
+                    _save_requirement_prompt(best_candidate_prompt)
+                    self._run.consecutive_no_improve = 0
+                else:
+                    best_candidate_result.improved = False
+                    self._run.consecutive_no_improve += 1
+                    if self._run.consecutive_no_improve >= self._run.patience:
+                        break
+
+                self._run.iterations.append(best_candidate_result)
+
+            self._run.status = "completed"
+            self._run.finished_at = time.time()
+            from needradar.services.analysis_service import invalidate_prompts_cache
+            invalidate_prompts_cache()
+
+        except asyncio.CancelledError:
+            self._run.status = "stopped"
+            self._run.finished_at = time.time()
+        except Exception as e:
+            self._run.status = "failed"
+            self._run.error = str(e)
+            self._run.finished_at = time.time()
+            logger.error("prompt_optimizer_feedback_failed", error=str(e))
+        finally:
+            if self._original_preset_id:
+                llm.activate_preset(self._original_preset_id)
 
     async def _propose_improvement(
         self, current_prompt: str, last_iter: IterationResult, temperature: float = 0.7,
