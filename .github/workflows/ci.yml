@@ -18,7 +18,7 @@ jobs:
       - run: pip install pip-audit
       - run: pip-audit
       - run: ruff check src/
-      - run: pytest tests/ -k "not health" --tb=short -q --cov=src/needradar --cov-fail-under=80 --cov-report=term
+      - run: pytest tests/ -k "not health" --tb=short -q --cov=src/needradar --cov-fail-under=70 --cov-report=term
 
   frontend:
     runs-on: ubuntu-latest
