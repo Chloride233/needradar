@@ -10,9 +10,9 @@ test.describe('Navigation', () => {
     await expect(activeNav).toContainText('趋势选题')
   })
 
-  test('navigates through all 3 core routes without errors', async ({ page }) => {
+  test('navigates through core routes without errors', async ({ page }) => {
     const routes = [
-      { path: '/', label: '发现中心' },
+      { path: '/', label: '指挥中心' },
       { path: '/trending', label: '趋势选题' },
       { path: '/opportunities', label: '项目机会' },
     ]

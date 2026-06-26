@@ -27,8 +27,8 @@ class Settings(BaseSettings):
     # DeepSeek
     deepseek_api_key: str = ""
 
-    # ChromaDB
-    chroma_persist_dir: str = "./data/chroma"
+    # Vector database (LanceDB)
+    lancedb_dir: str = "./data/lancedb"
 
     # GitHub
     github_token: str = ""

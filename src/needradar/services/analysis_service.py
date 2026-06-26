@@ -211,7 +211,24 @@ class AnalysisService:
     async def extract_and_store(self, keyword: str, item: RawDiscussionItem) -> Path | None:
         prompts = _load_prompts()
         extraction_prompt = prompts.get("requirement_extraction", "")
+
+        # RAG: retrieve relevant historical context
+        rag_context = ""
+        try:
+            from needradar.services.rag_retriever import get_retriever
+            retriever = get_retriever()
+            rag_context = await retriever.retrieve_context(
+                query=f"{keyword} {item.title}",
+                n_results=3,
+                min_score=0.2,
+                max_chars=1500,
+            )
+        except Exception as e:
+            logger.debug("rag_context_skip", error=str(e))
+
         full_prompt = self._build_system_prompt(extraction_prompt)
+        if rag_context:
+            full_prompt += "\n\n" + rag_context
 
         text = f"讨论标题：{item.title}\n\n讨论内容：\n{item.content}"
         extracted: ExtractedRequirement = await llm.extract_structured(
@@ -221,7 +238,7 @@ class AnalysisService:
         )
         self._record_usage()
 
-        # Embedding-based dedup via ChromaDB
+        # Embedding-based dedup via LanceDB
         embed_text = f"{extracted.title}\n{extracted.description}"
         try:
             vs = self._get_vector_store()

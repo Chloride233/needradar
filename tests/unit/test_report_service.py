@@ -298,7 +298,7 @@ class TestGenerateReport:
 
     @pytest.mark.asyncio
     async def test_falls_back_when_vector_fails(self, svc_with_mocks):
-        svc_with_mocks._vs.query = AsyncMock(side_effect=RuntimeError("ChromaDB error"))
+        svc_with_mocks._vs.query = AsyncMock(side_effect=RuntimeError("Vector store error"))
         prompts = {"report_analysis": "Analyze"}
 
         with patch("needradar.services.report_service._load_prompts", return_value=prompts), \

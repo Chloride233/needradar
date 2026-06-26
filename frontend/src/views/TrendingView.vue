@@ -1,45 +1,51 @@
 <template>
-  <div class="trending-page">
-    <!-- Header Actions -->
-    <div class="header-card">
-      <div class="header-left">
-        <h3 class="header-title">GitHub Trending 选题</h3>
-        <p class="header-desc">基于 GitHub 趋势项目，发现技术热点与选题机会</p>
+  <div class="trending-page" ref="pageRef">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-bg">
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
       </div>
-      <div class="header-actions">
-        <select v-model="filters.since" class="filter-select" @change="loadProjects">
-          <option value="daily">今日</option>
-          <option value="weekly">本周</option>
-          <option value="monthly">本月</option>
-        </select>
-        <select v-model="filters.language" class="filter-select" @change="loadProjects">
-          <option value="">全部语言</option>
-          <option v-for="lang in languages" :key="lang" :value="lang">{{ lang }}</option>
-        </select>
-        <button class="fetch-btn" :class="{ loading: fetching }" @click="fetchTrending" :disabled="fetching">
-          <svg v-if="!fetching" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-          </svg>
-          <span v-else class="btn-spinner"></span>
-          {{ fetching ? '抓取中...' : '刷新数据' }}
-        </button>
+      <div class="hero-content" data-reveal="up">
+        <h1 class="hero-title">GitHub Trending 选题</h1>
+        <p class="hero-sub">基于 GitHub 趋势项目，发现技术热点与选题机会</p>
+        <div class="hero-actions">
+          <select v-model="filters.since" class="filter-select" @change="loadProjects">
+            <option value="daily">今日</option>
+            <option value="weekly">本周</option>
+            <option value="monthly">本月</option>
+          </select>
+          <select v-model="filters.language" class="filter-select" @change="loadProjects">
+            <option value="">全部语言</option>
+            <option v-for="lang in languages" :key="lang" :value="lang">{{ lang }}</option>
+          </select>
+          <button class="fetch-btn" :class="{ loading: fetching }" @click="fetchTrending" :disabled="fetching">
+            <svg v-if="!fetching" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+            <span v-else class="btn-spinner"></span>
+            {{ fetching ? '抓取中...' : '刷新数据' }}
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
 
     <!-- Stats Row -->
-    <div class="stats-row">
-      <div class="stat-pill">
-        <span class="stat-val">{{ stats.total_projects }}</span>
-        <span class="stat-lbl">项目数</span>
+    <section class="stats-section" data-reveal="up" data-delay="100">
+      <div class="stats-row">
+        <div class="stat-pill">
+          <span class="stat-val">{{ stats.total_projects }}</span>
+          <span class="stat-lbl">项目数</span>
+        </div>
+        <div class="stat-pill" v-for="(count, lang) in topLanguages" :key="lang">
+          <span class="stat-val">{{ count }}</span>
+          <span class="stat-lbl">{{ lang }}</span>
+        </div>
       </div>
-      <div class="stat-pill" v-for="(count, lang) in topLanguages" :key="lang">
-        <span class="stat-val">{{ count }}</span>
-        <span class="stat-lbl">{{ lang }}</span>
-      </div>
-    </div>
+    </section>
 
     <!-- Recommend Section -->
-    <div class="recommend-card">
+    <section class="recommend-card" data-reveal="up" data-delay="200">
       <div class="recommend-header">
         <div>
           <h3 class="recommend-title">AI 选题推荐</h3>
@@ -71,18 +77,18 @@
       <div v-else-if="!recommending" class="recommend-empty">
         输入你的关注领域，点击「智能推荐」获取个性化选题建议
       </div>
-    </div>
+    </section>
 
     <!-- Project Grid -->
-    <div v-if="projects.length === 0 && !fetching" class="empty-state">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <div v-if="projects.length === 0 && !fetching" class="empty-state" data-reveal="up">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-tertiary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
       </svg>
       <p>暂无数据，点击「刷新数据」抓取最新趋势</p>
     </div>
 
     <div v-else class="project-grid">
-      <div v-for="proj in projects" :key="proj.id" class="project-card" :class="{ analyzed: proj.is_analyzed }">
+      <div v-for="(proj, i) in projects" :key="proj.id" class="project-card" :class="{ analyzed: proj.is_analyzed }" data-reveal="up" :data-delay="Math.min(i * 100, 500)">
         <div class="card-header">
           <a :href="'https://github.com/' + proj.full_name" target="_blank" class="card-name">
             {{ proj.full_name }}
@@ -116,40 +122,45 @@
     </div>
 
     <!-- Analysis Modal -->
-    <div v-if="analysisResult" class="modal-overlay" @click.self="analysisResult = null">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>{{ analysisResult.full_name }}</h3>
-          <button class="modal-close" @click="analysisResult = null" aria-label="关闭">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div class="modal-section">
-            <h4>技术亮点</h4>
-            <ul><li v-for="h in analysisResult.highlights" :key="h">{{ h }}</li></ul>
-          </div>
-          <div class="modal-section">
-            <h4>应用场景</h4>
-            <ul><li v-for="u in analysisResult.use_cases" :key="u">{{ u }}</li></ul>
-          </div>
-          <div class="modal-section">
-            <h4>趋势分析</h4>
-            <p>{{ analysisResult.analysis }}</p>
-          </div>
-          <div class="modal-section">
-            <h4>主题标签</h4>
-            <div class="modal-tags">
-              <span v-for="t in analysisResult.tags" :key="t" class="tag-chip">{{ t }}</span>
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="analysisResult" class="modal-overlay" @click.self="analysisResult = null">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>{{ analysisResult.full_name }}</h3>
+              <button class="modal-close" @click="analysisResult = null" aria-label="关闭">&times;</button>
+            </div>
+            <div class="modal-body">
+              <div class="modal-section">
+                <h4>技术亮点</h4>
+                <ul><li v-for="h in analysisResult.highlights" :key="h">{{ h }}</li></ul>
+              </div>
+              <div class="modal-section">
+                <h4>应用场景</h4>
+                <ul><li v-for="u in analysisResult.use_cases" :key="u">{{ u }}</li></ul>
+              </div>
+              <div class="modal-section">
+                <h4>趋势分析</h4>
+                <p>{{ analysisResult.analysis }}</p>
+              </div>
+              <div class="modal-section">
+                <h4>主题标签</h4>
+                <div class="modal-tags">
+                  <span v-for="t in analysisResult.tags" :key="t" class="tag-chip">{{ t }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import api from '../api/client'
+import { useReveal } from '../composables/useReveal'
 
 interface TrendingProject {
   id: number
@@ -178,6 +189,9 @@ const recommendations = ref<any[]>([])
 const filters = ref({ language: '', since: 'daily' })
 
 const stats = ref({ total_projects: 0, language_distribution: {} as Record<string, number>, snapshots_available: [] as string[] })
+
+const pageRef = ref<HTMLElement | null>(null)
+useReveal(pageRef)
 
 const sinceLabel = computed(() => {
   const m: Record<string, string> = { daily: '今日', weekly: '本周', monthly: '本月' }
@@ -259,156 +273,417 @@ onMounted(loadProjects)
 .trending-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
 }
 
-/* ── Header ── */
-.header-card {
-  background: linear-gradient(135deg, #1a1a1a, #141414);
-  border-radius: 16px;
-  padding: 24px 28px;
-  color: #fff;
+/* ── Hero ── */
+.hero {
+  position: relative;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  padding: var(--space-8) var(--space-6);
+  margin-top: var(--space-4);
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-hero-subtle);
+  z-index: 0;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  animation: float 8s ease-in-out infinite;
+}
+
+.hero-orb-1 {
+  width: 260px;
+  height: 260px;
+  background: rgba(0, 122, 255, 0.2);
+  top: -40px;
+  right: -30px;
+  animation-delay: 0s;
+}
+
+.hero-orb-2 {
+  width: 200px;
+  height: 200px;
+  background: rgba(88, 86, 214, 0.18);
+  bottom: -30px;
+  left: -20px;
+  animation-delay: -3s;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.hero-title {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  max-width: 480px;
+}
+
+.hero-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
 }
 
-.header-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.header-desc {
-  font-size: 13px;
-  color: rgba(255,255,255,0.55);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+/* ── Filter & Buttons ── */
 .filter-select {
-  height: 38px;
-  padding: 0 12px;
-  border-radius: 10px;
-  border: 1.5px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.1);
+  height: 40px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur));
   font-size: 13px;
   font-family: inherit;
-  color: #fff;
+  color: var(--color-text);
   outline: none;
   cursor: pointer;
+  transition: border-color var(--duration-normal) var(--ease-apple), box-shadow var(--duration-normal) var(--ease-apple);
 }
 
-.filter-select option { color: #e0e0e0; background: #1a1a1a; }
+.filter-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+}
 
 .fetch-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 18px;
-  height: 38px;
-  border-radius: 10px;
+  gap: var(--space-1);
+  padding: 0 var(--space-5);
+  height: 40px;
+  border-radius: var(--radius-sm);
   border: none;
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
-  color: var(--slate-800);
-  background: #141414;
+  color: #fff;
+  background: var(--gradient-accent);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition: box-shadow var(--duration-normal) var(--ease-apple), transform var(--duration-normal) var(--ease-apple);
   white-space: nowrap;
 }
 
-.fetch-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.fetch-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.fetch-btn:hover:not(:disabled) {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-1px);
+}
+
+.fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Stats ── */
+.stats-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
+  padding: var(--space-4) var(--space-5);
+  transition: box-shadow var(--duration-normal) var(--ease-apple);
+}
+
 .stats-row {
   display: flex;
-  gap: 10px;
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
 .stat-pill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: #141414;
-  border: 1px solid var(--slate-100);
-  box-shadow: none;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  transition: background var(--duration-normal) var(--ease-apple), box-shadow var(--duration-normal) var(--ease-apple);
+}
+
+.stat-pill:hover {
+  background: var(--color-primary-bg);
+  box-shadow: var(--shadow-sm);
 }
 
 .stat-val {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 700;
-  color: var(--teal-600);
+  color: var(--color-primary);
 }
 
 .stat-lbl {
   font-size: 12px;
-  color: var(--slate-400);
+  color: var(--color-text-secondary);
   font-weight: 500;
+}
+
+/* ── Recommend ── */
+.recommend-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
+  padding: var(--space-6);
+  transition: box-shadow var(--duration-normal) var(--ease-apple);
+}
+
+.recommend-card:hover {
+  box-shadow: var(--shadow-glass-hover);
+}
+
+.recommend-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.recommend-title {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.recommend-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.recommend-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.interest-input {
+  height: 40px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur));
+  outline: none;
+  width: 240px;
+  transition: border-color var(--duration-normal) var(--ease-apple), box-shadow var(--duration-normal) var(--ease-apple);
+}
+
+.interest-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+}
+
+.interest-input::placeholder { color: var(--color-text-tertiary); }
+
+.recommend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-5);
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: var(--gradient-accent);
+  cursor: pointer;
+  transition: box-shadow var(--duration-normal) var(--ease-apple), transform var(--duration-normal) var(--ease-apple);
+  white-space: nowrap;
+}
+
+.recommend-btn:hover:not(:disabled) {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-1px);
+}
+
+.recommend-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.recommend-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.recommend-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+  transition: box-shadow var(--duration-normal) var(--ease-apple), transform var(--duration-normal) var(--ease-apple), border-color var(--duration-normal) var(--ease-apple);
+}
+
+.recommend-item:hover {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+}
+
+.rec-index {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.rec-body { flex: 1; }
+
+.rec-title {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.rec-rationale {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.rec-angle {
+  font-size: 13px;
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+  line-height: 1.5;
+}
+
+.rec-angle-label {
+  font-weight: 600;
+}
+
+.rec-projects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.rec-project-chip {
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-light);
+  transition: background var(--duration-normal) var(--ease-apple), color var(--duration-normal) var(--ease-apple);
+}
+
+.rec-project-chip:hover {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+.recommend-empty {
+  color: var(--color-text-tertiary);
+  font-size: 14px;
+  text-align: center;
+  padding: var(--space-5) 0;
 }
 
 /* ── Grid ── */
 .project-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .project-card {
-  background: #141414;
-  border-radius: 14px;
-  border: 1px solid var(--slate-100);
-  box-shadow: none;
-  padding: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  gap: var(--space-3);
+  transition: box-shadow var(--duration-normal) var(--ease-apple), transform var(--duration-normal) var(--ease-apple), border-color var(--duration-normal) var(--ease-apple);
 }
 
 .project-card:hover {
-  border-color: var(--card-border-hover);
-  border-color: var(--slate-200);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glass-hover);
+  border-color: rgba(0, 122, 255, 0.2);
 }
 
 .project-card.analyzed {
-  border-left: 3px solid var(--teal-400);
+  border-left: 3px solid var(--color-success);
 }
 
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .card-name {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 600;
-  color: var(--slate-800);
+  color: var(--color-text);
   text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color var(--duration-fast) var(--ease-apple);
 }
 
-.card-name:hover { color: var(--teal-600); }
+.card-name:hover { color: var(--color-primary); }
 
 .lang-badge {
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-full);
   font-size: 11px;
   font-weight: 600;
   border: 1px solid;
@@ -417,7 +692,7 @@ onMounted(loadProjects)
 
 .card-desc {
   font-size: 13px;
-  color: var(--slate-500);
+  color: var(--color-text-secondary);
   line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -430,13 +705,13 @@ onMounted(loadProjects)
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .card-stats {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .stat-item {
@@ -444,63 +719,73 @@ onMounted(loadProjects)
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: var(--slate-400);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .stat-item svg { opacity: 0.5; }
-.period-stars { color: var(--amber-500); font-weight: 600; }
+.period-stars { color: var(--color-warning); font-weight: 600; }
 
 .analyze-btn {
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: 1.5px solid var(--slate-200);
-  background: #141414;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur));
   font-size: 12px;
   font-weight: 600;
   font-family: inherit;
-  color: var(--teal-600);
+  color: var(--color-primary);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition: border-color var(--duration-normal) var(--ease-apple), background var(--duration-normal) var(--ease-apple), box-shadow var(--duration-normal) var(--ease-apple), transform var(--duration-normal) var(--ease-apple);
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-1);
 }
 
 .analyze-btn:hover:not(:disabled) {
-  border-color: var(--teal-400);
-  background: var(--teal-50);
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .analyze-btn.done {
-  color: var(--slate-400);
-  border-color: var(--slate-200);
+  color: var(--color-text-tertiary);
+  border-color: var(--color-border-light);
   cursor: default;
+  background: transparent;
+  backdrop-filter: none;
 }
 
-.analyze-btn:disabled { opacity: 0.6; }
+.analyze-btn.done:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.analyze-btn:disabled { opacity: 0.5; }
 
 .card-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--space-1);
 }
 
 .tag-chip {
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-full);
   font-size: 11px;
   font-weight: 500;
-  background: var(--teal-50);
-  color: var(--teal-700);
-  border: 1px solid var(--teal-200);
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  border: 1px solid transparent;
 }
 
 .btn-spinner {
   width: 12px;
   height: 12px;
-  border: 2px solid rgba(0,0,0,0.1);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-top-color: currentColor;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
@@ -513,186 +798,23 @@ onMounted(loadProjects)
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 60px 0;
-  color: var(--slate-400);
+  gap: var(--space-3);
+  padding: var(--space-8) 0;
+  color: var(--color-text-tertiary);
   font-size: 14px;
-}
-
-/* ── Recommend ── */
-.recommend-card {
-  background: #141414;
-  border-radius: 16px;
-  border: 1px solid var(--slate-100);
-  box-shadow: none;
-  padding: 24px;
-}
-
-.recommend-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.recommend-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--slate-800);
-  margin-bottom: 4px;
-}
-
-.recommend-desc {
-  font-size: 13px;
-  color: var(--slate-400);
-}
-
-.recommend-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.interest-input {
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1.5px solid var(--slate-200);
-  font-size: 13px;
-  font-family: inherit;
-  color: var(--slate-800);
-  outline: none;
-  width: 240px;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
-}
-
-.interest-input:focus {
-  border-color: var(--teal-400);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
-}
-
-.interest-input::placeholder { color: var(--slate-400); }
-
-.recommend-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 20px;
-  height: 40px;
-  border-radius: 10px;
-  border: none;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  color: #fff;
-  background: linear-gradient(135deg, var(--teal-500), var(--teal-700));
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
-  white-space: nowrap;
-}
-
-.recommend-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.3);
-}
-
-.recommend-btn:disabled { opacity: 0.7; cursor: not-allowed; }
-
-.recommend-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.recommend-item {
-  display: flex;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  background: var(--slate-50);
-  border: 1px solid var(--slate-100);
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
-}
-
-.recommend-item:hover {
-  background: var(--teal-50);
-  border-color: var(--teal-200);
-}
-
-.rec-index {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: var(--teal-600);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.rec-body { flex: 1; }
-
-.rec-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--slate-800);
-  margin-bottom: 6px;
-}
-
-.rec-rationale {
-  font-size: 13px;
-  color: var(--slate-500);
-  line-height: 1.6;
-  margin-bottom: 8px;
-}
-
-.rec-angle {
-  font-size: 13px;
-  color: var(--teal-700);
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-
-.rec-angle-label {
-  font-weight: 600;
-}
-
-.rec-projects {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.rec-project-chip {
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 500;
-  background: #141414;
-  color: var(--slate-600);
-  border: 1px solid var(--slate-200);
-}
-
-.recommend-empty {
-  color: var(--slate-400);
-  font-size: 14px;
-  text-align: center;
-  padding: 24px 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
 }
 
 /* ── Modal ── */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -700,75 +822,110 @@ onMounted(loadProjects)
 }
 
 .modal-content {
-  background: #141414;
-  border-radius: 16px;
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
   width: 560px;
   max-width: 90vw;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  box-shadow: var(--shadow-float);
 }
 
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--slate-100);
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .modal-header h3 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-sans);
   font-size: 17px;
   font-weight: 600;
-  color: var(--slate-800);
+  color: var(--color-text);
 }
 
 .modal-close {
   background: none;
   border: none;
   font-size: 22px;
-  color: var(--slate-400);
+  color: var(--color-text-tertiary);
   cursor: pointer;
   padding: 4px;
   line-height: 1;
+  transition: color var(--duration-fast) var(--ease-apple);
+  border-radius: var(--radius-sm);
+}
+
+.modal-close:hover {
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .modal-section h4 {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 600;
-  color: var(--slate-700);
-  margin-bottom: 8px;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
 }
 
 .modal-section ul {
-  padding-left: 18px;
+  padding-left: var(--space-4);
   list-style: disc;
 }
 
 .modal-section li {
   font-size: 13px;
-  color: var(--slate-600);
+  color: var(--color-text-secondary);
   line-height: 1.7;
 }
 
 .modal-section p {
   font-size: 13px;
-  color: var(--slate-600);
+  color: var(--color-text-secondary);
   line-height: 1.7;
 }
 
 .modal-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--space-1);
+}
+
+/* ── Modal Transition ── */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity var(--duration-slow) var(--ease-apple);
+}
+
+.modal-enter-active .modal-content,
+.modal-leave-active .modal-content {
+  transition: transform var(--duration-slow) var(--ease-apple), opacity var(--duration-slow) var(--ease-apple);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal-content {
+  transform: translateY(20px) scale(0.96);
+  opacity: 0;
+}
+
+.modal-leave-to .modal-content {
+  transform: translateY(10px) scale(0.98);
+  opacity: 0;
 }
 </style>

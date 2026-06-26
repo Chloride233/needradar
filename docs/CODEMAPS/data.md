@@ -122,10 +122,10 @@ vault/
 
 每个文件: YAML frontmatter (keyword, platform, sentiment, emotion, source_url, tags, date) + Markdown 正文。使用 Wikilinks (`[[...]]`) 进行交叉引用。
 
-## 向量存储: ChromaDB
+## 向量存储: LanceDB
 
-- 集合: 可配置名称
+- 表: requirements (去重), vault_knowledge (RAG)
 - 嵌入: all-MiniLM-L6-v2 (SentenceTransformer, 离线模式)
 - 距离: cosine
-- 用途: 需求语义去重, 报告的 RAG 检索
-- 持久化目录: 来自 `NR_CHROMA_PERSIST_DIR` 环境变量
+- 用途: 需求语义去重, 报告的 RAG 检索, vault 知识检索
+- 持久化目录: 来自 `NR_LANCEDB_DIR` 环境变量

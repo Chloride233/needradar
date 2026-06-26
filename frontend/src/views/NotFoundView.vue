@@ -1,6 +1,6 @@
 <template>
   <div class="not-found">
-    <div class="nf-content">
+    <div class="nf-content" data-reveal="scale">
       <div class="nf-code">404</div>
       <div class="nf-divider"></div>
       <div class="nf-body">
@@ -23,41 +23,50 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
+  position: relative;
 }
 
 .nf-content {
   display: flex;
   align-items: center;
   gap: 40px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8) var(--space-9);
+  box-shadow: var(--shadow-glass);
 }
 
 .nf-code {
-  font-family: 'Outfit', sans-serif;
   font-size: 120px;
   font-weight: 800;
   line-height: 1;
-  color: var(--teal-200);
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   user-select: none;
 }
 
 .nf-divider {
   width: 2px;
   height: 80px;
-  background: var(--slate-200);
+  background: var(--color-border-light);
   border-radius: 1px;
 }
 
 .nf-title {
-  font-family: 'Outfit', sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: var(--slate-800);
+  color: var(--color-text);
   margin-bottom: 8px;
 }
 
 .nf-desc {
   font-size: 14px;
-  color: var(--slate-400);
+  color: var(--color-text-tertiary);
   margin-bottom: 20px;
 }
 
@@ -65,19 +74,19 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  border-radius: 10px;
-  background: var(--teal-600);
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-accent);
   color: #fff;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all var(--duration-normal) var(--ease-apple);
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
 }
 
 .nf-btn:hover {
-  background: var(--teal-700);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(20, 196, 166, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
 }
 </style>

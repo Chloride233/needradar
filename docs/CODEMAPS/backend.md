@@ -54,8 +54,12 @@
 
 | 服务 | 用途 | 依赖 |
 |---------|---------|-------------|
-| `AnalysisService` | 爬取→提取→存储流水线 | CrawlerFactory, LLMProvider, ChromaDB, VaultStore |
-| `ReportService` | RAG 报告生成 + 关系图谱 | LLMProvider, ChromaDB, VaultStore |
+| `PipelineOrchestrator` | Burr 状态机编排 + 质量门 | Burr, PipelineActions, SQLAlchemy |
+| `PipelineActions` | 爬取/提取/报告/归档/蒸馏 | CrawlerFactory, LLMProvider, LanceDB, VaultStore |
+| `AnalysisService` | 爬取→提取→存储流水线 | CrawlerFactory, LLMProvider, LanceDB, VaultStore |
+| `ReportService` | RAG 报告生成 + 关系图谱 | LLMProvider, LanceDB, VaultStore |
+| `RAGRetriever` | 语义检索 vault 知识 | LanceDB (vault_knowledge) |
+| `VaultVectorizer` | vault → chunk → embedding | LanceDB, VaultStore |
 | `ContentVerifier` | 8步幻觉检测 | LLMProvider, VaultStore |
 | `PromptOptimizer` | 迭代式提示词优化循环 | LLMProvider |
 | `UsageService` | LLM 费用追踪 + 预算告警 | SQLAlchemy session |
@@ -87,7 +91,7 @@ sanitizer.py     — 注入检测, 输出净化, JSON 解析
 ## 向量存储 (`src/needradar/vector/`)
 
 ```
-base.py         — VectorStore 抽象基类 (add/query/delete/count)
-chroma_store.py — ChromaVectorStore (all-MiniLM-L6-v2, 余弦距离, 重试)
-__init__.py     — create_vector_store() 工厂函数
+base.py           — VectorStore 抽象基类 (add/query/delete/count)
+lancedb_store.py  — LanceDBVectorStore (all-MiniLM-L6-v2, 余弦距离, 嵌入式)
+__init__.py       — create_vector_store() 工厂函数
 ```

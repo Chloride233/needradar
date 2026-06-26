@@ -231,3 +231,14 @@ async def get_task(task_id: int, db: AsyncSession = Depends(get_db)):
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return TaskResponse.model_validate(task)
+
+
+@router.post("/vault/index")
+async def index_vault_endpoint(force: bool = False):
+    """Index vault markdown files into LanceDB for RAG retrieval."""
+    from needradar.services.vault_vectorizer import index_vault
+    try:
+        stats = await index_vault(force=force)
+        return {"status": "ok", **stats}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

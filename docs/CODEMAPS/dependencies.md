@@ -24,11 +24,12 @@
 | uvicorn | ≥0.34 | ASGI 服务器 |
 | sqlalchemy[asyncio] | ≥2.0 | ORM + 异步引擎 |
 | litellm | ≥1.81 | 统一 LLM 接口 |
-| chromadb | ≥0.5 | 向量数据库 |
+| lancedb | ≥0.17 | 向量数据库（嵌入式） |
 | pydantic | ≥2.10 | 数据验证 |
 | pydantic-settings | ≥2.7 | 环境配置 |
 | httpx | ≥0.28 | 异步 HTTP 客户端 (爬虫) |
 | apscheduler | ≥3.10 | 定时任务调度 |
+| burr | ≥0.40 | Agent 编排框架 |
 | pyyaml | ≥6.0 | 配置/提示词 YAML |
 | loguru | ≥0.7 | 结构化日志 |
 | alembic | ≥1.14 | 数据库迁移 (已配置, 未使用) |

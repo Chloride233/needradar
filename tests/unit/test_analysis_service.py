@@ -303,7 +303,7 @@ class TestExtractAndStore:
     async def test_title_fallback_when_vector_fails(self, db_session, fake_item, fake_extracted):
         svc = AnalysisService(db_session)
         mock_vs = MagicMock()
-        mock_vs.query = AsyncMock(side_effect=RuntimeError("ChromaDB down"))
+        mock_vs.query = AsyncMock(side_effect=RuntimeError("Vector store down"))
 
         with patch("needradar.services.analysis_service._load_prompts") as mp, \
              patch("needradar.services.analysis_service.llm") as ml, \

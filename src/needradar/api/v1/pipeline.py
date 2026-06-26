@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import get_db
@@ -21,13 +21,18 @@ async def list_runs(
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
-    query = select(PipelineRun); cq = select(PipelineRun.id)
+    query = select(PipelineRun)
+    count_query = select(func.count()).select_from(PipelineRun)
     if status:
-        query = query.where(PipelineRun.status == status)
-        cq = cq.where(PipelineRun.status == status)
+        statuses = [s.strip() for s in status.split(",") if s.strip()]
+        if len(statuses) == 1:
+            query = query.where(PipelineRun.status == statuses[0])
+            count_query = count_query.where(PipelineRun.status == statuses[0])
+        elif statuses:
+            query = query.where(PipelineRun.status.in_(statuses))
+            count_query = count_query.where(PipelineRun.status.in_(statuses))
 
-    result = await db.execute(cq)
-    total = len(result.scalars().all())
+    total = (await db.execute(count_query)).scalar() or 0
     query = query.order_by(PipelineRun.created_at.desc()).offset((page - 1) * page_size).limit(page_size)
     result = await db.execute(query)
     rows = result.scalars().all()

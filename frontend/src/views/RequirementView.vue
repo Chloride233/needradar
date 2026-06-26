@@ -1,22 +1,24 @@
 <template>
-  <div class="req-page">
-    <!-- Summary Header -->
-    <div class="summary-header">
-      <div>
-        <h2 class="summary-title">需求洞察汇总</h2>
-        <p class="summary-desc">基于 {{ summaries.length }} 份分析报告，提取高优先级需求与关键痛点</p>
+  <div ref="pageRef" class="req-page">
+    <!-- Hero -->
+    <div class="hero" data-reveal="up">
+      <div class="hero-orb hero-orb--blue"></div>
+      <div class="hero-orb hero-orb--purple"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">需求洞察汇总</h1>
+        <p class="hero-sub">基于 {{ summaries.length }} 份分析报告，提取高优先级需求与关键痛点</p>
       </div>
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="loading-state">
-      <div class="loading-spinner"></div>
+      <div class="spinner"></div>
       <span>分析报告中...</span>
     </div>
 
     <!-- Empty -->
     <div v-else-if="summaries.length === 0" class="empty-state">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
       <p>暂无分析报告，请先执行挖掘任务生成报告</p>
@@ -24,13 +26,11 @@
 
     <!-- Summaries -->
     <template v-else>
-      <!-- High Priority Pain Points Summary -->
-      <div class="section-card">
+      <!-- High Priority Pain Points -->
+      <div class="glass-card" data-reveal="up" data-delay="100">
         <div class="section-head">
           <div class="section-icon icon-alert">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           </div>
           <div>
             <h3 class="section-title">高优先级痛点</h3>
@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="pain-list">
-          <div v-for="p in allPainPoints" :key="p.title" class="pain-item">
+          <div v-for="(p, i) in allPainPoints" :key="p.title" class="pain-item" data-reveal="up" :data-delay="(i * 50 + 150).toString()">
             <span class="pain-severity" :class="severityClass(p.severity)">{{ p.severity }}</span>
             <div class="pain-body">
               <span class="pain-title">{{ p.title }}</span>
@@ -49,12 +49,10 @@
       </div>
 
       <!-- Core Findings per Report -->
-      <div class="section-card">
+      <div class="glass-card" data-reveal="up" data-delay="200">
         <div class="section-head">
           <div class="section-icon icon-insight">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           </div>
           <div>
             <h3 class="section-title">核心洞察</h3>
@@ -62,7 +60,7 @@
           </div>
         </div>
         <div class="findings-list">
-          <div v-for="s in summaries" :key="s.report_title" class="finding-group">
+          <div v-for="(s, gi) in summaries" :key="s.report_title" class="finding-group" data-reveal="up" :data-delay="(gi * 80 + 300).toString()">
             <div class="finding-source">
               <span class="finding-keyword">{{ s.keyword }}</span>
               <span class="finding-report">{{ s.report_title }}</span>
@@ -91,30 +89,24 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import api from '../api/client'
+import { useReveal } from '../composables/useReveal'
 
-interface PainPoint {
-  title: string
-  severity: string
-  description: string
-}
-
+interface PainPoint { title: string; severity: string; description: string }
 interface InsightSummary {
-  report_title: string
-  keyword: string
-  core_findings: string[]
-  pain_points: PainPoint[]
-  categories: { name: string; items: string[] }[]
+  report_title: string; keyword: string; core_findings: string[];
+  pain_points: PainPoint[]; categories: { name: string; items: string[] }[]
 }
 
 const loading = ref(false)
 const summaries = ref<InsightSummary[]>([])
+const pageRef = ref<HTMLElement | null>(null)
+
+useReveal(pageRef)
 
 const allPainPoints = computed(() => {
   const points: (PainPoint & { _order: number })[] = []
   summaries.value.forEach(s => {
-    s.pain_points.forEach(p => {
-      points.push({ ...p, _order: severityOrder(p.severity) })
-    })
+    s.pain_points.forEach(p => { points.push({ ...p, _order: severityOrder(p.severity) }) })
   })
   return points.sort((a, b) => b._order - a._order)
 })
@@ -137,9 +129,7 @@ async function loadSummary() {
   try {
     const { data } = await api.get('/requirements/summary')
     summaries.value = data.summaries
-  } finally {
-    loading.value = false
-  }
+  } finally { loading.value = false }
 }
 
 onMounted(loadSummary)
@@ -149,49 +139,94 @@ onMounted(loadSummary)
 .req-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-6);
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
 }
 
-/* ── Header ── */
-.summary-header {
-  background: linear-gradient(135deg, #1a1a1a, #141414);
-  border-radius: 16px;
-  padding: 24px 28px;
-  color: #fff;
+/* ── Hero ── */
+.hero {
+  position: relative;
+  padding: var(--space-9) 0 var(--space-7);
+  overflow: hidden;
+  text-align: center;
 }
 
-.summary-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 20px;
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.hero-orb--blue {
+  width: 320px;
+  height: 320px;
+  background: var(--color-primary);
+  top: -40px;
+  left: -60px;
+  opacity: 0.12;
+}
+
+.hero-orb--purple {
+  width: 280px;
+  height: 280px;
+  background: var(--color-secondary);
+  bottom: -40px;
+  right: -40px;
+  opacity: 0.1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 40px;
   font-weight: 700;
-  margin-bottom: 4px;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  line-height: 1.15;
 }
 
-.summary-desc {
-  font-size: 13px;
-  color: rgba(255,255,255,0.5);
+.hero-sub {
+  font-size: 17px;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-3);
+  line-height: 1.5;
 }
 
-/* ── Section Card ── */
-.section-card {
-  background: #141414;
-  border-radius: 16px;
-  border: 1px solid var(--slate-100);
-  box-shadow: none;
-  padding: 24px;
+/* ── Glass Card ── */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
+  padding: var(--space-6);
+  transition: box-shadow var(--duration-normal) var(--ease-apple);
 }
 
+.glass-card:hover {
+  box-shadow: var(--shadow-glass-hover);
+}
+
+/* ── Section Head ── */
 .section-head {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .section-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,53 +234,58 @@ onMounted(loadSummary)
 }
 
 .icon-alert {
-  background: var(--error-bg);
-  color: var(--error-text);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .icon-insight {
-  background: rgba(99, 102, 241, 0.1);
-  color: #818cf8;
+  background: rgba(88, 86, 214, 0.08);
+  color: var(--color-secondary);
 }
 
 .section-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  color: var(--slate-800);
+  color: var(--color-text);
+  letter-spacing: -0.01em;
 }
 
 .section-sub {
-  font-size: 12px;
-  color: var(--slate-400);
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  display: block;
+  margin-top: 2px;
 }
 
 /* ── Pain Points ── */
 .pain-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
 }
 
 .pain-item {
   display: flex;
-  gap: 14px;
-  padding: 16px;
-  border-radius: 12px;
-  background: var(--slate-50);
-  border: 1px solid transparent;
-  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-normal) var(--ease-apple);
 }
 
 .pain-item:hover {
-  background: #141414;
-  border-color: var(--slate-200);
-  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border);
+  transform: translateY(-1px);
 }
 
 .pain-severity {
-  padding: 4px 12px;
-  border-radius: 8px;
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 700;
   flex-shrink: 0;
@@ -253,9 +293,20 @@ onMounted(loadSummary)
   margin-top: 2px;
 }
 
-.sev-high { background: var(--error-bg); color: var(--error-text); }
-.sev-med-high { background: var(--warning-bg); color: var(--warning-text); }
-.sev-med { background: var(--slate-100); color: var(--slate-500); }
+.sev-high {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.sev-med-high {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.sev-med {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+}
 
 .pain-body {
   flex: 1;
@@ -263,17 +314,17 @@ onMounted(loadSummary)
 }
 
 .pain-title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  color: var(--slate-800);
+  color: var(--color-text);
   line-height: 1.5;
 }
 
 .pain-desc {
   font-size: 13px;
-  color: var(--slate-500);
+  color: var(--color-text-secondary);
   line-height: 1.6;
-  margin-top: 6px;
+  margin-top: var(--space-1);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -284,76 +335,85 @@ onMounted(loadSummary)
 .findings-list {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-5);
 }
 
 .finding-group {
-  padding: 20px;
-  border-radius: 14px;
-  background: var(--slate-50);
-  border: 1px solid var(--slate-100);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-normal) var(--ease-apple);
+}
+
+.finding-group:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .finding-source {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 .finding-keyword {
   display: inline-flex;
-  padding: 3px 12px;
-  border-radius: 8px;
-  background: var(--teal-50);
-  color: var(--teal-700);
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: 600;
 }
 
 .finding-report {
   font-size: 13px;
-  color: var(--slate-500);
+  color: var(--color-text-secondary);
 }
 
 .finding-items {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
 }
 
 .finding-item {
   display: flex;
-  gap: 10px;
+  gap: var(--space-3);
   align-items: flex-start;
   font-size: 14px;
-  color: var(--slate-700);
+  color: var(--color-text);
   line-height: 1.6;
 }
 
 .finding-num {
   width: 24px;
   height: 24px;
-  border-radius: 7px;
-  background: var(--teal-600);
+  border-radius: var(--radius-sm);
+  background: var(--gradient-accent);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Outfit', sans-serif;
   font-size: 12px;
   font-weight: 700;
   flex-shrink: 0;
   margin-top: 1px;
 }
 
+/* ── Categories ── */
 .finding-categories {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--slate-200);
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--glass-border);
 }
 
 .cat-group {
@@ -365,8 +425,8 @@ onMounted(loadSummary)
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: var(--slate-600);
-  margin-bottom: 8px;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
 }
 
 .cat-items {
@@ -376,41 +436,44 @@ onMounted(loadSummary)
 }
 
 .cat-chip {
-  padding: 4px 10px;
-  border-radius: 7px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 500;
-  background: #141414;
-  color: var(--slate-600);
-  border: 1px solid var(--slate-200);
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  background: var(--glass-bg);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--glass-border);
+  transition: all var(--duration-fast) var(--ease-apple);
 }
 
 .cat-chip:hover {
-  border-color: var(--teal-300);
-  color: var(--teal-700);
-  background: var(--teal-50);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
 }
 
 /* ── Loading / Empty ── */
-.loading-state, .empty-state {
+.loading-state,
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 64px 0;
-  color: var(--slate-400);
+  gap: var(--space-3);
+  padding: var(--space-8) 0;
+  color: var(--color-text-tertiary);
   font-size: 14px;
 }
 
-.loading-spinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid var(--slate-200);
-  border-top-color: var(--teal-500);
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-border-light);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>

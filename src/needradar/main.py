@@ -44,16 +44,6 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
     logger.info("needradar_stopped")
 
-
-async def _warm_chroma():
-    try:
-        import needradar.vector.chroma_store as cs
-        cs._get_ef()  # trigger model load
-        logger.info("chromadb_model_warmed")
-    except Exception as e:
-        logger.warning("chromadb_warm_failed", error=str(e))
-
-
 app = FastAPI(
     title="NeedRadar",
     version="0.1.0",

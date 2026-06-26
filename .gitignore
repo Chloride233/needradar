@@ -83,6 +83,8 @@ vault/05-工作日志/*
 !vault/05-工作日志/.gitkeep
 vault/06-关系图谱/*
 !vault/06-关系图谱/.gitkeep
+vault/07-知识沉淀/*
+!vault/07-知识沉淀/.gitkeep
 
 # Prompt optimizer backup
 *.bak
@@ -95,6 +97,16 @@ vault/06-关系图谱/*
 .playwright-cli/
 .playwright/
 .vite/
+.tmp/
+.codex/
+
+# Agent configs (project-specific, not for open source)
+.agents/
+skills-lock.json
+design-system/
+
+# Generated reports
+.reports/
 
 # Playwright output
 frontend/test-results/

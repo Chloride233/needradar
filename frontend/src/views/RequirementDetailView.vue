@@ -1,20 +1,44 @@
 <template>
-  <div class="req-detail">
-    <!-- Loading / Error / Empty -->
-    <div v-if="loading" class="loading-state"><div class="spinner"></div><span>加载需求...</span></div>
-    <div v-if="error" class="error-banner"><span>{{ error }}</span><button class="retry-btn" @click="fetchAll">重试</button></div>
-    <div v-if="!loading && !error && !req" class="empty-state">需求未找到。<router-link to="/requirements">返回需求池</router-link></div>
+  <div ref="pageRef" class="req-detail">
+    <!-- Loading / Error / Empty states -->
+    <div v-if="loading" class="loading-state" data-reveal="scale">
+      <div class="spinner"></div>
+      <span>加载需求...</span>
+    </div>
+    <div v-if="error" class="error-banner" data-reveal="up">
+      <span>{{ error }}</span>
+      <button class="retry-btn" @click="fetchAll">重试</button>
+    </div>
+    <div v-if="!loading && !error && !req" class="empty-state" data-reveal="up">
+      需求未找到。<router-link to="/requirements">返回需求池</router-link>
+    </div>
 
-    <!-- Object View -->
     <template v-if="req">
-      <div class="ov-header">
-        <router-link to="/requirements" class="back-link">&larr; 返回需求池</router-link>
-        <h1 class="ov-title">📋 {{ req.title }}</h1>
-        <div class="ov-meta">{{ req.source_platform }} · {{ req.keyword }} · {{ req.created_at }}</div>
+      <!-- Hero -->
+      <div class="hero" data-reveal="up">
+        <div class="hero-orbs">
+          <div class="orb orb--blue"></div>
+          <div class="orb orb--purple"></div>
+          <div class="orb orb--pink"></div>
+        </div>
+        <div class="hero-content">
+          <router-link to="/requirements" class="back-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            返回需求池
+          </router-link>
+          <h1 class="detail-title">{{ req.title }}</h1>
+          <div class="detail-meta">
+            <span class="meta-tag">{{ req.source_platform }}</span>
+            <span class="meta-dot">·</span>
+            <span>{{ req.keyword }}</span>
+            <span class="meta-dot">·</span>
+            <span>{{ req.created_at }}</span>
+          </div>
+        </div>
       </div>
 
       <!-- Tabs -->
-      <div class="tabs">
+      <div class="tabs" data-reveal="up" data-delay="100">
         <button :class="{ active: tab === 'overview' }" @click="tab = 'overview'">概览</button>
         <button :class="{ active: tab === 'links' }" @click="tab = 'links'">关联对象</button>
         <button :class="{ active: tab === 'similar' }" @click="tab = 'similar'">相似需求</button>
@@ -22,31 +46,31 @@
 
       <!-- Tab: Overview -->
       <div v-if="tab === 'overview'" class="tab-content">
-        <div class="prominent-cards">
-          <div class="prom-card" :class="req.sentiment">
-            <span class="prom-label">情感强度</span>
-            <span class="prom-value">{{ sentimentLabel(req.sentiment) }}</span>
+        <div class="stat-cards" data-reveal="up" data-delay="150">
+          <div class="stat-card" :class="req.sentiment">
+            <span class="stat-label">情感强度</span>
+            <span class="stat-value">{{ sentimentLabel(req.sentiment) }}</span>
           </div>
-          <div class="prom-card confidence">
-            <span class="prom-label">置信度</span>
-            <span class="prom-value">{{ (req.confidence * 100).toFixed(0) }}%</span>
+          <div class="stat-card">
+            <span class="stat-label">置信度</span>
+            <span class="stat-value">{{ (req.confidence * 100).toFixed(0) }}%</span>
           </div>
-          <div class="prom-card mentions">
-            <span class="prom-label">提及次数</span>
-            <span class="prom-value">{{ req.mention_count }}</span>
+          <div class="stat-card">
+            <span class="stat-label">提及次数</span>
+            <span class="stat-value">{{ req.mention_count }}</span>
           </div>
-          <div class="prom-card source">
-            <span class="prom-label">来源平台</span>
-            <span class="prom-value">{{ req.source_platform }}</span>
+          <div class="stat-card">
+            <span class="stat-label">来源平台</span>
+            <span class="stat-value">{{ req.source_platform }}</span>
           </div>
         </div>
 
-        <section class="ov-section">
+        <section class="detail-section" data-reveal="up" data-delay="200">
           <h2>描述</h2>
           <p class="desc-text">{{ req.description }}</p>
         </section>
 
-        <section class="ov-section">
+        <section class="detail-section" data-reveal="up" data-delay="250">
           <h2>情感分析</h2>
           <div class="emotion-row">
             <span class="emotion-tag" :class="req.emotion">{{ emotionLabel(req.emotion) }}</span>
@@ -54,12 +78,12 @@
           </div>
         </section>
 
-        <section v-if="req.source_url" class="ov-section">
+        <section v-if="req.source_url" class="detail-section" data-reveal="up" data-delay="300">
           <h2>来源链接</h2>
           <a :href="req.source_url" target="_blank" rel="noopener" class="source-link">{{ req.source_url }}</a>
         </section>
 
-        <section class="ov-section">
+        <section class="detail-section" data-reveal="up" data-delay="400">
           <h2>动作</h2>
           <div class="action-row">
             <button class="action-btn" disabled title="即将上线">标记为已验证</button>
@@ -68,28 +92,31 @@
         </section>
       </div>
 
-      <!-- Tab: Linked Objects -->
+      <!-- Tab: Links -->
       <div v-if="tab === 'links'" class="tab-content">
-        <div v-if="linksLoading" class="loading-state"><div class="spinner"></div><span>加载关联...</span></div>
-        <div v-else-if="links.length === 0" class="empty-state">暂无关联对象</div>
-        <div v-else class="links-list">
-          <div v-for="group in groupedLinks" :key="group.label" class="link-group">
+        <div v-if="linksLoading" class="loading-state" data-reveal="scale">
+          <div class="spinner"></div>
+          <span>加载关联...</span>
+        </div>
+        <div v-else-if="links.length === 0" class="empty-state" data-reveal="up">暂无关联对象</div>
+        <div v-else class="links-list" data-reveal="up">
+          <div v-for="(group, gi) in groupedLinks" :key="group.label" class="link-group" :data-reveal="'up'" :data-delay="(gi * 100 + 100).toString()">
             <h3>{{ group.label }} ({{ group.items.length }})</h3>
             <div v-for="item in group.items" :key="item.id" class="link-item">
-              <span class="link-direction">{{ item.direction === 'outgoing' ? '→' : '←' }}</span>
-              <span class="link-type-tag">{{ item.link_type }}</span>
-              <span class="link-target-type">{{ item.other_type }}</span>
-              <span class="link-target-id">{{ item.other_id }}</span>
+              <span class="link-dir">{{ item.direction === 'outgoing' ? '→' : '←' }}</span>
+              <span class="link-type">{{ item.link_type }}</span>
+              <span class="link-target">{{ item.other_type }}</span>
+              <span class="link-id">{{ item.other_id }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Tab: Similar (stub) -->
+      <!-- Tab: Similar -->
       <div v-if="tab === 'similar'" class="tab-content">
-        <div class="empty-state">
+        <div class="empty-state" data-reveal="up">
           <p>相似需求检索即将上线</p>
-          <p class="hint">基于 ChromaDB 向量相似度，发现语义相近的需求</p>
+          <p class="hint">基于 LanceDB 向量相似度，发现语义相近的需求</p>
         </div>
       </div>
     </template>
@@ -100,6 +127,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../api/client'
+import { useReveal } from '../composables/useReveal'
+
+const pageRef = ref<HTMLElement | null>(null)
+useReveal(pageRef)
 
 const route = useRoute()
 const pathParam = computed(() => route.query.path as string)
@@ -111,20 +142,12 @@ const tab = ref('overview')
 const links = ref<any[]>([])
 const linksLoading = ref(false)
 
-function sentimentLabel(s: string): string {
-  return { strong: '强烈', moderate: '中等', mild: '轻微' }[s] || s
-}
-
-function emotionLabel(e: string): string {
-  return { positive: '😊 正向', negative: '😞 负向', neutral: '😐 中性' }[e] || e
-}
+function sentimentLabel(s: string): string { return { strong: '强烈', moderate: '中等', mild: '轻微' }[s] || s }
+function emotionLabel(e: string): string { return { positive: '正向', negative: '负向', neutral: '中性' }[e] || e }
 
 const groupedLinks = computed(() => {
   const groups: Record<string, { label: string; items: any[] }> = {}
-  const labels: Record<string, string> = {
-    derived_from: '来源于', contains: '包含', generates: '生成',
-    references: '引用', verified_by: '被验证', executed_in: '执行于',
-  }
+  const labels: Record<string, string> = { derived_from: '来源于', contains: '包含', generates: '生成', references: '引用', verified_by: '被验证', executed_in: '执行于' }
   for (const l of links.value) {
     const key = l.link_type
     if (!groups[key]) groups[key] = { label: labels[key] || key, items: [] }
@@ -133,9 +156,7 @@ const groupedLinks = computed(() => {
   return Object.values(groups)
 })
 
-function copyTitle() {
-  if (req.value?.title) navigator.clipboard.writeText(req.value.title)
-}
+function copyTitle() { if (req.value?.title) navigator.clipboard.writeText(req.value.title) }
 
 async function fetchAll() {
   loading.value = true; error.value = ''
@@ -162,63 +183,423 @@ onMounted(fetchAll)
 </script>
 
 <style scoped>
-.req-detail { display: flex; flex-direction: column; gap: 20px; }
-.loading-state, .error-banner, .empty-state { display: flex; align-items: center; gap: 12px; padding: 40px; border-radius: 12px; justify-content: center; color: var(--slate-500); }
-.error-banner { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); }
-.retry-btn { padding: 4px 12px; border-radius: 6px; border: 1px solid var(--error-border); background: transparent; color: var(--error-text); cursor: pointer; }
-.spinner { width: 20px; height: 20px; border: 2px solid var(--slate-300); border-top-color: var(--teal-500); border-radius: 50%; animation: spin 0.8s linear infinite; }
+/* ── Page layout ── */
+.req-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+/* ── Loading / Error / Empty ── */
+.loading-state,
+.error-banner,
+.empty-state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-7);
+  border-radius: var(--radius-xl);
+  justify-content: center;
+  color: var(--color-text-secondary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+}
+.error-banner {
+  background: rgba(255, 59, 48, 0.06);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 59, 48, 0.2);
+  color: var(--color-danger);
+}
+.retry-btn {
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all var(--duration-normal) var(--ease-apple);
+}
+.retry-btn:hover {
+  background: rgba(255, 59, 48, 0.08);
+}
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-light);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
 @keyframes spin { to { transform: rotate(360deg); } }
-.empty-state { flex-direction: column; }
-.empty-state a { color: var(--teal-500); }
+.empty-state {
+  flex-direction: column;
+}
+.empty-state a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity var(--duration-normal) var(--ease-apple);
+}
+.empty-state a:hover { opacity: 0.7; }
+.hint {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
 
-.ov-header { display: flex; flex-direction: column; gap: 4px; }
-.back-link { font-size: 13px; color: var(--teal-500); text-decoration: none; }
-.ov-title { font-size: 22px; font-weight: 700; color: var(--slate-800); margin: 0; }
-.ov-meta { font-size: 12px; color: var(--slate-500); }
+/* ── Hero ── */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-9) var(--space-7) var(--space-7);
+  background: var(--gradient-hero-subtle);
+}
+.hero-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  animation: float 8s ease-in-out infinite;
+}
+.orb--blue {
+  width: 300px;
+  height: 300px;
+  background: rgba(0, 122, 255, 0.2);
+  top: -80px;
+  left: -60px;
+}
+.orb--purple {
+  width: 250px;
+  height: 250px;
+  background: rgba(88, 86, 214, 0.18);
+  top: -40px;
+  right: -40px;
+  animation-delay: -3s;
+}
+.orb--pink {
+  width: 200px;
+  height: 200px;
+  background: rgba(240, 147, 251, 0.15);
+  bottom: -60px;
+  left: 40%;
+  animation-delay: -5s;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
 
-.tabs { display: flex; border-bottom: 1px solid var(--card-border); }
-.tabs button { padding: 10px 20px; border: none; background: transparent; color: var(--slate-500); font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; }
-.tabs button.active { color: var(--teal-600); border-bottom-color: var(--teal-500); font-weight: 600; }
-.tab-content { display: flex; flex-direction: column; gap: 20px; }
+/* ── Header ── */
+.back-link {
+  font-size: 13px;
+  color: var(--color-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  transition: opacity var(--duration-normal) var(--ease-apple);
+  width: fit-content;
+}
+.back-link:hover { opacity: 0.7; }
+.detail-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+.detail-meta {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.meta-tag {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+}
+.meta-dot { color: var(--color-text-tertiary); }
 
-.prominent-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
-.prom-card { background: var(--slate-50); border: 1px solid var(--card-border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
-.prom-card.strong { border-left: 3px solid var(--amber-400); }
-.prom-card.moderate { border-left: 3px solid var(--teal-400); }
-.prom-card.mild { border-left: 3px solid var(--slate-400); }
-.prom-card.confidence { border-left: 3px solid var(--emerald-400); }
-.prom-card.mentions { border-left: 3px solid var(--teal-400); }
-.prom-card.source { border-left: 3px solid var(--slate-400); }
-.prom-label { font-size: 11px; color: var(--slate-500); text-transform: uppercase; }
-.prom-value { font-size: 18px; font-weight: 700; color: var(--slate-800); }
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-1);
+  box-shadow: var(--shadow-glass);
+}
+.tabs button {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  font-family: inherit;
+  font-weight: 500;
+  transition: all var(--duration-normal) var(--ease-apple);
+}
+.tabs button.active {
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+.tabs button:hover:not(.active) {
+  color: var(--color-text);
+  background: rgba(0, 0, 0, 0.03);
+}
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
 
-.ov-section { background: var(--slate-50); border: 1px solid var(--card-border); border-radius: 10px; padding: 18px; }
-.ov-section h2 { font-size: 14px; font-weight: 600; color: var(--slate-800); margin: 0 0 10px; }
-.desc-text { font-size: 13px; color: var(--slate-600); line-height: 1.7; white-space: pre-wrap; margin: 0; }
+/* ── Stat cards ── */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+.stat-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-glass);
+  transition: box-shadow var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple);
+}
+.stat-card:hover {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
+}
+.stat-card.strong { border-left: 3px solid var(--color-warning); }
+.stat-card.moderate { border-left: 3px solid var(--color-primary); }
+.stat-card.mild { border-left: 3px solid var(--color-text-tertiary); }
+.stat-label {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
 
-.emotion-row { display: flex; align-items: center; gap: 12px; }
-.emotion-tag { font-size: 13px; padding: 4px 10px; border-radius: 6px; }
-.emotion-tag.positive { background: var(--emerald-50); color: var(--emerald-700); }
-.emotion-tag.negative { background: var(--amber-50); color: var(--amber-700); }
-.emotion-tag.neutral { background: var(--slate-100); color: var(--slate-600); }
-.sentiment-bar { flex: 1; height: 8px; background: var(--slate-200); border-radius: 4px; overflow: hidden; }
-.sent-fill { height: 100%; background: var(--teal-500); border-radius: 4px; }
+/* ── Detail sections ── */
+.detail-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-glass);
+  transition: box-shadow var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple);
+}
+.detail-section:hover {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
+}
+.detail-section h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 var(--space-4);
+  letter-spacing: -0.01em;
+}
+.desc-text {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  margin: 0;
+}
 
-.source-link { font-size: 12px; color: var(--teal-500); word-break: break-all; }
+/* ── Emotion ── */
+.emotion-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.emotion-tag {
+  font-size: 13px;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.emotion-tag.positive { background: var(--color-success-bg); color: var(--color-success); }
+.emotion-tag.negative { background: var(--color-danger-bg); color: var(--color-danger); }
+.emotion-tag.neutral { background: var(--color-bg-secondary); color: var(--color-text-secondary); }
+.sentiment-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.sent-fill {
+  height: 100%;
+  background: var(--gradient-accent);
+  border-radius: var(--radius-full);
+  transition: width var(--duration-slow) var(--ease-out);
+}
 
-.action-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.action-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--slate-100); color: var(--slate-700); font-size: 13px; cursor: pointer; }
-.action-btn:hover:not(:disabled) { background: var(--teal-50); border-color: var(--teal-300); color: var(--teal-700); }
-.action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* ── Source link ── */
+.source-link {
+  font-size: 14px;
+  color: var(--color-primary);
+  word-break: break-all;
+  text-decoration: none;
+  transition: opacity var(--duration-normal) var(--ease-apple);
+}
+.source-link:hover { opacity: 0.7; }
 
-.links-list { display: flex; flex-direction: column; gap: 12px; }
-.link-group { background: var(--slate-50); border: 1px solid var(--card-border); border-radius: 10px; padding: 14px; }
-.link-group h3 { font-size: 13px; font-weight: 600; color: var(--slate-700); margin: 0 0 8px; }
-.link-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--slate-100); font-size: 12px; }
+/* ── Action buttons ── */
+.action-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.action-btn {
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur));
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: all var(--duration-normal) var(--ease-apple);
+}
+.action-btn:hover:not(:disabled) {
+  background: var(--color-primary-bg);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-1px);
+}
+.action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Links ── */
+.links-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.link-group {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-glass);
+  transition: box-shadow var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple);
+}
+.link-group:hover {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
+}
+.link-group h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 var(--space-3);
+}
+.link-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 13px;
+}
 .link-item:last-child { border-bottom: none; }
-.link-direction { color: var(--slate-400); font-weight: 700; }
-.link-type-tag { background: var(--teal-50); color: var(--teal-700); padding: 2px 8px; border-radius: 4px; font-size: 11px; }
-.link-target-type { color: var(--slate-500); }
-.link-target-id { color: var(--slate-700); font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hint { font-size: 12px; color: var(--slate-400); margin: 0; }
+.link-dir {
+  color: var(--color-text-tertiary);
+  font-weight: 700;
+  font-size: 14px;
+}
+.link-type {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+.link-target {
+  color: var(--color-text-secondary);
+}
+.link-id {
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .req-detail {
+    padding: 0 var(--space-4);
+  }
+  .hero {
+    padding: var(--space-7) var(--space-5) var(--space-5);
+  }
+  .detail-title {
+    font-size: 24px;
+  }
+  .stat-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 </style>

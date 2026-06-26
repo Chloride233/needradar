@@ -7,19 +7,20 @@ test.describe('Homepage', () => {
     await expect(page.locator('.hero-title')).toBeVisible()
   })
 
-  test('shows the sidebar with 3 core navigation items', async ({ page }) => {
+  test('shows the sidebar with navigation groups', async ({ page }) => {
     await page.goto('/')
     const navItems = page.locator('.nav-item')
-    await expect(navItems).toHaveCount(3)
-    const firstItem = navItems.first()
-    await expect(firstItem).toHaveClass(/active/)
+    await expect(navItems.first()).toHaveClass(/active/)
+    // Verify grouped navigation structure
+    const groups = page.locator('.nav-group')
+    await expect(groups).toHaveCount(3)
   })
 
   test('shows the online status indicator', async ({ page }) => {
     await page.goto('/')
-    const pulse = page.locator('.pulse')
-    await expect(pulse).toBeVisible()
-    const statusLabel = page.locator('.status-label')
-    await expect(statusLabel).toBeVisible()
+    const dot = page.locator('.status-dot')
+    await expect(dot).toBeVisible()
+    const statusText = page.locator('.status-text')
+    await expect(statusText).toBeVisible()
   })
 })

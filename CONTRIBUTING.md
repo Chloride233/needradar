@@ -25,7 +25,7 @@
 | `NR_DEEPSEEK_API_KEY` | 是 | DeepSeek API 密钥 | `sk-xxx` |
 | `NR_DEBUG` | 否 | 调试模式（默认 false） | `true` |
 | `NR_LOG_LEVEL` | 否 | 日志级别（默认 INFO） | `DEBUG`, `INFO`, `WARN` |
-| `NR_CHROMA_PERSIST_DIR` | 否 | ChromaDB 持久化路径 | `./data/chroma` |
+| `NR_LANCEDB_DIR` | 否 | LanceDB 持久化路径 | `./data/lancedb` |
 | `NR_DATABASE_URL` | 否 | PostgreSQL 连接串（生产用） | `postgresql+asyncpg://...` |
 
 <!-- /AUTO-GENERATED -->
@@ -61,7 +61,7 @@ src/needradar/
   schemas/         # Pydantic 请求/响应 Schema
   services/        # 业务逻辑（analysis, report, scheduler, verification, vault, usage, prompt_optimizer）
   utils/           # 工具函数
-  vector/          # ChromaDB 向量存储（去重/检索）
+  vector/          # LanceDB 向量存储（去重/检索/RAG）
   cli.py           # 一键管道 CLI
   main.py          # FastAPI 入口
 frontend/          # Vue 3 + Naive UI（TypeScript）

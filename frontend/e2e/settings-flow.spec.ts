@@ -31,8 +31,8 @@ test.describe('Settings Flow — 页面结构', () => {
   })
 
   test('显示页面标题和描述', async ({ page }) => {
-    await expect(page.locator('.settings-header-title')).toHaveText('LLM 模型配置')
-    await expect(page.locator('.settings-header-desc')).toBeVisible()
+    await expect(page.locator('.hero-title')).toHaveText('LLM 模型配置')
+    await expect(page.locator('.hero-sub')).toBeVisible()
   })
 
   test('渲染所有预置模型', async ({ page }) => {
@@ -166,7 +166,7 @@ test.describe('Settings Flow — 空状态', () => {
       await route.fulfill({ json: { active: null, presets: [] } })
     })
     await page.goto('/settings')
-    await expect(page.locator('.settings-header-title')).toHaveText('LLM 模型配置')
+    await expect(page.locator('.hero-title')).toHaveText('LLM 模型配置')
     await expect(page.locator('.preset-card')).toHaveCount(0)
   })
 })

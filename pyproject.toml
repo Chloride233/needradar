@@ -22,7 +22,7 @@ dependencies = [
     "litellm>=1.81,<2.0",
 
     # Vector database
-    "chromadb>=0.5,<1.0",
+    "lancedb>=0.17",
 
     # HTTP client
     "httpx>=0.28",
@@ -35,6 +35,9 @@ dependencies = [
 
     # Scheduler
     "apscheduler>=3.10,<4.0",
+
+    # Agent orchestration
+    "burr>=0.40",
 ]
 
 [project.optional-dependencies]

@@ -41,10 +41,7 @@ const mockReport = {
 
 test.describe('Task Flow — 创建任务', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [] } })
-    })
-    await page.route('**/api/v1/tasks', async (route) => {
+    await page.route('**/api/v1/tasks**', async (route) => {
       if (route.request().method() === 'POST') {
         await route.fulfill({ json: { id: 99, status: 'pending' } })
       } else {
@@ -97,14 +94,19 @@ test.describe('Task Flow — 创建任务', () => {
   test('点击"开始挖掘"按钮触发创建', async ({ page }) => {
     await page.locator('[aria-label="搜索关键词"]').fill('Vue3实战')
     await page.locator('[aria-label="开始挖掘"]').click()
-    await expect(page.locator('[aria-label="搜索关键词"]')).toHaveValue('')
+    // Wait for the async API call to complete and input to be cleared
+    await expect(page.locator('[aria-label="搜索关键词"]')).toHaveValue('', { timeout: 5000 })
   })
 })
 
 test.describe('Task Flow — 任务列表', () => {
   test('空任务列表显示空状态', async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [] } })
+    await page.route('**/api/v1/tasks**', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ json: { items: [] } })
+      } else {
+        await route.continue()
+      }
     })
     await page.route('**/api/v1/trending/suggest-keywords**', async (route) => {
       await route.fulfill({ json: { projects: [] } })
@@ -115,35 +117,47 @@ test.describe('Task Flow — 任务列表', () => {
   })
 
   test('任务列表渲染所有状态的任务', async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: mockTasks } })
+    await page.route('**/api/v1/tasks**', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ json: { items: mockTasks } })
+      } else {
+        await route.continue()
+      }
     })
     await page.route('**/api/v1/trending/suggest-keywords**', async (route) => {
       await route.fulfill({ json: { projects: mockSuggestions } })
     })
     await page.goto('/tasks')
-    await expect(page.locator('.task-item')).toHaveCount(4)
-    await expect(page.locator('.badge-completed')).toContainText('已完成')
-    await expect(page.locator('.badge-running')).toContainText('运行中')
-    await expect(page.locator('.badge-failed')).toContainText('失败')
-    await expect(page.locator('.badge-pending')).toContainText('排队中')
+    await expect(page.locator('.task-item')).toHaveCount(4, { timeout: 10000 })
+    await expect(page.locator('.badge-completed').first()).toContainText('已完成')
+    await expect(page.locator('.badge-running').first()).toContainText('运行中')
+    await expect(page.locator('.badge-failed').first()).toContainText('失败')
+    await expect(page.locator('.badge-pending').first()).toContainText('排队中')
   })
 
   test('已完成任务显示"查看报告"按钮', async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [mockTasks[0]] } })
+    await page.route('**/api/v1/tasks**', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ json: { items: [mockTasks[0]] } })
+      } else {
+        await route.continue()
+      }
     })
     await page.route('**/api/v1/trending/suggest-keywords**', async (route) => {
       await route.fulfill({ json: { projects: [] } })
     })
     await page.goto('/tasks')
-    await expect(page.locator('.report-link-btn')).toBeVisible()
-    await expect(page.locator('.report-link-btn')).toHaveText('查看报告')
+    await expect(page.locator('.report-link-btn').first()).toBeVisible({ timeout: 10000 })
+    await expect(page.locator('.report-link-btn').first()).toHaveText('查看报告')
   })
 
   test('运行中任务显示实时刷新指示器', async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [mockTasks[1]] } })
+    await page.route('**/api/v1/tasks**', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ json: { items: [mockTasks[1]] } })
+      } else {
+        await route.continue()
+      }
     })
     await page.route('**/api/v1/trending/suggest-keywords**', async (route) => {
       await route.fulfill({ json: { projects: [] } })
@@ -153,21 +167,29 @@ test.describe('Task Flow — 任务列表', () => {
   })
 
   test('失败任务显示红色状态点', async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [mockTasks[2]] } })
+    await page.route('**/api/v1/tasks**', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ json: { items: [mockTasks[2]] } })
+      } else {
+        await route.continue()
+      }
     })
     await page.route('**/api/v1/trending/suggest-keywords**', async (route) => {
       await route.fulfill({ json: { projects: [] } })
     })
     await page.goto('/tasks')
-    await expect(page.locator('.task-item.task-failed .dot-failed')).toBeVisible()
+    await expect(page.locator('.task-item.task-failed .dot-failed').first()).toBeVisible({ timeout: 10000 })
   })
 })
 
 test.describe('Task Flow — 趋势推荐', () => {
   test('渲染趋势推荐列表', async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [] } })
+    await page.route('**/api/v1/tasks**', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ json: { items: [] } })
+      } else {
+        await route.continue()
+      }
     })
     await page.route('**/api/v1/trending/suggest-keywords**', async (route) => {
       await route.fulfill({ json: { projects: mockSuggestions } })
@@ -181,10 +203,7 @@ test.describe('Task Flow — 趋势推荐', () => {
 
   test('点击推荐项填充关键词并触发创建', async ({ page }) => {
     let taskCreated = false
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [] } })
-    })
-    await page.route('**/api/v1/tasks', async (route) => {
+    await page.route('**/api/v1/tasks**', async (route) => {
       if (route.request().method() === 'POST') {
         taskCreated = true
         await route.fulfill({ json: { id: 100, status: 'pending' } })
@@ -197,14 +216,20 @@ test.describe('Task Flow — 趋势推荐', () => {
     })
     await page.goto('/tasks')
     await page.locator('.suggest-item').first().click()
+    // Wait for the async createTask to complete
+    await page.waitForTimeout(1000)
     expect(taskCreated).toBe(true)
   })
 })
 
 test.describe('Task Flow — 报告弹窗', () => {
   test('点击查看报告打开弹窗', async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [mockTasks[0]] } })
+    await page.route('**/api/v1/tasks**', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ json: { items: [mockTasks[0]] } })
+      } else {
+        await route.continue()
+      }
     })
     await page.route('**/api/v1/trending/suggest-keywords**', async (route) => {
       await route.fulfill({ json: { projects: [] } })
@@ -219,8 +244,12 @@ test.describe('Task Flow — 报告弹窗', () => {
   })
 
   test('点击关闭按钮关闭弹窗', async ({ page }) => {
-    await page.route('**/api/v1/tasks?page_size=50', async (route) => {
-      await route.fulfill({ json: { items: [mockTasks[0]] } })
+    await page.route('**/api/v1/tasks**', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({ json: { items: [mockTasks[0]] } })
+      } else {
+        await route.continue()
+      }
     })
     await page.route('**/api/v1/trending/suggest-keywords**', async (route) => {
       await route.fulfill({ json: { projects: [] } })

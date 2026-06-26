@@ -100,20 +100,29 @@ class ReportService:
 
         context_text = "\n---\n".join(documents[:15])
 
+        # RAG: enrich with vault knowledge
+        rag_context = ""
+        try:
+            from needradar.services.rag_retriever import get_retriever
+            retriever = get_retriever()
+            rag_context = await retriever.retrieve_context(
+                query=keyword, n_results=5, min_score=0.3, max_chars=2000,
+            )
+        except Exception as e:
+            logger.debug("rag_report_context_skip", error=str(e))
+
         prompts = _load_prompts()
         analysis_prompt = prompts.get("report_analysis", "")
+
+        user_content = f"以下是检索到的相关需求数据：\n\n{context_text}"
+        if rag_context:
+            user_content += "\n\n" + rag_context
 
         try:
             analysis = await llm.complete([
                 {"role": "system", "content": analysis_prompt},
-                {
-                    "role": "user",
-                    "content": f"以下是检索到的相关需求数据：\n\n{context_text}",
-                },
-                {
-                    "role": "user",
-                    "content": f"分析关键词：{keyword}",
-                },
+                {"role": "user", "content": user_content},
+                {"role": "user", "content": f"分析关键词：{keyword}"},
             ])
             # Normalize literal \n from LLM output to actual newlines
             return analysis.replace('\\n', '\n')

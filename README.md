@@ -1,169 +1,246 @@
-# NeedRadar — AI 驱动的全网需求挖掘引擎
+<![CDATA[<div align="center">
 
-> 扫描全网讨论，发现下一个爆款 AI 产品的方向
+# 🔍 NeedRadar
 
-## 快速开始
+**AI-Powered User Needs Mining Engine**
 
-### 环境要求
+*Scan global tech discussions. Discover what to build next. Backed by data, verified by AI.*
 
-- Python 3.11+
-- Node.js 18+
-- [DeepSeek API Key](https://platform.deepseek.com/)（推荐）或 OpenAI API Key
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
+[![Vue 3](https://img.shields.io/badge/Vue-3-brightgreen.svg)](https://vuejs.org/)
 
-### 一键启动
-
-```bash
-# 1. 安装依赖
-pip install -e .
-cd frontend && npm install && cd ..
-
-# 2. 启动后端（默认端口 8900）
-python -m uvicorn needradar.main:app --host 127.0.0.1 --port 8900
-
-# 3. 启动前端（默认端口 5173）
-cd frontend && npx vite --port 5173
-```
-
-打开 http://localhost:5173 即可使用。
-
-### CLI 一行命令
-
-```bash
-# 全流程：爬取 → 提取 → 报告 → 验证
-python -m needradar.cli run "AI编程助手" --platforms github,stackoverflow
-
-# 仅生成报告（基于已有数据）
-python -m needradar.cli report "AI编程助手"
-
-# 查看当前状态
-python -m needradar.cli status
-```
-
-### 配置 API Key
-
-方式一：环境变量
-```bash
-export NR_DEEPSEEK_API_KEY=your-key-here
-```
-
-方式二：在 Web 界面 → 设置页直接配置
-
-## 核心功能
-
-| 功能 | 说明 |
-|------|------|
-| **多平台爬取** | GitHub Issues/Discussions、Stack Overflow、掘金 |
-| **AI 需求提取** | LLM 自动从讨论中提取结构化需求（痛点、场景、情感倾向） |
-| **语义去重** | 基于 Embedding 向量的需求去重，合并相似表述 |
-| **洞察报告** | 自动生成包含核心发现、需求聚类、痛点分析、行动建议的报告 |
-| **内容验证** | 8 步幻觉检测管道：事实核查、一致性校验、来源可靠性评估 |
-| **用量追踪** | Token 消耗、成本统计、缓存命中率、预算告警 |
-| **Obsidian 集成** | 所有内容存储为 Obsidian vault 中的 Markdown 文件 |
-
-## 技术栈
-
-| 层 | 技术 |
-|----|------|
-| 后端 | Python / FastAPI / SQLAlchemy / SQLite (WAL) |
-| AI | LiteLLM / DeepSeek V4 / ChromaDB |
-| 前端 | Vue 3 / Naive UI / ECharts / Pinia |
-| 存储 | SQLite + Obsidian Vault + ChromaDB 向量索引 |
-
-## 项目结构
-
-```
-NeedRadar/
-├── src/needradar/
-│   ├── api/v1/              # REST API（tasks, reports, requirements, verification...）
-│   ├── crawlers/            # 各平台爬虫（github, stackoverflow, juejin）
-│   ├── llm/                 # LLM 调用层（provider, presets, pricing, sanitizer）
-│   ├── models/              # 数据模型（crawl_task, llm_usage, verification）
-│   ├── services/            # 业务逻辑（analysis, report, verification, vault_store）
-│   ├── vector/              # ChromaDB 向量存储（去重 + RAG）
-│   └── cli.py               # CLI 入口
-├── frontend/src/
-│   └── views/               # 页面（Dashboard, Tasks, Requirements, Reports, Verification, Settings）
-├── config/
-│   ├── prompts.yaml         # LLM Prompt 模板（可自定义）
-│   ├── platforms.yaml       # 平台爬虫配置
-│   └── default.yaml         # 默认配置
-├── vault/                   # Obsidian vault（内容存储）
-│   ├── 01-原始素材库/
-│   ├── 02-需求池/
-│   ├── 03-分析车间/          # 初稿、报告
-│   ├── 04-报告归档/
-│   └── 05-工作日志/
-├── data/                    # 运行时数据（gitignore）
-│   ├── needradar.db         # SQLite 数据库
-│   ├── chroma/              # ChromaDB 持久化
-│   └── llm_config.json      # LLM 配置持久化
-└── CLAUDE.md                # AI 协作指引
-```
-
-## 自定义报告模板
-
-报告生成的 Prompt 存储在 `config/prompts.yaml`，可直接编辑：
-
-- `report_analysis` — 报告分析 prompt
-- `requirement_extraction` — 需求提取 prompt
-- `sentiment_analysis` — 情感分析 prompt
-
-修改后无需重启，下次调用自动生效。
-
-## API 概览
-
-| 端点 | 方法 | 说明 |
-|------|------|------|
-| `/api/v1/tasks` | POST | 创建爬取任务 |
-| `/api/v1/tasks` | GET | 任务列表 |
-| `/api/v1/tasks/sse/stream` | GET | SSE 实时任务流 |
-| `/api/v1/reports` | POST | 生成报告 |
-| `/api/v1/reports` | GET | 报告列表 |
-| `/api/v1/requirements` | GET | 需求列表（支持搜索/筛选） |
-| `/api/v1/verification/verify` | POST | 触发内容验证 |
-| `/api/v1/verification/results` | GET | 验证结果列表 |
-| `/api/v1/usage/summary` | GET | 用量统计 |
-| `/api/v1/dashboard` | GET | 仪表盘数据 |
-| `/api/v1/llm/config` | GET/PUT | LLM 配置 |
-
-完整 API 文档：启动后访问 http://localhost:8900/docs
-
-## 工作流程
-
-```
-用户输入关键词
-      │
-      ▼
-┌─ Phase 1: 并发爬取 ─┐
-│  GitHub │ SO │ 掘金  │  ← 3 个平台同时爬取
-└────────┴────┴───────┘
-      │
-      ▼
-┌─ Phase 2: AI 提取 ──┐
-│  每条讨论 → LLM 提取  │  ← 结构化需求（标题/描述/痛点/场景/情感）
-│  Embedding 向量去重   │  ← 合并相似需求
-└──────────────────────┘
-      │
-      ▼
-┌─ Phase 3: 报告生成 ──┐
-│  RAG 检索 + LLM 分析  │  ← 核心发现/聚类/痛点/建议
-│  写入 Obsidian Vault  │
-└──────────────────────┘
-      │
-      ▼
-┌─ Phase 4: 内容验证 ──┐
-│  声明提取 → 事实核查   │  ← 8 步幻觉检测
-│  一致性 → 来源可靠性   │  ← 加权评分 0-100
-└──────────────────────┘
-```
-
-## 成本优化
-
-- DeepSeek V4 Flash 作为默认模型（Input ¥1/M，Output ¥2/M）
-- 共享 System Prefix 利用 DeepSeek 前缀缓存（缓存命中 Token 成本降低 50%+）
-- 批量处理减少 API 调用次数
-- 用量仪表盘实时监控成本和缓存命中率
+</div>
 
 ---
 
-*NeedRadar — 让每一个 AI 产品方向，都有数据支撑。*
+## What is NeedRadar?
+
+NeedRadar is an **end-to-end AI agent** that mines user needs from global tech discussions — GitHub Issues, Stack Overflow, Juejin, Bilibili — and transforms them into structured, verified insight reports.
+
+It's not just a scraper. It's a **needs discovery pipeline** with human-in-the-loop quality gates, RAG-powered context enrichment, and hallucination detection.
+
+```
+Keyword → Crawl → AI Extract → Quality Gate → Report → Verify → Knowledge
+            ↑          ↑              ↑
+         4 platforms  LLM + RAG    Human confirms
+```
+
+## Why?
+
+> The bottleneck in AI product development isn't coding — it's knowing **what to build**.
+
+Most teams build features based on intuition. NeedRadar replaces that with a systematic pipeline:
+
+- **Crawl** real discussions from where developers actually talk
+- **Extract** structured needs with LLM (pain points, scenarios, sentiment)
+- **Verify** reports against source material (8-step hallucination detection)
+- **Learn** — every human correction feeds back into the knowledge base
+
+## Quick Start
+
+### Prerequisites
+
+- Python 3.11+
+- Node.js 18+
+- A [DeepSeek API Key](https://platform.deepseek.com/) (recommended) or OpenAI/Anthropic key
+
+### Install & Run
+
+```bash
+# Clone
+git clone https://github.com/YOUR_USERNAME/needradar.git
+cd needradar
+
+# Backend
+pip install -e .
+export NR_DEEPSEEK_API_KEY=your-key-here
+python -m uvicorn needradar.main:app --host 127.0.0.1 --port 8900
+
+# Frontend (new terminal)
+cd frontend
+npm install
+npx vite --port 5173
+```
+
+Open **http://localhost:5173** — the Agent Command Center.
+
+### One-Line CLI
+
+```bash
+# Full pipeline: crawl → extract → report → verify
+python -m needradar.cli run "AI coding assistant" --platforms github,stackoverflow
+```
+
+## Features
+
+| Feature | What it does |
+|---------|-------------|
+| 🕷️ **Multi-platform Crawl** | GitHub Issues/Discussions, Stack Overflow, Juejin, Bilibili — concurrent, incremental, fingerprint-based dedup |
+| 🧠 **AI Needs Extraction** | LLM extracts structured requirements: title, description, pain point, scenario, sentiment, confidence |
+| 🚦 **Quality Gates** | 3 human-in-the-loop checkpoints (material → requirement → insight). Approve, reject, or edit before proceeding |
+| 📊 **Insight Reports** | RAG-enriched analysis with need clustering, pain point mapping, and actionable recommendations |
+| ✅ **Content Verification** | 8-step hallucination detection: claim extraction → fact check → consistency → source reliability → weighted score |
+| 🔮 **RAG Knowledge Base** | Vault content vectorized into LanceDB. Historical context enriches every LLM call |
+| 📝 **Obsidian Native** | All content stored as Markdown in an Obsidian vault — browse, search, link with your existing knowledge base |
+| 💰 **Cost Tracking** | Token usage, cost breakdown, cache hit rate, budget alerts — DeepSeek V4 Flash at ¥1/M input |
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Agent Command Center                  │
+│              (Vue 3 + Naive UI Dashboard)                │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐  │
+│  │ Crawlers │  │   LLM    │  │ LanceDB  │  │ Vault  │  │
+│  │ GitHub   │  │ LiteLLM  │  │ (vector) │  │ (Obsi- │  │
+│  │ SO/Juejin│  │ DeepSeek │  │ 721 reqs │  │ dian)  │  │
+│  │ Bilibili │  │          │  │ 1134 rag │  │ 936 md │  │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └───┬────┘  │
+│       │              │              │            │       │
+│       └──────────────┴──────────────┴────────────┘       │
+│                          │                               │
+│              ┌───────────┴───────────┐                   │
+│              │ Pipeline Orchestrator  │                   │
+│              │    (Apache Burr)       │                   │
+│              │                        │                   │
+│              │  crawl → GATE → extract │                   │
+│              │  → GATE → report → GATE │                   │
+│              │  → archive → distill    │                   │
+│              └────────────────────────┘                   │
+│                                                         │
+│  FastAPI · SQLAlchemy · SQLite · APScheduler             │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | Python · FastAPI · SQLAlchemy · SQLite (WAL) |
+| **AI/LLM** | LiteLLM · DeepSeek V4 · LanceDB (vector search + RAG) |
+| **Orchestration** | Apache Burr (state machine + quality gates) |
+| **Frontend** | Vue 3 · Naive UI · ECharts · TypeScript |
+| **Storage** | SQLite + Obsidian Vault (Markdown) + LanceDB (embeddings) |
+| **Scheduler** | APScheduler (background tasks) |
+
+## Project Structure
+
+```
+needradar/
+├── src/needradar/
+│   ├── api/v1/           # REST API (16 modules)
+│   ├── crawlers/         # Platform crawlers (plugin-based)
+│   ├── llm/              # LLM layer (provider, pricing, sanitizer)
+│   ├── models/           # SQLAlchemy models
+│   ├── services/         # Business logic
+│   │   ├── pipeline_orchestrator.py  # Burr state machine
+│   │   ├── pipeline_actions.py       # Phase actions
+│   │   ├── rag_retriever.py          # RAG context retrieval
+│   │   ├── vault_vectorizer.py       # Vault → embeddings
+│   │   └── ...
+│   ├── vector/           # LanceDB vector store
+│   └── cli.py            # CLI entry point
+├── frontend/
+│   ├── src/views/        # 12 page components
+│   ├── src/composables/  # Vue composables (useAgent, useReveal)
+│   └── src/styles/       # Design tokens (Apple-inspired)
+├── config/
+│   └── prompts.yaml      # LLM prompt templates (editable)
+├── vault/                # Obsidian vault (content storage)
+└── data/                 # Runtime data (gitignored)
+```
+
+## Pipeline Flow
+
+```
+         ┌─────────────┐
+         │  User Input  │  keyword + platforms
+         └──────┬──────┘
+                ▼
+    ┌───────────────────────┐
+    │   1. CRAWL            │  GitHub / SO / Juejin / Bilibili
+    │   Concurrent, incr.   │  Fingerprint dedup, noise filter
+    └───────────┬───────────┘
+                ▼
+    ┌───────────────────────┐
+    │ 🚦 MATERIAL GATE      │  Human: review raw items
+    └───────────┬───────────┘
+                ▼
+    ┌───────────────────────┐
+    │   2. EXTRACT           │  LLM + RAG context
+    │   Structured needs     │  Embedding dedup
+    └───────────┬───────────┘
+                ▼
+    ┌───────────────────────┐
+    │ 🚦 REQUIREMENT GATE   │  Human: review extracted needs
+    └───────────┬───────────┘
+                ▼
+    ┌───────────────────────┐
+    │   3. REPORT + VERIFY   │  RAG analysis + 8-step verification
+    │   Insight report       │  Hallucination detection
+    └───────────┬───────────┘
+                ▼
+    ┌───────────────────────┐
+    │ 🚦 INSIGHT GATE       │  Human: review report quality
+    └───────────┬───────────┘
+                ▼
+    ┌───────────────────────┐
+    │   4. ARCHIVE + DISTILL │  Knowledge extraction
+    │   Feedback → Learning  │  Vault RAG index update
+    └───────────────────────┘
+```
+
+## Configuration
+
+### API Key
+
+```bash
+# Option 1: Environment variable
+export NR_DEEPSEEK_API_KEY=your-key
+
+# Option 2: Web UI → Settings page
+```
+
+### Custom Prompts
+
+Edit `config/prompts.yaml` — changes take effect immediately, no restart needed:
+
+- `requirement_extraction` — How needs are extracted from discussions
+- `report_analysis` — How insight reports are generated
+- `sentiment_analysis` — How sentiment is classified
+
+## API
+
+Full API docs: http://localhost:8900/docs
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/agent/status` | GET | Agent dashboard data (runs, gates, stats) |
+| `/api/v1/tasks` | POST/GET | Create/list crawl tasks |
+| `/api/v1/gates` | GET | Quality gates list |
+| `/api/v1/gates/{id}/approve` | POST | Approve a gate |
+| `/api/v1/reports` | POST/GET | Generate/list reports |
+| `/api/v1/requirements` | GET | Search/filter requirements |
+| `/api/v1/verification/verify` | POST | Run content verification |
+| `/api/v1/tasks/vault/index` | POST | Re-index vault for RAG |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR guidelines.
+
+## License
+
+[MIT](LICENSE)
+
+---
+
+<div align="center">
+
+**NeedRadar** — *Every AI product direction, backed by data.*
+
+</div>
+]]>

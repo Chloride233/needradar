@@ -1,6 +1,20 @@
 from fastapi import APIRouter
 
 from needradar.api.v1.dashboard import router as dashboard_router
+
+
+def _safe_count(vs) -> int:
+    """Sync wrapper for vector store count (used in health check)."""
+    try:
+        if hasattr(vs, "_table"):
+            return vs._table.count_rows()
+        if hasattr(vs, "_collection"):
+            return vs._collection.count()
+        return 0
+    except Exception as e:
+        from loguru import logger
+        logger.warning("vector_count_failed", error=str(e))
+        return 0
 from needradar.api.v1.entities import router as entities_router
 from needradar.api.v1.links import router as links_router
 from needradar.api.v1.llm_config import router as llm_config_router
@@ -17,6 +31,7 @@ from needradar.api.v1.proposals import router as proposals_router
 from needradar.api.v1.verification import router as verification_router
 from needradar.api.v1.gates import router as gates_router
 from needradar.api.v1.feedback import router as feedback_router
+from needradar.api.v1.agent import router as agent_router
 
 router = APIRouter(prefix="/api/v1")
 
@@ -32,15 +47,14 @@ async def health_detail():
 
     result = {"status": "ok", "version": "0.1.0", "components": {}}
 
-    # ChromaDB status (run in thread to avoid blocking)
+    # Vector store status (run in thread to avoid blocking)
     try:
-        from needradar.vector.chroma_store import _get_client
-        client = await asyncio.to_thread(_get_client)
-        client.heartbeat()
-        coll = client.get_or_create_collection("requirements")
-        result["components"]["chromadb"] = {"status": "ok", "vectors": coll.count()}
+        from needradar.vector import create_vector_store
+        vs = await asyncio.to_thread(create_vector_store)
+        count = await asyncio.to_thread(lambda: _safe_count(vs))
+        result["components"]["vector_store"] = {"status": "ok", "backend": "lancedb", "vectors": count}
     except Exception as e:
-        result["components"]["chromadb"] = {"status": "error", "error": str(e)}
+        result["components"]["vector_store"] = {"status": "error", "error": str(e)}
         result["status"] = "degraded"
 
     # Vault status
@@ -73,3 +87,4 @@ router.include_router(scheduler_router)
 router.include_router(prompt_optimizer_router)
 router.include_router(gates_router)
 router.include_router(feedback_router)
+router.include_router(agent_router)

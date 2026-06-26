@@ -45,12 +45,14 @@ src/needradar/
   llm/                    # LLM 调用层（provider, pricing, presets, sanitizer）
   models/                 # SQLAlchemy 数据模型
   schemas/                # Pydantic 请求/响应 Schema
-  services/               # 业务逻辑（analysis, report, scheduler, verification, vault, usage, prompt_optimizer）
+  services/               # 业务逻辑（pipeline_orchestrator, pipeline_actions, analysis, report, rag_retriever, vault_vectorizer, scheduler, verification, vault, usage, prompt_optimizer）
   utils/                  # 工具函数
   vector/                 # LanceDB 向量存储（去重/检索/RAG）
   cli.py                  # CLI 一键管道
 frontend/                 # Vue 3 + Naive UI 前端（TypeScript）
-  src/views/              # 11 个页面组件
+  src/views/              # 12 个页面组件
+  src/composables/        # Vue composables (useAgent, useReveal)
+  src/styles/             # Design tokens (CSS variables)
   src/i18n/               # 国际化（zh/en）
 config/                   # prompts.yaml, prompt_test_cases.yaml 等
 scripts/                  # 开发辅助脚本

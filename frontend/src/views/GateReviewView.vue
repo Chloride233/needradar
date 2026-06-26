@@ -1,24 +1,31 @@
 <template>
-  <div class="gate-review-page">
-    <div class="page-header">
-      <button class="back-btn" @click="$router.push('/tasks')" aria-label="返回任务列表">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        返回
-      </button>
-      <h1 class="page-title">质量门审查</h1>
-      <span class="run-id">Run #{{ runId }}</span>
+  <div ref="pageRef" class="gate-review-page">
+    <!-- Hero Section -->
+    <div class="page-hero" data-reveal="up">
+      <div class="hero-orb hero-orb--1"></div>
+      <div class="hero-orb hero-orb--2"></div>
+      <div class="hero-content">
+        <button class="back-btn" @click="$router.push('/gates')" aria-label="返回质量门列表">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          返回
+        </button>
+        <div class="hero-text">
+          <h1 class="page-title">质量门审查</h1>
+          <span class="run-id">Run #{{ runId }}</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Gate Status Overview -->
-    <div class="gate-progress">
+    <!-- Gate Status Overview (only when gates exist) -->
+    <div v-if="gates.length > 0" class="gate-progress" data-reveal="up" data-delay="100">
       <div v-for="g in gateSteps" :key="g.type" class="gate-step" :class="g.status">
         <div class="step-icon">
-          <svg v-if="g.status === 'approved'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          <svg v-else-if="g.status === 'awaiting_review'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <svg v-else-if="g.status === 'rejected'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          <svg v-if="g.status === 'approved'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg v-else-if="g.status === 'awaiting_review'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <svg v-else-if="g.status === 'rejected'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
         </div>
         <span class="step-label">{{ g.label }}</span>
       </div>
@@ -31,7 +38,7 @@
     </div>
 
     <!-- Gate Detail -->
-    <div v-else-if="currentGate" class="gate-detail">
+    <div v-else-if="currentGate" class="gate-detail" data-reveal="up" data-delay="200">
       <div class="gate-header">
         <h2 class="gate-title">{{ gateTypeLabel(currentGate.gate_type) }}</h2>
         <span class="gate-status" :class="currentGate.status">{{ statusLabel(currentGate.status) }}</span>
@@ -45,7 +52,7 @@
             全选 ({{ approvedCount }}/{{ items.length }})
           </label>
         </div>
-        <div v-for="(item, idx) in items" :key="idx" class="item-card" :class="{ rejected: !item.approved }">
+        <div v-for="(item, idx) in items" :key="idx" class="item-card" :class="{ rejected: !item.approved }" :data-reveal="'up'" :data-delay="String(100 + idx * 50)">
           <div class="item-check">
             <input type="checkbox" v-model="item.approved" />
           </div>
@@ -62,7 +69,7 @@
 
       <!-- Requirement Gate: extracted requirements -->
       <div v-else-if="currentGate.gate_type === 'requirement'" class="items-list">
-        <div v-for="(item, idx) in items" :key="idx" class="item-card requirement-card" :class="{ rejected: !item.approved }">
+        <div v-for="(item, idx) in items" :key="idx" class="item-card requirement-card" :class="{ rejected: !item.approved }" :data-reveal="'up'" :data-delay="String(100 + idx * 50)">
           <div class="item-check">
             <input type="checkbox" v-model="item.approved" />
           </div>
@@ -79,7 +86,7 @@
 
       <!-- Insight Gate: report + verification -->
       <div v-else-if="currentGate.gate_type === 'insight'" class="items-list">
-        <div v-for="(item, idx) in items" :key="idx" class="item-card insight-card">
+        <div v-for="(item, idx) in items" :key="idx" class="item-card insight-card" :data-reveal="'up'" :data-delay="String(100 + idx * 50)">
           <div class="item-body">
             <div class="item-title">报告: {{ item.report_title }}</div>
             <div v-if="item.verification" class="verification-scores">
@@ -105,26 +112,43 @@
       </div>
 
       <!-- Review Actions -->
-      <div v-if="currentGate.status === 'awaiting_review'" class="review-actions">
+      <div v-if="currentGate.status === 'awaiting_review'" class="review-actions" data-reveal="up" data-delay="300">
         <textarea v-model="reviewerNote" class="review-note" placeholder="审查备注（可选）" rows="2"></textarea>
-        <div class="action-buttons">
-          <button class="btn reject" @click="rejectGate" :disabled="submitting">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+
+        <!-- Confirmation step -->
+        <div v-if="confirmAction" class="confirm-bar" :class="confirmAction">
+          <div class="confirm-text">
+            <strong>{{ confirmLabel }}</strong>
+            <span v-if="confirmAction === 'reject'">此操作将终止管道，已提取的数据不会丢失。</span>
+            <span v-else-if="confirmAction === 'edit'">将提交 {{ rejectedCount }} 项修改并继续。</span>
+            <span v-else>确认通过此质量门，管道将继续执行下一阶段。</span>
+          </div>
+          <div class="confirm-buttons">
+            <button class="btn-sm cancel" @click="confirmAction = ''" :disabled="submitting">取消</button>
+            <button class="btn-sm confirm" :class="confirmAction" @click="executeAction" :disabled="submitting">
+              {{ submitting ? '提交中...' : '确认' }}
+            </button>
+          </div>
+        </div>
+
+        <div v-else class="action-buttons">
+          <button class="btn reject" @click="confirmAction = 'reject'" :disabled="submitting">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             批驳
           </button>
-          <button class="btn edit" @click="editGate" :disabled="submitting">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <button class="btn edit" @click="confirmAction = 'edit'" :disabled="submitting">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             编辑后批准
           </button>
-          <button class="btn approve" @click="approveGate" :disabled="submitting">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <button class="btn approve" @click="confirmAction = 'approve'" :disabled="submitting">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             批准
           </button>
         </div>
       </div>
 
       <!-- Already reviewed -->
-      <div v-else class="review-result">
+      <div v-else class="review-result" data-reveal="up" data-delay="300">
         <span class="result-label">审查结果:</span>
         <span class="result-value" :class="currentGate.status">{{ statusLabel(currentGate.status) }}</span>
         <span v-if="currentGate.reviewer_note" class="result-note">"{{ currentGate.reviewer_note }}"</span>
@@ -133,10 +157,12 @@
 
     <!-- No gates -->
     <div v-else-if="!loading" class="empty-state">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
       </svg>
-      <p>暂无质量门</p>
+      <p>此管道暂无质量门</p>
+      <p class="empty-hint">质量门会在管道执行过程中自动创建</p>
+      <button class="back-link" @click="$router.push('/')">返回指挥中心</button>
     </div>
   </div>
 </template>
@@ -144,8 +170,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useReveal } from '../composables/useReveal'
 
 const route = useRoute()
+const pageRef = ref<HTMLElement | null>(null)
+useReveal(pageRef)
 const runId = computed(() => route.params.runId)
 
 const loading = ref(true)
@@ -154,6 +183,14 @@ const gates = ref<any[]>([])
 const currentGate = ref<any>(null)
 const items = ref<any[]>([])
 const reviewerNote = ref('')
+const confirmAction = ref('') // '' | 'approve' | 'reject' | 'edit'
+
+const confirmLabel = computed(() => {
+  const map: Record<string, string> = { approve: '确认批准', reject: '确认批驳', edit: '确认编辑后批准' }
+  return map[confirmAction.value] || ''
+})
+
+const rejectedCount = computed(() => items.value.filter((i: any) => !i.approved).length)
 
 const gateSteps = computed(() => {
   const types = [
@@ -207,6 +244,7 @@ async function loadGates() {
 
 async function loadGateDetail(gateId: number) {
   try {
+    confirmAction.value = ''
     const resp = await fetch(`/api/v1/gates/${gateId}`)
     const data = await resp.json()
     currentGate.value = data
@@ -214,6 +252,15 @@ async function loadGateDetail(gateId: number) {
   } catch (e) {
     console.error('Failed to load gate detail:', e)
   }
+}
+
+async function executeAction() {
+  if (!confirmAction.value) return
+  const action = confirmAction.value
+  confirmAction.value = ''
+  if (action === 'approve') await approveGate()
+  else if (action === 'reject') await rejectGate()
+  else if (action === 'edit') await editGate()
 }
 
 async function approveGate() {
@@ -294,154 +341,298 @@ onMounted(loadGates)
 </script>
 
 <style scoped>
+/* ── Page Layout ── */
 .gate-review-page {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 0 var(--space-6);
+  padding-bottom: var(--space-9);
 }
 
-.page-header {
+/* ── Hero Section ── */
+.page-hero {
+  position: relative;
+  padding: var(--space-8) 0 var(--space-7);
+  overflow: hidden;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.hero-orb--1 {
+  width: 320px;
+  height: 320px;
+  background: var(--color-primary);
+  top: -80px;
+  left: -60px;
+  opacity: 0.15;
+}
+
+.hero-orb--2 {
+  width: 240px;
+  height: 240px;
+  background: var(--color-secondary);
+  top: -40px;
+  right: -40px;
+  opacity: 0.12;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: var(--space-4);
+}
+
+.hero-text {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
 }
 
 .back-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: none;
-  border: 1px solid var(--card-border, #2a2a2a);
-  color: var(--text-secondary, #999);
-  padding: 6px 12px;
-  border-radius: 8px;
+  gap: var(--space-1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  color: var(--color-text-secondary);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 13px;
+  font-family: inherit;
+  transition: border-color var(--duration-normal) var(--ease-apple),
+              color var(--duration-normal) var(--ease-apple),
+              box-shadow var(--duration-normal) var(--ease-apple);
 }
-.back-btn:hover { border-color: var(--card-border-hover, #363636); }
+
+.back-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-glass-hover);
+}
 
 .page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-primary, #eee);
-  flex: 1;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .run-id {
-  font-size: 12px;
-  color: var(--text-secondary, #666);
-  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+  font-weight: 500;
 }
 
-/* Gate Progress */
+/* ── Gate Progress ── */
 .gate-progress {
   display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
 }
 
 .gate-step {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--card-border, #2a2a2a);
-  border-radius: 10px;
-  transition: all 0.2s;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
+  transition: border-color var(--duration-normal) var(--ease-apple),
+              background var(--duration-normal) var(--ease-apple),
+              box-shadow var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple);
 }
 
-.gate-step.approved { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.05); }
-.gate-step.awaiting_review { border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.05); }
-.gate-step.rejected { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+.gate-step:hover {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
+}
 
-.step-icon { display: flex; align-items: center; }
-.gate-step.approved .step-icon { color: #22c55e; }
-.gate-step.awaiting_review .step-icon { color: #f5a623; }
-.gate-step.rejected .step-icon { color: #ef4444; }
-.gate-step.pending .step-icon { color: #666; }
+.gate-step.approved {
+  border-color: var(--color-success);
+  background: rgba(52, 199, 89, 0.08);
+}
 
-.step-label { font-size: 13px; color: var(--text-secondary, #999); }
-.gate-step.awaiting_review .step-label { color: #f5a623; font-weight: 500; }
+.gate-step.awaiting_review {
+  border-color: var(--color-warning);
+  background: rgba(255, 149, 0, 0.08);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
 
-/* Loading */
+.gate-step.rejected {
+  border-color: var(--color-danger);
+  background: rgba(255, 59, 48, 0.08);
+}
+
+.step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-secondary);
+  transition: background var(--duration-normal) var(--ease-apple);
+}
+
+.gate-step.approved .step-icon { color: var(--color-success); background: var(--color-success-bg); }
+.gate-step.awaiting_review .step-icon { color: var(--color-warning); background: var(--color-warning-bg); }
+.gate-step.rejected .step-icon { color: var(--color-danger); background: var(--color-danger-bg); }
+.gate-step.pending .step-icon { color: var(--color-text-tertiary); }
+
+.step-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: color var(--duration-normal) var(--ease-apple);
+}
+
+.gate-step.awaiting_review .step-label { color: var(--color-warning); font-weight: 600; }
+.gate-step.approved .step-label { color: var(--color-success); }
+.gate-step.rejected .step-label { color: var(--color-danger); }
+
+/* ── Loading ── */
 .loading-state {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 48px;
-  color: var(--text-secondary, #666);
+  gap: var(--space-3);
+  padding: var(--space-9);
+  color: var(--color-text-secondary);
+  font-size: 15px;
 }
 
 .spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--card-border, #2a2a2a);
-  border-top-color: #f5a623;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-light);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Gate Detail */
+/* ── Gate Detail Card ── */
 .gate-detail {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--card-border, #2a2a2a);
-  border-radius: 12px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--shadow-glass);
+  transition: box-shadow var(--duration-normal) var(--ease-apple);
+}
+
+.gate-detail:hover {
+  box-shadow: var(--shadow-glass-hover);
 }
 
 .gate-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--card-border, #2a2a2a);
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--glass-border);
 }
 
-.gate-title { font-size: 16px; font-weight: 600; color: var(--text-primary, #eee); }
+.gate-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
 
 .gate-status {
   font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: 500;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
-.gate-status.awaiting_review { background: rgba(245,166,35,0.15); color: #f5a623; }
-.gate-status.approved { background: rgba(34,197,94,0.15); color: #22c55e; }
-.gate-status.rejected { background: rgba(239,68,68,0.15); color: #ef4444; }
 
-/* Items */
-.items-list { padding: 16px 20px; }
+.gate-status.awaiting_review {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.gate-status.approved {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.gate-status.rejected {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* ── Items List ── */
+.items-list {
+  padding: var(--space-5) var(--space-6);
+}
 
 .items-toolbar {
-  margin-bottom: 12px;
+  margin-bottom: var(--space-4);
 }
 
 .select-all {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   font-size: 13px;
-  color: var(--text-secondary, #999);
+  font-weight: 500;
+  color: var(--color-text-secondary);
   cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-apple);
 }
 
+.select-all:hover {
+  color: var(--color-text);
+}
+
+/* ── Item Cards ── */
 .item-card {
   display: flex;
-  gap: 12px;
-  padding: 12px 16px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--card-border, #2a2a2a);
-  border-radius: 10px;
-  margin-bottom: 8px;
-  transition: all 0.2s;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-glass);
+  transition: box-shadow var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple),
+              border-color var(--duration-normal) var(--ease-apple);
 }
-.item-card.rejected { opacity: 0.5; border-color: rgba(239,68,68,0.2); }
+
+.item-card:hover {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
+}
+
+.item-card.rejected {
+  opacity: 0.5;
+  border-color: var(--color-danger);
+}
 
 .item-check {
   display: flex;
@@ -449,161 +640,442 @@ onMounted(loadGates)
   padding-top: 2px;
 }
 
+.item-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
 .item-body { flex: 1; min-width: 0; }
 
 .item-title {
   font-size: 14px;
-  font-weight: 500;
-  color: var(--text-primary, #eee);
-  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+  line-height: 1.4;
 }
 
 .item-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
   font-size: 12px;
 }
 
 .platform-tag {
-  background: rgba(245,166,35,0.1);
-  color: #f5a623;
-  padding: 2px 8px;
-  border-radius: 4px;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
   font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .source-link {
-  color: var(--text-secondary, #666);
+  color: var(--color-text-tertiary);
   text-decoration: none;
+  font-weight: 500;
+  transition: color var(--duration-fast) var(--ease-apple);
 }
-.source-link:hover { color: #f5a623; }
+
+.source-link:hover { color: var(--color-primary); }
 
 .item-preview {
-  font-size: 12px;
-  color: var(--text-secondary, #666);
-  line-height: 1.5;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
   max-height: 60px;
   overflow: hidden;
 }
 
-/* Requirement tags */
-.sentiment-tag, .emotion-tag {
+/* ── Requirement Tags ── */
+.sentiment-tag,
+.emotion-tag {
   font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
-.sentiment-tag.strong { background: rgba(239,68,68,0.15); color: #ef4444; }
-.sentiment-tag.moderate { background: rgba(245,166,35,0.15); color: #f5a623; }
-.sentiment-tag.mild { background: rgba(34,197,94,0.15); color: #22c55e; }
-.emotion-tag.positive { background: rgba(34,197,94,0.15); color: #22c55e; }
-.emotion-tag.negative { background: rgba(239,68,68,0.15); color: #ef4444; }
-.emotion-tag.neutral { background: rgba(255,255,255,0.08); color: #999; }
 
-.confidence { color: var(--text-secondary, #666); font-size: 12px; }
+.sentiment-tag.strong { background: var(--color-danger-bg); color: var(--color-danger); }
+.sentiment-tag.moderate { background: var(--color-warning-bg); color: var(--color-warning); }
+.sentiment-tag.mild { background: var(--color-success-bg); color: var(--color-success); }
 
-/* Verification scores */
+.emotion-tag.positive { background: var(--color-success-bg); color: var(--color-success); }
+.emotion-tag.negative { background: var(--color-danger-bg); color: var(--color-danger); }
+.emotion-tag.neutral { background: var(--color-bg-tertiary); color: var(--color-text-secondary); }
+
+.confidence {
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ── Verification Scores ── */
 .verification-scores {
   display: flex;
-  gap: 16px;
-  margin-top: 8px;
+  gap: var(--space-5);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--glass-border);
 }
 
 .score-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
+  min-width: 64px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  transition: transform var(--duration-normal) var(--ease-apple);
 }
 
-.score-label { font-size: 11px; color: var(--text-secondary, #666); }
-.score-value { font-size: 18px; font-weight: 600; color: var(--text-primary, #eee); }
-.score-value.warn { color: #ef4444; }
+.score-item:hover {
+  transform: translateY(-2px);
+}
 
-/* Review Actions */
+.score-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.score-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-value.warn { color: var(--color-danger); }
+
+/* ── Confirm Bar ── */
+.confirm-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid;
+  animation: slideUp 200ms var(--ease-apple);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.confirm-bar.approve {
+  background: rgba(52, 199, 89, 0.06);
+  border-color: rgba(52, 199, 89, 0.2);
+}
+
+.confirm-bar.reject {
+  background: rgba(255, 59, 48, 0.06);
+  border-color: rgba(255, 59, 48, 0.2);
+}
+
+.confirm-bar.edit {
+  background: rgba(255, 149, 0, 0.06);
+  border-color: rgba(255, 149, 0, 0.2);
+}
+
+.confirm-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.confirm-text strong {
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.btn-sm {
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all var(--duration-fast) var(--ease-apple);
+}
+
+.btn-sm.cancel {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.btn-sm.cancel:hover {
+  background: var(--color-bg-secondary);
+}
+
+.btn-sm.confirm.approve {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.btn-sm.confirm.reject {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.btn-sm.confirm.edit {
+  background: var(--color-warning);
+  color: #fff;
+}
+
+.btn-sm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Review Actions ── */
 .review-actions {
-  padding: 16px 20px;
-  border-top: 1px solid var(--card-border, #2a2a2a);
+  padding: var(--space-5) var(--space-6);
+  border-top: 1px solid var(--glass-border);
 }
 
 .review-note {
   width: 100%;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--card-border, #2a2a2a);
-  border-radius: 8px;
-  padding: 10px 12px;
-  color: var(--text-primary, #eee);
-  font-size: 13px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  font-size: 14px;
   resize: vertical;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-4);
   font-family: inherit;
+  outline: none;
+  transition: border-color var(--duration-normal) var(--ease-apple),
+              box-shadow var(--duration-normal) var(--ease-apple);
 }
-.review-note:focus { outline: none; border-color: #f5a623; }
+
+.review-note::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.review-note:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+}
 
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: var(--space-3);
   justify-content: flex-end;
 }
 
 .btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: all 0.2s;
+  transition: background var(--duration-normal) var(--ease-apple),
+              border-color var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple),
+              box-shadow var(--duration-normal) var(--ease-apple);
 }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
 
 .btn.approve {
-  background: rgba(34,197,94,0.15);
-  color: #22c55e;
-  border-color: rgba(34,197,94,0.3);
+  background: var(--color-success);
+  color: #fff;
+  border-color: var(--color-success);
 }
-.btn.approve:hover:not(:disabled) { background: rgba(34,197,94,0.25); }
+
+.btn.approve:hover:not(:disabled) {
+  background: #2DB84E;
+  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.3);
+}
 
 .btn.reject {
-  background: rgba(239,68,68,0.15);
-  color: #ef4444;
-  border-color: rgba(239,68,68,0.3);
+  background: transparent;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
 }
-.btn.reject:hover:not(:disabled) { background: rgba(239,68,68,0.25); }
+
+.btn.reject:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+  box-shadow: 0 4px 16px rgba(255, 59, 48, 0.15);
+}
 
 .btn.edit {
-  background: rgba(245,166,35,0.15);
-  color: #f5a623;
-  border-color: rgba(245,166,35,0.3);
+  background: transparent;
+  color: var(--color-warning);
+  border-color: var(--color-warning);
 }
-.btn.edit:hover:not(:disabled) { background: rgba(245,166,35,0.25); }
 
-/* Review Result */
+.btn.edit:hover:not(:disabled) {
+  background: var(--color-warning-bg);
+  box-shadow: 0 4px 16px rgba(255, 149, 0, 0.15);
+}
+
+/* ── Review Result ── */
 .review-result {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 16px 20px;
-  border-top: 1px solid var(--card-border, #2a2a2a);
-  font-size: 13px;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-6);
+  border-top: 1px solid var(--glass-border);
+  font-size: 14px;
 }
 
-.result-label { color: var(--text-secondary, #666); }
-.result-value.approved { color: #22c55e; font-weight: 500; }
-.result-value.rejected { color: #ef4444; font-weight: 500; }
-.result-note { color: var(--text-secondary, #666); font-style: italic; }
+.result-label {
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+}
 
-/* Empty */
+.result-value.approved { color: var(--color-success); font-weight: 600; }
+.result-value.rejected { color: var(--color-danger); font-weight: 600; }
+
+.result-note {
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin-left: var(--space-1);
+}
+
+/* ── Empty State ── */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 48px;
-  color: var(--text-secondary, #666);
+  gap: var(--space-4);
+  padding: var(--space-9);
+  color: var(--color-text-tertiary);
+}
+
+.empty-state svg {
+  opacity: 0.4;
+}
+
+.empty-state p {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.empty-hint {
+  font-size: 13px;
+  color: var(--color-text-tertiary) !important;
+  font-weight: 400 !important;
+}
+
+.back-link {
+  margin-top: var(--space-4);
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--glass-bg);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--duration-fast) var(--ease-apple);
+}
+
+.back-link:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .gate-review-page {
+    padding: 0 var(--space-4);
+  }
+
+  .page-hero {
+    padding: var(--space-6) 0 var(--space-5);
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .gate-progress {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .gate-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .items-list {
+    padding: var(--space-4);
+  }
+
+  .item-card {
+    padding: var(--space-3);
+  }
+
+  .review-actions {
+    padding: var(--space-4);
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn {
+    justify-content: center;
+  }
+
+  .verification-scores {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .review-result {
+    flex-wrap: wrap;
+    padding: var(--space-4);
+  }
 }
 </style>

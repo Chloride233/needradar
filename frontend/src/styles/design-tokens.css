@@ -1,0 +1,148 @@
+/*
+ * NeedRadar Design Tokens — Apple.com-inspired
+ * Glass + Gradient + Motion
+ */
+
+:root {
+  /* ── Colors: Primary ── */
+  --color-primary: #007AFF;
+  --color-primary-hover: #0066D6;
+  --color-primary-pressed: #004FAD;
+  --color-primary-bg: rgba(0, 122, 255, 0.08);
+  --color-primary-bg-hover: rgba(0, 122, 255, 0.12);
+
+  /* ── Colors: Semantic ── */
+  --color-secondary: #5856D6;
+  --color-success: #34C759;
+  --color-success-bg: rgba(52, 199, 89, 0.08);
+  --color-warning: #FF9500;
+  --color-warning-bg: rgba(255, 149, 0, 0.08);
+  --color-danger: #FF3B30;
+  --color-danger-bg: rgba(255, 59, 48, 0.08);
+
+  /* ── Colors: Neutral ── */
+  --color-bg: #FFFFFF;
+  --color-bg-secondary: #F5F5F7;
+  --color-bg-tertiary: #E8E8ED;
+  --color-border: #D2D2D7;
+  --color-border-light: #E8E8ED;
+  --color-text: #1D1D1F;
+  --color-text-secondary: #86868B;
+  --color-text-tertiary: #AEAEB2;
+
+  /* ── Spacing (8px grid) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* ── Border Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  /* ── Typography ── */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+               'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+
+  /* ── Apple Glass ── */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-heavy: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-blur: 20px;
+  --glass-blur-heavy: 40px;
+
+  /* ── Apple Gradients ── */
+  --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #007AFF 75%, #00c6fb 100%);
+  --gradient-hero-subtle: linear-gradient(160deg, #E8E0FF 0%, #F0E6FF 20%, #E0F0FF 50%, #E6F9FF 80%, #F5F5F7 100%);
+  --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #F5F5F7 100%);
+  --gradient-accent: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+  --gradient-warm: linear-gradient(135deg, #FF9500 0%, #FF3B30 100%);
+  --gradient-mesh-1: radial-gradient(at 20% 80%, rgba(0, 122, 255, 0.15) 0%, transparent 50%);
+  --gradient-mesh-2: radial-gradient(at 80% 20%, rgba(88, 86, 214, 0.12) 0%, transparent 50%);
+  --gradient-mesh-3: radial-gradient(at 50% 50%, rgba(240, 147, 251, 0.08) 0%, transparent 50%);
+
+  /* ── Apple Motion ── */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-apple: cubic-bezier(0.23, 1, 0.32, 1);
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-reveal: 600ms;
+  --duration-hero: 800ms;
+
+  /* ── Shadows (Apple style — subtle, layered) ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --shadow-glass-hover: 0 12px 40px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  /* ── Layout ── */
+  --sidebar-width: 220px;
+  --content-max-width: 1200px;
+  --topbar-height: 0px;
+}
+
+/* ── Reveal Animation System ── */
+[data-reveal] {
+  opacity: 0;
+  transition: opacity var(--duration-reveal) var(--ease-apple),
+              transform var(--duration-reveal) var(--ease-apple);
+  transition-delay: calc(var(--reveal-delay, 0) * 1ms);
+}
+
+[data-reveal="up"]    { transform: translateY(30px); }
+[data-reveal="down"]  { transform: translateY(-30px); }
+[data-reveal="left"]  { transform: translateX(30px); }
+[data-reveal="right"] { transform: translateX(-30px); }
+[data-reveal="scale"] { transform: scale(0.92); }
+
+[data-reveal][data-revealed] {
+  opacity: 1;
+  transform: translate(0) scale(1);
+}
+
+/* Stagger delays via data-delay */
+[data-delay="100"] { --reveal-delay: 100; }
+[data-delay="150"] { --reveal-delay: 150; }
+[data-delay="200"] { --reveal-delay: 200; }
+[data-delay="250"] { --reveal-delay: 250; }
+[data-delay="300"] { --reveal-delay: 300; }
+[data-delay="400"] { --reveal-delay: 400; }
+[data-delay="500"] { --reveal-delay: 500; }
+
+/* ── Hero gradient animation ── */
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.3); }
+  50%      { box-shadow: 0 0 20px 4px rgba(0, 122, 255, 0.1); }
+}

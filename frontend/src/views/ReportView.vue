@@ -1,11 +1,24 @@
 <template>
-  <div class="report-page">
-    <!-- Generate -->
-    <div class="generate-card">
+  <div class="report-page" ref="pageRef">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-bg">
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+        <div class="hero-orb hero-orb-3"></div>
+      </div>
+      <div class="hero-content">
+        <h1 class="hero-title" data-reveal="up">洞察报告</h1>
+        <p class="hero-sub" data-reveal="up" data-delay="100">基于已采集的需求数据，自动生成结构化分析报告</p>
+      </div>
+    </section>
+
+    <!-- Generate Card -->
+    <div class="generate-card" data-reveal="up" data-delay="200">
       <div class="generate-content">
         <div class="generate-text">
-          <h3 class="generate-title">生成需求洞察报告</h3>
-          <p class="generate-desc">基于已采集的需求数据，自动生成结构化分析报告</p>
+          <h3 class="generate-title">生成新报告</h3>
+          <p class="generate-desc">输入关键词，AI 将自动分析需求数据并生成洞察报告</p>
         </div>
         <div class="generate-action">
           <div class="generate-input-wrap">
@@ -23,7 +36,7 @@
     </div>
 
     <!-- Report Display (viewing a specific report) -->
-    <div v-if="activeReport" class="report-card">
+    <div v-if="activeReport" class="report-card" data-reveal="up">
       <div class="report-toolbar">
         <div class="report-meta">
           <button class="back-btn" @click="activeReport = null">
@@ -36,30 +49,32 @@
           <h2 class="report-heading">{{ activeReport.title }}</h2>
           <span class="report-date">{{ activeReport.created_at }}</span>
         </div>
-        <button class="download-btn" @click="downloadReport">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          Markdown
-        </button>
-        <button class="download-btn" @click="downloadHtml">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-          </svg>
-          HTML
-        </button>
-        <button class="download-btn" @click="printReport">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
-          </svg>
-          Print / PDF
-        </button>
-        <button class="download-btn" @click="copyReport">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-          {{ copied ? 'Copied!' : 'Copy' }}
-        </button>
+        <div class="toolbar-actions">
+          <button class="download-btn" @click="downloadReport">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Markdown
+          </button>
+          <button class="download-btn" @click="downloadHtml">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+            HTML
+          </button>
+          <button class="download-btn" @click="printReport">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Print / PDF
+          </button>
+          <button class="download-btn" @click="copyReport">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            {{ copied ? 'Copied!' : 'Copy' }}
+          </button>
+        </div>
       </div>
       <div class="report-body">
         <div class="markdown-content" v-html="renderedMarkdown"></div>
@@ -67,7 +82,7 @@
     </div>
 
     <!-- Report List -->
-    <div v-else class="list-card">
+    <div v-else class="list-card" data-reveal="up" data-delay="300">
       <div class="list-header">
         <h3 class="list-title">
           历史报告
@@ -76,7 +91,7 @@
       </div>
 
       <div v-if="reports.length === 0" class="empty-state">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
           <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
@@ -85,7 +100,7 @@
       </div>
 
       <div v-else class="report-list">
-        <div v-for="report in reports" :key="report.title" class="report-item" @click="openReport(report)">
+        <div v-for="(report, index) in reports" :key="report.title" class="report-item" :data-reveal="'up'" :data-delay="String(100 + index * 60)" @click="openReport(report)">
           <div class="report-item-left">
             <div class="report-item-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -96,9 +111,9 @@
               <span class="report-item-title">{{ report.title }}</span>
               <div class="report-item-meta">
                 <span class="report-item-keyword">{{ report.keyword }}</span>
-                <span class="report-item-sep">·</span>
+                <span class="report-item-sep">&middot;</span>
                 <span class="report-item-stage">{{ report.stage }}</span>
-                <span class="report-item-sep">·</span>
+                <span class="report-item-sep">&middot;</span>
                 <span class="report-item-date">{{ report.created_at }}</span>
               </div>
             </div>
@@ -116,9 +131,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { marked } from 'marked'
 import { sanitize } from '../utils/sanitize'
+import { useReveal } from '../composables/useReveal'
 import api from '../api/client'
 
 marked.setOptions({ breaks: true, gfm: true })
+
+const pageRef = ref<HTMLElement | null>(null)
+useReveal(pageRef)
 
 interface ReportItem {
   title: string
@@ -167,7 +186,7 @@ async function openReport(report: ReportItem) {
     activeReport.value = report
     return
   }
-  // List API returns empty content — fetch full content by filename
+  // List API returns empty content -- fetch full content by filename
   const filename = encodeURIComponent(report.title + '.md')
   try {
     const { data } = await api.get(`/reports/by-filename/${filename}`)
@@ -196,12 +215,12 @@ function downloadHtml() {
   if (!activeReport.value) return
   const html = `<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><title>${activeReport.value.title}</title>
-<style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1e293b;line-height:1.8}
-h1{font-size:24px;border-bottom:2px solid #0d9488;padding-bottom:8px}h2{font-size:18px;margin-top:32px;border-bottom:1px solid #e2e8f0;padding-bottom:6px}
+<style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1D1D1F;line-height:1.8}
+h1{font-size:24px;border-bottom:2px solid #007AFF;padding-bottom:8px}h2{font-size:18px;margin-top:32px;border-bottom:1px solid #E8E8ED;padding-bottom:6px}
 h3{font-size:16px;margin-top:24px}table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
-td,th{padding:8px 12px;border:1px solid #e2e8f0;text-align:left}tr:first-child{background:#f8fafc;font-weight:600}
-blockquote{border-left:3px solid #0d9488;padding:8px 16px;margin:12px 0;background:#f0fdfa}code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:13px}
-hr{border:none;border-top:1px solid #e2e8f0;margin:24px 0}</style></head>
+td,th{padding:8px 12px;border:1px solid #E8E8ED;text-align:left}tr:first-child{background:#F5F5F7;font-weight:600}
+blockquote{border-left:3px solid #007AFF;padding:8px 16px;margin:12px 0;background:rgba(0,122,255,0.05)}code{background:#F5F5F7;padding:2px 6px;border-radius:4px;font-size:13px}
+hr{border:none;border-top:1px solid #E8E8ED;margin:24px 0}</style></head>
 <body>${renderedMarkdown.value}</body></html>`
   const blob = new Blob([html], { type: 'text/html' })
   const url = URL.createObjectURL(blob)
@@ -219,12 +238,12 @@ function printReport() {
   const printWin = window.open('', '_blank')
   if (!printWin) return
   printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${safeTitle}</title>
-<style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:700px;margin:0 auto;padding:20px;color:#1e293b;line-height:1.8}
-h1{font-size:22px;border-bottom:2px solid #0d9488;padding-bottom:8px}h2{font-size:17px;margin-top:28px;border-bottom:1px solid #e2e8f0;padding-bottom:6px}
+<style>body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;max-width:700px;margin:0 auto;padding:20px;color:#1D1D1F;line-height:1.8}
+h1{font-size:22px;border-bottom:2px solid #007AFF;padding-bottom:8px}h2{font-size:17px;margin-top:28px;border-bottom:1px solid #E8E8ED;padding-bottom:6px}
 h3{font-size:15px;margin-top:20px}table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
-td,th{padding:8px 12px;border:1px solid #e2e8f0;text-align:left}tr:first-child{background:#f8fafc;font-weight:600}
-blockquote{border-left:3px solid #0d9488;padding:8px 16px;margin:12px 0;background:#f0fdfa}
-hr{border:none;border-top:1px solid #e2e8f0;margin:20px 0}@media print{body{padding:0}}</style></head>
+td,th{padding:8px 12px;border:1px solid #E8E8ED;text-align:left}tr:first-child{background:#F5F5F7;font-weight:600}
+blockquote{border-left:3px solid #007AFF;padding:8px 16px;margin:12px 0;background:rgba(0,122,255,0.05)}
+hr{border:none;border-top:1px solid #E8E8ED;margin:20px 0}@media print{body{padding:0}}</style></head>
 <body>${safeHtml}</body></html>`)
   printWin.document.close()
   printWin.print()
@@ -243,108 +262,217 @@ onMounted(loadReports)
 </script>
 
 <style scoped>
+/* ── Page Layout ── */
 .report-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  padding-bottom: var(--space-8);
 }
 
-/* ── Generate Card ── */
+/* ── Hero Section ── */
+.hero {
+  position: relative;
+  padding: var(--space-9) 0 var(--space-7);
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+}
+
+.hero-orb-1 {
+  width: 400px;
+  height: 400px;
+  background: var(--color-primary);
+  top: -120px;
+  left: -100px;
+  animation: float 8s ease-in-out infinite;
+}
+
+.hero-orb-2 {
+  width: 300px;
+  height: 300px;
+  background: var(--color-secondary);
+  top: -60px;
+  right: -80px;
+  animation: float 10s ease-in-out infinite 2s;
+}
+
+.hero-orb-3 {
+  width: 250px;
+  height: 250px;
+  background: #f093fb;
+  bottom: -80px;
+  left: 40%;
+  animation: float 12s ease-in-out infinite 4s;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.hero-title {
+  font-family: var(--font-sans);
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+}
+
+.hero-sub {
+  font-size: clamp(15px, 2vw, 18px);
+  color: var(--color-text-secondary);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Generate Card (Glass) ── */
 .generate-card {
-  background: linear-gradient(135deg, var(--teal-600), var(--teal-800));
-  border-radius: 16px;
-  padding: 28px 32px;
-  color: #fff;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
+  padding: var(--space-6);
+  transition: box-shadow var(--duration-normal) var(--ease-apple);
+}
+
+.generate-card:hover {
+  box-shadow: var(--shadow-glass-hover);
 }
 
 .generate-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: var(--space-5);
 }
 
 .generate-title {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-sans);
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 4px;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
 }
 
 .generate-desc {
   font-size: 13px;
-  color: rgba(255,255,255,0.65);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
 }
 
-.generate-action { flex-shrink: 0; }
+.generate-action {
+  flex-shrink: 0;
+}
 
 .generate-input-wrap {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .generate-input {
-  height: 42px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1.5px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.12);
-  font-size: 13px;
-  font-family: inherit;
-  color: #fff;
+  height: 44px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  color: var(--color-text);
   outline: none;
-  width: 240px;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  width: 260px;
+  transition: border-color var(--duration-normal) var(--ease-apple),
+              box-shadow var(--duration-normal) var(--ease-apple);
 }
 
-.generate-input::placeholder { color: rgba(255,255,255,0.45); }
+.generate-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
 .generate-input:focus {
-  border-color: rgba(255,255,255,0.5);
-  background: rgba(255,255,255,0.18);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
 }
 
 .generate-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 20px;
-  height: 42px;
-  border-radius: 10px;
+  gap: var(--space-2);
+  padding: 0 var(--space-5);
+  height: 44px;
+  border-radius: var(--radius-md);
   border: none;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  font-family: inherit;
-  color: var(--teal-800);
-  background: #141414;
+  font-family: var(--font-sans);
+  color: #fff;
+  background: var(--gradient-accent);
+  background-size: 200% 200%;
   cursor: pointer;
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition: transform var(--duration-normal) var(--ease-apple),
+              box-shadow var(--duration-normal) var(--ease-apple),
+              background-position var(--duration-slow) var(--ease-apple);
   white-space: nowrap;
 }
 
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-lg);
+  background-position: 100% 0;
 }
 
-.generate-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.generate-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .btn-spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(0,0,0,0.15);
-  border-top-color: var(--teal-700);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
-/* ── Report Detail ── */
+/* ── Report Detail (Glass) ── */
 .report-card {
-  background: #141414;
-  border-radius: 16px;
-  border: 1px solid var(--slate-100);
-  box-shadow: none;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
   overflow: hidden;
 }
 
@@ -352,66 +480,75 @@ onMounted(loadReports)
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--slate-100);
-  background: var(--slate-50);
-  gap: 8px;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
-.download-btn-group {
+.toolbar-actions {
   display: flex;
-  gap: 6px;
+  gap: var(--space-1);
   flex-wrap: wrap;
 }
 
 .report-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
 .back-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--slate-200);
-  background: #141414;
+  gap: var(--space-1);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   font-size: 12px;
   font-weight: 500;
-  font-family: inherit;
-  color: var(--slate-500);
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition: border-color var(--duration-normal) var(--ease-apple),
+              color var(--duration-normal) var(--ease-apple),
+              background var(--duration-normal) var(--ease-apple);
 }
 
 .back-btn:hover {
-  border-color: var(--teal-300);
-  color: var(--teal-600);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
 }
 
 .report-stage {
   display: inline-flex;
   padding: 4px 12px;
-  border-radius: 8px;
-  background: var(--teal-50);
-  color: var(--teal-700);
+  border-radius: var(--radius-full);
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .report-heading {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 600;
-  color: var(--slate-800);
+  color: var(--color-text);
 }
 
 .report-date {
   font-size: 12px;
-  color: var(--slate-400);
+  color: var(--color-text-tertiary);
 }
 
 .download-btn {
@@ -419,125 +556,237 @@ onMounted(loadReports)
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  border-radius: 10px;
-  border: 1.5px solid var(--slate-200);
-  background: #141414;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   font-size: 13px;
   font-weight: 500;
-  font-family: inherit;
-  color: var(--slate-600);
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition: border-color var(--duration-normal) var(--ease-apple),
+              color var(--duration-normal) var(--ease-apple),
+              background var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple);
 }
 
 .download-btn:hover {
-  border-color: var(--teal-400);
-  color: var(--teal-700);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+  transform: translateY(-1px);
 }
 
 .report-body {
-  padding: 28px 32px;
+  padding: var(--space-6);
   max-height: 65vh;
   overflow-y: auto;
 }
 
+/* ── Markdown Content ── */
 .markdown-content {
   font-size: 14px;
   line-height: 1.8;
-  color: var(--slate-700);
+  color: var(--color-text);
 }
 
-.markdown-content :deep(h1) { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; color: var(--slate-900); margin-bottom: 16px; }
-.markdown-content :deep(h2) { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 600; color: var(--slate-800); margin: 28px 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(--teal-100); }
-.markdown-content :deep(h3) { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: var(--slate-800); margin: 20px 0 8px; }
-.markdown-content :deep(h4) { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: var(--slate-800); margin: 16px 0 8px; }
-.markdown-content :deep(strong) { color: var(--slate-900); }
-.markdown-content :deep(li) { list-style: disc; margin-left: 20px; margin-bottom: 4px; }
-.markdown-content :deep(table) { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
-.markdown-content :deep(td), .markdown-content :deep(th) { padding: 10px 14px; border: 1px solid var(--slate-200); text-align: left; }
-.markdown-content :deep(tr:first-child td) { background: var(--slate-50); font-weight: 600; color: var(--slate-600); font-size: 12px; }
-.markdown-content :deep(blockquote) { border-left: 3px solid var(--teal-300); padding: 8px 16px; margin: 12px 0; background: var(--slate-50); border-radius: 0 8px 8px 0; }
-.markdown-content :deep(hr) { border: none; border-top: 1px solid var(--slate-200); margin: 24px 0; }
-.markdown-content :deep(code) { background: var(--slate-100); padding: 2px 6px; border-radius: 4px; font-size: 13px; color: var(--teal-700); }
-.markdown-content :deep(p) { margin-bottom: 12px; }
-.markdown-content :deep(ul), .markdown-content :deep(ol) { padding-left: 24px; margin-bottom: 12px; }
-.markdown-content :deep(a) { color: var(--teal-600); text-decoration: none; }
-.markdown-content :deep(a:hover) { text-decoration: underline; }
+.markdown-content :deep(h1) {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.02em;
+}
 
-/* ── Report List ── */
+.markdown-content :deep(h2) {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: var(--space-6) 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.markdown-content :deep(h3) {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+.markdown-content :deep(h4) {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+.markdown-content :deep(strong) {
+  color: var(--color-text);
+}
+
+.markdown-content :deep(li) {
+  list-style: disc;
+  margin-left: 20px;
+  margin-bottom: var(--space-1);
+}
+
+.markdown-content :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-4) 0;
+  font-size: 13px;
+}
+
+.markdown-content :deep(td),
+.markdown-content :deep(th) {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border-light);
+  text-align: left;
+}
+
+.markdown-content :deep(th) {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.markdown-content :deep(tr:hover td) {
+  background: var(--color-bg-secondary);
+}
+
+.markdown-content :deep(blockquote) {
+  border-left: 3px solid var(--color-primary);
+  padding: var(--space-2) var(--space-4);
+  margin: var(--space-3) 0;
+  background: var(--color-primary-bg);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.markdown-content :deep(hr) {
+  border: none;
+  border-top: 1px solid var(--color-border-light);
+  margin: var(--space-6) 0;
+}
+
+.markdown-content :deep(code) {
+  background: var(--color-bg-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--color-text);
+}
+
+.markdown-content :deep(p) {
+  margin-bottom: var(--space-3);
+}
+
+.markdown-content :deep(ul),
+.markdown-content :deep(ol) {
+  padding-left: 24px;
+  margin-bottom: var(--space-3);
+}
+
+.markdown-content :deep(a) {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-apple);
+}
+
+.markdown-content :deep(a:hover) {
+  text-decoration: underline;
+}
+
+/* ── Report List (Glass) ── */
 .list-card {
-  background: #141414;
-  border-radius: 16px;
-  border: 1px solid var(--slate-100);
-  box-shadow: none;
-  padding: 24px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass);
+  padding: var(--space-6);
 }
 
 .list-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: var(--space-5);
 }
 
 .list-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 16px;
+  font-family: var(--font-sans);
+  font-size: 18px;
   font-weight: 600;
-  color: var(--slate-800);
+  color: var(--color-text);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .list-count {
-  font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  color: var(--slate-400);
-  background: var(--slate-50);
+  color: var(--color-text-secondary);
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-full);
 }
 
 .report-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-2);
 }
 
 .report-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: var(--slate-50);
-  border: 1px solid transparent;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  transition: border-color var(--duration-normal) var(--ease-apple),
+              background var(--duration-normal) var(--ease-apple),
+              box-shadow var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple);
   cursor: pointer;
 }
 
 .report-item:hover {
-  background: #1a1a1a;
-  border-color: var(--slate-200);
-  border-color: var(--card-border-hover);
+  background: var(--glass-bg-heavy);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
 }
 
 .report-item-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-3);
   min-width: 0;
   flex: 1;
 }
 
 .report-item-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--teal-50);
-  color: var(--teal-600);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--gradient-accent);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -552,7 +801,7 @@ onMounted(loadReports)
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: var(--slate-800);
+  color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -563,42 +812,96 @@ onMounted(loadReports)
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: var(--slate-400);
-  margin-top: 3px;
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
 }
 
 .report-item-keyword {
-  color: var(--teal-600);
+  color: var(--color-primary);
   font-weight: 500;
 }
 
-.report-item-sep { color: var(--slate-300); }
+.report-item-sep {
+  color: var(--color-border-light);
+}
 
 .report-item-stage {
-  padding: 1px 8px;
-  border-radius: 4px;
-  background: var(--slate-100);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
   font-size: 11px;
   font-weight: 500;
+  color: var(--color-text-secondary);
 }
 
 .report-item-arrow {
-  color: var(--slate-300);
+  color: var(--color-border);
   flex-shrink: 0;
-  transition: color 0.2s;
+  transition: color var(--duration-normal) var(--ease-apple),
+              transform var(--duration-normal) var(--ease-apple);
 }
 
 .report-item:hover .report-item-arrow {
-  color: var(--teal-500);
+  color: var(--color-primary);
+  transform: translateX(4px);
 }
 
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 72px 0;
-  color: var(--slate-400);
+  gap: var(--space-4);
+  padding: 80px 0;
+  color: var(--color-text-tertiary);
   font-size: 14px;
+}
+
+.empty-state svg {
+  color: var(--color-border-light);
+  opacity: 0.6;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .report-page {
+    padding: 0 var(--space-4);
+  }
+
+  .hero {
+    padding: var(--space-7) 0 var(--space-5);
+  }
+
+  .generate-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .generate-input-wrap {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .generate-input {
+    width: 100%;
+  }
+
+  .generate-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .report-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .toolbar-actions {
+    width: 100%;
+  }
+
+  .download-btn {
+    flex: 1;
+    justify-content: center;
+  }
 }
 </style>
