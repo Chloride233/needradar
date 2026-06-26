@@ -26,11 +26,12 @@ async def _run_pipeline(keyword: str, platforms: list[str]) -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+    import datetime
+    import json
+
     from needradar.models.crawl_task import CrawlTask, TaskStatus
     from needradar.models.pipeline_run import PipelineRun
     from needradar.services.analysis_service import AnalysisService
-    import datetime
-    import json
 
     logger.info(f"[1/4] Starting pipeline: keyword={keyword} platforms={platforms}")
 
@@ -145,7 +146,7 @@ async def _run_agent_pipeline(keyword: str, platforms: list[str]) -> None:
         logger.info(f"Pipeline started: run_id={run.id}")
         logger.info("Pipeline will pause at quality gates. Use the API or web UI to review and approve.")
         logger.info(f"  GET  /api/v1/gates?pipeline_run_id={run.id}")
-        logger.info(f"  POST /api/v1/gates/{{gate_id}}/approve")
+        logger.info("  POST /api/v1/gates/{gate_id}/approve")
 
 
 async def _list_gates(status: str | None = None, run_id: int | None = None) -> None:
@@ -155,8 +156,9 @@ async def _list_gates(status: str | None = None, run_id: int | None = None) -> N
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    from needradar.models.quality_gate import QualityGate
     from sqlalchemy import select
+
+    from needradar.models.quality_gate import QualityGate
 
     async with async_session_factory() as db:
         stmt = select(QualityGate).order_by(QualityGate.created_at.desc())

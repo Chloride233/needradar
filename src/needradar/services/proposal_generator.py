@@ -209,8 +209,8 @@ class ProposalGenerator:
     async def _link_generates(self, opportunity_id: int, proposal: ProjectProposal) -> None:
         """Create EntityLink: opportunity --[generates]--> proposal."""
         try:
-            from needradar.schemas.schemas import EntityLinkCreateRequest
             from needradar.models.link import LinkType
+            from needradar.schemas.schemas import EntityLinkCreateRequest
             from needradar.services.link_service import EntityLinkService
 
             svc = EntityLinkService(self._db)

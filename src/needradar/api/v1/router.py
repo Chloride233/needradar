@@ -15,23 +15,23 @@ def _safe_count(vs) -> int:
         from loguru import logger
         logger.warning("vector_count_failed", error=str(e))
         return 0
+from needradar.api.v1.agent import router as agent_router
 from needradar.api.v1.entities import router as entities_router
+from needradar.api.v1.feedback import router as feedback_router
+from needradar.api.v1.gates import router as gates_router
 from needradar.api.v1.links import router as links_router
 from needradar.api.v1.llm_config import router as llm_config_router
+from needradar.api.v1.opportunities import router as opportunities_router
+from needradar.api.v1.pipeline import router as pipeline_router
+from needradar.api.v1.prompt_optimizer import router as prompt_optimizer_router
+from needradar.api.v1.proposals import router as proposals_router
 from needradar.api.v1.reports import router as reports_router
 from needradar.api.v1.requirements import router as requirements_router
 from needradar.api.v1.scheduler import router as scheduler_router
 from needradar.api.v1.tasks import router as tasks_router
 from needradar.api.v1.trending import router as trending_router
 from needradar.api.v1.usage import router as usage_router
-from needradar.api.v1.prompt_optimizer import router as prompt_optimizer_router
-from needradar.api.v1.opportunities import router as opportunities_router
-from needradar.api.v1.pipeline import router as pipeline_router
-from needradar.api.v1.proposals import router as proposals_router
 from needradar.api.v1.verification import router as verification_router
-from needradar.api.v1.gates import router as gates_router
-from needradar.api.v1.feedback import router as feedback_router
-from needradar.api.v1.agent import router as agent_router
 
 router = APIRouter(prefix="/api/v1")
 

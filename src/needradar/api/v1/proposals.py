@@ -9,7 +9,11 @@ from fastapi.responses import PlainTextResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import get_db
-from needradar.schemas.schemas import ProposalGenerateRequest, ProposalListResponse, ProposalResponse
+from needradar.schemas.schemas import (
+    ProposalGenerateRequest,
+    ProposalListResponse,
+    ProposalResponse,
+)
 from needradar.services.proposal_generator import ProposalGenerator
 
 router = APIRouter(prefix="/proposals", tags=["proposals"])

@@ -190,8 +190,8 @@ class OpportunityScorer:
     async def _link_contains(self, opp: ProjectOpportunity) -> None:
         """Create EntityLink rows: opportunity --[contains]--> requirements."""
         try:
-            from needradar.schemas.schemas import EntityLinkCreateRequest
             from needradar.models.link import LinkType
+            from needradar.schemas.schemas import EntityLinkCreateRequest
             from needradar.services.link_service import EntityLinkService
 
             req_ids = json.loads(opp.source_req_ids_json)

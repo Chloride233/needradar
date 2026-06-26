@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import get_db
 from needradar.models.feedback import FeedbackRecord
-from needradar.models.quality_gate import GateStatus, QualityGate
+from needradar.models.quality_gate import QualityGate
 from needradar.schemas.agent_schemas import FeedbackListResponse, FeedbackResponse
 from needradar.services.pipeline_orchestrator import PipelineOrchestrator
 

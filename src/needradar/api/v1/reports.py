@@ -37,8 +37,8 @@ async def generate_report(
 async def _link_references(db: AsyncSession, report_title: str, meta: dict) -> None:
     """Create EntityLink rows: report --[references]--> requirements."""
     try:
-        from needradar.schemas.schemas import EntityLinkCreateRequest
         from needradar.models.link import LinkType
+        from needradar.schemas.schemas import EntityLinkCreateRequest
         from needradar.services.link_service import EntityLinkService
 
         related = meta.get("关联需求", [])

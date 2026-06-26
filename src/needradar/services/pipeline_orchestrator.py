@@ -15,7 +15,6 @@ import json
 from datetime import datetime, timezone
 
 from loguru import logger
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import async_session_factory
@@ -135,7 +134,11 @@ class PipelineOrchestrator:
     async def _resume_from_phase(self, run_id: int, phase: GateType, keyword: str) -> None:
         """Resume pipeline from a specific phase after gate approval."""
         from needradar.services.pipeline_actions import (
-            extract_action, report_action, archive_action, distill_action, complete_action,
+            archive_action,
+            complete_action,
+            distill_action,
+            extract_action,
+            report_action,
         )
 
         try:
@@ -195,7 +198,6 @@ class PipelineOrchestrator:
         """Apply gate edits: promote approved items, handle rejections."""
         if gate.gate_type == GateType.REQUIREMENT.value:
             items = json.loads(gate.items_json) if gate.items_json else []
-            from needradar.services.vault_store import vault
             for item in items:
                 if item.get("approved", True) and item.get("vault_path"):
                     pass  # Requirements are already in the final vault location

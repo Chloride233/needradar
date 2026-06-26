@@ -206,8 +206,8 @@ class VaultStore:
         filename = self._safe_filename(key) + ".md"
         filepath = directory / filename
 
-        from datetime import date
         import json as _json
+        from datetime import date
         meta = {
             "标题": key,
             "阶段": "知识",

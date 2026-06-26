@@ -299,8 +299,8 @@ class AnalysisService:
     async def _link_derived(self, vault_path: str, item: RawDiscussionItem) -> None:
         """Create EntityLink: requirement --[derived_from]--> raw_discussion."""
         try:
-            from needradar.schemas.schemas import EntityLinkCreateRequest
             from needradar.models.link import LinkType
+            from needradar.schemas.schemas import EntityLinkCreateRequest
             from needradar.services.link_service import EntityLinkService
 
             svc = EntityLinkService(self._db)

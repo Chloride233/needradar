@@ -4,8 +4,8 @@ import json
 from dataclasses import asdict
 
 from fastapi import APIRouter, BackgroundTasks, Query
-from pydantic import BaseModel
 from loguru import logger
+from pydantic import BaseModel
 
 from needradar.core.database import async_session_factory
 from needradar.models.verification import (
@@ -114,7 +114,8 @@ async def list_results(
 ):
     """List all verification results."""
     async with async_session_factory() as session:
-        from sqlalchemy import select, func as sa_func
+        from sqlalchemy import func as sa_func
+        from sqlalchemy import select
         count_q = select(sa_func.count()).select_from(VerificationResult)
         total = (await session.execute(count_q)).scalar() or 0
         q = (
@@ -163,7 +164,8 @@ async def submit_feedback(result_id: int, req: FeedbackRequest):
 async def verification_stats():
     """Aggregate verification statistics."""
     async with async_session_factory() as session:
-        from sqlalchemy import select, func as sa_func
+        from sqlalchemy import func as sa_func
+        from sqlalchemy import select
         total = (await session.execute(
             select(sa_func.count()).select_from(VerificationResult)
         )).scalar() or 0
@@ -192,7 +194,7 @@ async def verification_stats():
 async def get_report_verifications(report_title: str):
     """Get all verification results for a specific report (for trend comparison)."""
     async with async_session_factory() as session:
-        from sqlalchemy import select, func as sa_func
+        from sqlalchemy import select
         q = (
             select(VerificationResult)
             .where(VerificationResult.report_title == report_title)

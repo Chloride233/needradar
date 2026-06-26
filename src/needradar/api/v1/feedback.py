@@ -5,13 +5,16 @@ from __future__ import annotations
 import json
 
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import get_db
 from needradar.models.feedback import FeedbackRecord
-from needradar.schemas.agent_schemas import FeedbackListResponse, FeedbackResponse, FeedbackStatsResponse
+from needradar.schemas.agent_schemas import (
+    FeedbackListResponse,
+    FeedbackResponse,
+    FeedbackStatsResponse,
+)
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 

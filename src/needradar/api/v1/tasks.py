@@ -12,7 +12,6 @@ from sse_starlette.sse import EventSourceResponse
 from needradar.core.database import async_session_factory, get_db
 from needradar.models.crawl_task import CrawlTask, TaskStatus
 from needradar.schemas.schemas import TaskCreateRequest, TaskListResponse, TaskResponse
-from pydantic import BaseModel
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -39,6 +38,7 @@ async def _retry_commit(db: AsyncSession, retries: int = 5, delay: float = 1.0) 
 
 async def _run_pipeline(keyword: str, task_ids: list[int]) -> None:
     import traceback
+
     from needradar.services.analysis_service import AnalysisService
 
     logger.info("background_pipeline_start", keyword=keyword, task_ids=task_ids)

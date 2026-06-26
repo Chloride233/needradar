@@ -20,7 +20,6 @@ from needradar.models.pipeline_run import PipelineRun
 from needradar.models.quality_gate import GateStatus, GateType, QualityGate
 from needradar.schemas.schemas import NoiseVerdict, RawDiscussionItem
 
-
 # ── Helpers (shared across actions) ──
 
 
@@ -95,11 +94,12 @@ async def _update_run(run_id: int, **kwargs) -> None:
 
 async def crawl_action(run_id: int, keyword: str, platforms: list[str]) -> dict:
     """Crawl phase: fetch raw items from platforms, filter noise, create material gate."""
+    from sqlalchemy import select
+
     from needradar.crawlers.factory import create_crawler
     from needradar.models.fingerprint import CrawlFingerprint
     from needradar.services.noise_filter import NoiseFilter
     from needradar.services.vault_store import vault
-    from sqlalchemy import select
 
     await _update_run(run_id, current_phase=PhaseName.CRAWLING.value, status="running")
     await _record_phase(run_id, PhaseName.CRAWLING, PhaseStatus.RUNNING)
@@ -191,10 +191,11 @@ async def crawl_action(run_id: int, keyword: str, platforms: list[str]) -> dict:
 
 async def extract_action(run_id: int, keyword: str) -> dict:
     """Extract phase: extract requirements from approved material items, create requirement gate."""
+    from sqlalchemy import select
+
     from needradar.models.quality_gate import QualityGate as QG
     from needradar.schemas.schemas import ExtractedRequirement
     from needradar.services.vault_store import vault
-    from sqlalchemy import select
 
     await _update_run(run_id, current_phase=PhaseName.EXTRACTING.value, status="running")
     await _record_phase(run_id, PhaseName.EXTRACTING, PhaseStatus.RUNNING)

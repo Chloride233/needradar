@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import get_db
 from needradar.models.pipeline_run import PipelineRun
-from needradar.models.quality_gate import QualityGate, GateStatus
+from needradar.models.quality_gate import GateStatus, QualityGate
 
 router = APIRouter(prefix="/agent", tags=["agent"])
 

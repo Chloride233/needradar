@@ -8,14 +8,12 @@ test cases for PromptOptimizer → improved prompts → better extraction.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
 
 from loguru import logger
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.models.feedback import EntityType, FeedbackRecord, FeedbackType
-from needradar.models.quality_gate import GateType, QualityGate
 
 
 class FeedbackService:

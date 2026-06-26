@@ -1,6 +1,7 @@
 from needradar.models.base import Base, TimestampMixin
 from needradar.models.crawl_task import CrawlTask, TaskStatus
-from needradar.models.feedback import EntityType as FeedbackEntityType, FeedbackRecord, FeedbackType
+from needradar.models.feedback import EntityType as FeedbackEntityType
+from needradar.models.feedback import FeedbackRecord, FeedbackType
 from needradar.models.fingerprint import CrawlFingerprint
 from needradar.models.knowledge import KnowledgeCategory, KnowledgeEntry
 from needradar.models.link import EntityLink, LinkType

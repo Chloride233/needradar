@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from needradar.core.database import get_db
 from needradar.models.scheduled_job import JobStatus, ScheduledJob
 from needradar.schemas.schemas import (
-    PlatformEnum,
     ScheduledJobCreateRequest,
     ScheduledJobListResponse,
     ScheduledJobResponse,
@@ -20,7 +19,6 @@ from needradar.services.scheduler_service import (
     _add_job_to_scheduler,
     get_scheduler,
     remove_job,
-    reschedule_job,
 )
 
 router = APIRouter(prefix="/scheduler", tags=["scheduler"])
@@ -148,8 +146,9 @@ async def delete_job(job_id: int, db: AsyncSession = Depends(get_db)):
 
 @router.post("/{job_id}/trigger", response_model=ScheduledJobResponse)
 async def trigger_job(job_id: int, db: AsyncSession = Depends(get_db)):
-    from needradar.services.scheduler_service import _execute_scheduled_job
     import asyncio
+
+    from needradar.services.scheduler_service import _execute_scheduled_job
 
     job = await db.get(ScheduledJob, job_id)
     if not job:

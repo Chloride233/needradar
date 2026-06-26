@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 
 from loguru import logger
-from sqlalchemy import func, select, and_, or_
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.models.link import EntityLink, LinkType

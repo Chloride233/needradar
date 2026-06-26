@@ -8,7 +8,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from needradar.core.database import get_db
-from needradar.models.trending import TrendingProject, TrendingSince
+from needradar.models.trending import TrendingProject
 from needradar.services.vault_store import vault
 
 router = APIRouter(prefix="/trending", tags=["trending"])
@@ -248,7 +248,7 @@ async def analyze_project(
         f"## {project.full_name}\n\n"
         f"{project.description}\n\n"
         f"### 技术亮点\n\n" + "\n".join(f"- {h}" for h in result.highlights) + "\n\n"
-        f"### 应用场景\n\n" + "\n".join(f"- {u}" for u in result.use_cases) + "\n\n"
+        "### 应用场景\n\n" + "\n".join(f"- {u}" for u in result.use_cases) + "\n\n"
         f"### 趋势分析\n\n{result.analysis}"
     )
     vault.write("素材", f"[Trending] {project.full_name}", meta, body)

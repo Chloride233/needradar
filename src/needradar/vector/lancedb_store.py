@@ -119,7 +119,6 @@ class LanceDBVectorStore(VectorStore):
         n_results: int = 10,
         where: dict | None = None,
     ) -> list[SearchResult]:
-        import json
 
         query_vectors = _embed(query_texts)
         try:
