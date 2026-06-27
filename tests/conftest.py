@@ -1,22 +1,24 @@
 import asyncio
+import tempfile
 from collections.abc import AsyncGenerator
+from pathlib import Path
+from uuid import uuid4
 
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.pool import StaticPool
 
 from needradar.core.database import get_db
 from needradar.main import app
 from needradar.models import Base  # imports all models to register with Base.metadata
 
-TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+TEST_DATABASE_PATH = Path(tempfile.gettempdir()) / f"needradar-test-{uuid4().hex}.db"
+TEST_DATABASE_URL = f"sqlite+aiosqlite:///{TEST_DATABASE_PATH.as_posix()}"
 
 test_engine = create_async_engine(
     TEST_DATABASE_URL,
     echo=False,
-    poolclass=StaticPool,
 )
 test_session_factory = async_sessionmaker(
     test_engine, class_=AsyncSession, expire_on_commit=False
