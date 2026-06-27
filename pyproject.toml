@@ -8,10 +8,13 @@ license = "MIT"
 dependencies = [
     # Web framework
     "fastapi>=0.115,<0.129",
+    "sse-starlette>=2.1",
     "uvicorn[standard]>=0.34",
 
     # Database
     "sqlalchemy[asyncio]>=2.0,<2.1",
+    "aiosqlite>=0.20",
+    "asyncpg>=0.30",
 
     # Validation & config
     "pydantic>=2.10",

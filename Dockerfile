@@ -7,13 +7,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml .
-RUN pip install --no-cache-dir .
-
 COPY src/ src/
 COPY config/ config/
 COPY alembic.ini .
 COPY migrations/ migrations/
 COPY scripts/entrypoint.sh .
+RUN pip install --no-cache-dir .
 RUN chmod +x entrypoint.sh
 
 EXPOSE 8000

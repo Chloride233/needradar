@@ -59,15 +59,14 @@ jobs:
 
       - name: 启动服务栈
         run: |
-          docker compose -f docker-compose.yml up -d postgres redis
+          docker compose -f docker-compose.yml up -d postgres
           sleep 5
 
       - name: 启动后端
         run: |
           docker run -d --name needradar-smoke \
             --network host \
-            -e NR_DATABASE_URL="postgresql+asyncpg://needradar:password@localhost:5432/needradar" \
-            -e NR_REDIS_URL="redis://localhost:6379/0" \
+            -e NR_DATABASE_URL="postgresql+asyncpg://needradar:changeme@localhost:5432/needradar" \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           sleep 5
 

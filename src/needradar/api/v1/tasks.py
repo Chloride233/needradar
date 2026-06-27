@@ -3,13 +3,14 @@ from __future__ import annotations
 import asyncio
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from loguru import logger
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sse_starlette.sse import EventSourceResponse
 
-from needradar.core.database import async_session_factory, get_db
+from needradar.core import database as db_module
+from needradar.core.database import get_db
 from needradar.models.crawl_task import CrawlTask, TaskStatus
 from needradar.schemas.schemas import TaskCreateRequest, TaskListResponse, TaskResponse
 
@@ -44,7 +45,7 @@ async def _run_pipeline(keyword: str, task_ids: list[int]) -> None:
     logger.info("background_pipeline_start", keyword=keyword, task_ids=task_ids)
     await asyncio.sleep(1)
     try:
-        async with async_session_factory() as db:
+        async with db_module.async_session_factory() as db:
             service = AnalysisService(db)
             await service.run_pipeline(keyword, [], existing_task_ids=task_ids)
             await _retry_commit(db)
@@ -77,7 +78,7 @@ async def _run_pipeline(keyword: str, task_ids: list[int]) -> None:
                     verifier = get_verifier()
                     v_output = await verifier.verify_report(report_title)
 
-                    async with async_session_factory() as vdb:
+                    async with db_module.async_session_factory() as vdb:
                         v_result = VerificationResult(
                             report_title=report_title,
                             status=VerificationStatus.COMPLETED,
@@ -118,6 +119,7 @@ async def _run_pipeline(keyword: str, task_ids: list[int]) -> None:
 @router.post("", response_model=TaskListResponse, status_code=201)
 async def create_task(
     request: TaskCreateRequest,
+    background_tasks: BackgroundTasks,
     mode: str = "auto",
     db: AsyncSession = Depends(get_db),
 ):
@@ -173,7 +175,7 @@ async def create_task(
     task_ids = [t.id for t in tasks]
     await db.commit()
 
-    asyncio.create_task(_run_pipeline(request.keyword, task_ids))
+    background_tasks.add_task(_run_pipeline, request.keyword, task_ids)
 
     return TaskListResponse(
         items=[TaskResponse.model_validate(t) for t in tasks],
@@ -214,7 +216,7 @@ async def list_tasks(
 async def task_sse_stream():
     async def event_generator():
         while True:
-            async with async_session_factory() as db:
+            async with db_module.async_session_factory() as db:
                 stmt = select(CrawlTask).order_by(CrawlTask.created_at.desc()).limit(50)
                 result = await db.execute(stmt)
                 tasks = [TaskResponse.model_validate(t).model_dump(mode="json") for t in result.scalars().all()]
