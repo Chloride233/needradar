@@ -70,16 +70,10 @@ jobs:
       - name: 拉取刚构建的镜像
         run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-      - name: 启动服务栈
-        run: |
-          docker compose -f docker-compose.yml up -d postgres
-          sleep 5
-
       - name: 启动后端
         run: |
           docker run -d --name needradar-smoke \
-            --network host \
-            -e NR_DATABASE_URL="postgresql+asyncpg://needradar:changeme@localhost:5432/needradar" \
+            -p 8000:8000 \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           sleep 5
 
@@ -96,7 +90,6 @@ jobs:
         run: |
           docker stop needradar-smoke || true
           docker rm needradar-smoke || true
-          docker compose -f docker-compose.yml down -v
 
   # ── GitHub Release（仅 tag 触发） ──
   release:
