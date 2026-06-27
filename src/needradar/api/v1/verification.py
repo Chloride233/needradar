@@ -7,7 +7,7 @@ from fastapi import APIRouter, BackgroundTasks, Query
 from loguru import logger
 from pydantic import BaseModel
 
-from needradar.core.database import async_session_factory
+from needradar.core import database as db_module
 from needradar.models.verification import (
     VerificationResult,
     VerificationStatus,
@@ -93,7 +93,7 @@ async def list_verifiable_reports():
 @router.post("/verify", response_model=VerificationResponse)
 async def trigger_verification(req: VerifyRequest, bg: BackgroundTasks):
     """Trigger verification for a report. Runs in background, returns pending result."""
-    async with async_session_factory() as session:
+    async with db_module.async_session_factory() as session:
         result = VerificationResult(
             report_title=req.report_title,
             status=VerificationStatus.PENDING,
@@ -113,7 +113,7 @@ async def list_results(
     page_size: int = Query(20, ge=1, le=100),
 ):
     """List all verification results."""
-    async with async_session_factory() as session:
+    async with db_module.async_session_factory() as session:
         from sqlalchemy import func as sa_func
         from sqlalchemy import select
         count_q = select(sa_func.count()).select_from(VerificationResult)
@@ -134,7 +134,7 @@ async def list_results(
 @router.get("/results/{result_id}", response_model=VerificationResponse)
 async def get_result(result_id: int):
     """Get detailed verification result."""
-    async with async_session_factory() as session:
+    async with db_module.async_session_factory() as session:
         result = await session.get(VerificationResult, result_id)
         if not result:
             from fastapi import HTTPException
@@ -146,7 +146,7 @@ async def get_result(result_id: int):
 async def submit_feedback(result_id: int, req: FeedbackRequest):
     """Submit human feedback for a verification result."""
     import datetime
-    async with async_session_factory() as session:
+    async with db_module.async_session_factory() as session:
         result = await session.get(VerificationResult, result_id)
         if not result:
             from fastapi import HTTPException
@@ -163,7 +163,7 @@ async def submit_feedback(result_id: int, req: FeedbackRequest):
 @router.get("/stats")
 async def verification_stats():
     """Aggregate verification statistics."""
-    async with async_session_factory() as session:
+    async with db_module.async_session_factory() as session:
         from sqlalchemy import func as sa_func
         from sqlalchemy import select
         total = (await session.execute(
@@ -193,7 +193,7 @@ async def verification_stats():
 @router.get("/results/by-report/{report_title:path}", response_model=VerificationListResponse)
 async def get_report_verifications(report_title: str):
     """Get all verification results for a specific report (for trend comparison)."""
-    async with async_session_factory() as session:
+    async with db_module.async_session_factory() as session:
         from sqlalchemy import select
         q = (
             select(VerificationResult)
@@ -212,7 +212,7 @@ async def get_report_verifications(report_title: str):
 async def _run_verification(result_id: int, report_title: str) -> None:
     verifier = get_verifier()
     try:
-        async with async_session_factory() as session:
+        async with db_module.async_session_factory() as session:
             result = await session.get(VerificationResult, result_id)
             if not result:
                 return
@@ -221,7 +221,7 @@ async def _run_verification(result_id: int, report_title: str) -> None:
 
         output = await verifier.verify_report(report_title)
 
-        async with async_session_factory() as session:
+        async with db_module.async_session_factory() as session:
             result = await session.get(VerificationResult, result_id)
             if not result:
                 return
@@ -243,7 +243,7 @@ async def _run_verification(result_id: int, report_title: str) -> None:
 
     except Exception as e:
         logger.error("verification_failed", id=result_id, error=str(e))
-        async with async_session_factory() as session:
+        async with db_module.async_session_factory() as session:
             result = await session.get(VerificationResult, result_id)
             if result:
                 result.status = VerificationStatus.FAILED
