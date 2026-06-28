@@ -20,6 +20,23 @@ def upgrade() -> None:
     inspector = sa.inspect(bind)
     existing_tables = inspector.get_table_names()
 
+    if "pipeline_runs" not in existing_tables:
+        op.create_table(
+            "pipeline_runs",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column("keyword", sa.String(200), nullable=False, index=True),
+            sa.Column("status", sa.String(30), server_default="pending"),
+            sa.Column("stages_json", sa.Text(), server_default="[]"),
+            sa.Column("task_ids_json", sa.Text(), server_default="[]"),
+            sa.Column("error_message", sa.Text(), nullable=True),
+            sa.Column("current_phase", sa.String(30), nullable=True),
+            sa.Column("gate_status", sa.String(20), server_default="none"),
+            sa.Column("is_agent_mode", sa.Boolean(), server_default=sa.text("0")),
+            sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
+            sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
+        )
+        existing_tables.append("pipeline_runs")
+
     # ── crawl_tasks: add missing columns ──
     _add_column_if_missing("crawl_tasks", "new_items", sa.Integer(), server_default="0")
     _add_column_if_missing("crawl_tasks", "skipped_items", sa.Integer(), server_default="0")
@@ -125,6 +142,8 @@ def _add_column_if_missing(table: str, column: str, col_type, **kwargs):
     """Add a column only if it doesn't already exist (idempotent)."""
     bind = op.get_bind()
     inspector = sa.inspect(bind)
+    if table not in inspector.get_table_names():
+        return
     existing_cols = {c["name"] for c in inspector.get_columns(table)}
     if column not in existing_cols:
         op.add_column(table, sa.Column(column, col_type, **kwargs))
