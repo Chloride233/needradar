@@ -77,9 +77,23 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           sleep 5
 
-      - name: 验证健康检查
+      - name: 等待健康检查就绪
         run: |
-          curl -f --retry 5 --retry-delay 2 http://localhost:8000/api/v1/health || exit 1
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8000/api/v1/health > /tmp/needradar-health.json; then
+              cat /tmp/needradar-health.json
+              exit 0
+            fi
+            if ! docker ps --filter "name=needradar-smoke" --filter "status=running" | grep -q needradar-smoke; then
+              echo "Container exited before becoming healthy."
+              docker logs needradar-smoke || true
+              exit 1
+            fi
+            sleep 2
+          done
+          echo "Health check did not become ready in time."
+          docker logs needradar-smoke || true
+          exit 1
 
       - name: 验证 Dashboard API
         run: |
