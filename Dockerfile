@@ -12,6 +12,7 @@ COPY config/ config/
 COPY alembic.ini .
 COPY migrations/ migrations/
 COPY scripts/entrypoint.sh .
+RUN mkdir -p /app/data
 RUN pip install --no-cache-dir .
 RUN chmod +x entrypoint.sh
 
