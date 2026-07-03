@@ -98,6 +98,12 @@ jobs:
       - name: 验证 Dashboard API
         run: |
           curl -f http://localhost:8000/api/v1/dashboard || exit 1
+          curl -f http://localhost:8000/api/v1/verification/results || exit 1
+          curl -f http://localhost:8000/api/v1/trending || exit 1
+          curl -f http://localhost:8000/api/v1/opportunities || exit 1
+          curl -f http://localhost:8000/api/v1/proposals || exit 1
+          curl -f "http://localhost:8000/api/v1/links?entity_type=smoke&entity_id=smoke" || exit 1
+          curl -f http://localhost:8000/api/v1/scheduler || exit 1
 
       - name: 清理
         if: always()

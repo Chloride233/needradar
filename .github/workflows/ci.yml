@@ -24,6 +24,13 @@ jobs:
           --ignore-vuln CVE-2026-48817
           --ignore-vuln CVE-2026-48818
       - run: ruff check src/
+      - name: Validate Alembic schema
+        run: |
+          mkdir -p .tmp
+          rm -f .tmp/ci-migration.db
+          export NR_DATABASE_URL=sqlite+aiosqlite:///./.tmp/ci-migration.db
+          alembic upgrade head
+          python scripts/check_schema_drift.py
       - run: pytest tests/ -k "not health" --tb=short -q --cov=src/needradar --cov-fail-under=70 --cov-report=term
 
   frontend:
