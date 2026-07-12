@@ -77,3 +77,14 @@ scripts/                  # 开发辅助脚本
 - 修改后端代码后建议手动重启 uvicorn（Windows 下 `--reload` 不稳定）
 - 支持平台：GitHub / StackOverflow / 掘金 / B站（插件化自动发现，新增爬虫无需改配置）
 - 前端审计规则：每次前端改动后需 Playwright CLI 验证（参见 memory/frontend_testing_rule）
+
+## 当前证据路线
+
+按顺序推进以下阶段；前一阶段未满足 Issue 验收标准时，不进入后一阶段：
+
+1. Phase 1：[统一采集平台、数据规模与测试口径](https://github.com/Chloride233/needradar/issues/2)
+2. Phase 2：[需求抽取准确率与人工修改率](https://github.com/Chloride233/needradar/issues/1)
+3. Phase 3：[RAG、HITL 与幻觉检测消融](https://github.com/Chloride233/needradar/issues/4)
+4. Phase 4：[采集稳定性、成本控制与真实用户价值](https://github.com/Chloride233/needradar/issues/3)
+
+新增功能必须服务于当前 Phase。阶段完成必须有可复现命令、测试、实验报告或真实用户证据。README 中的平台数量、数据规模和效果数字必须能由代码或统计命令重新生成。
