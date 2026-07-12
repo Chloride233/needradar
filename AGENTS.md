@@ -13,7 +13,9 @@ NeedRadar 是一个 AI 驱动的用户需求挖掘系统。从全网（GitHub、
 1. 读取 `vault/05-工作日志/` 目录下最新的日志文件，了解最近的工作内容、关键决策和待办事项
 2. 确认理解项目的当前状态：哪些功能已完成、哪些正在进行、哪些阻塞
 3. 检查日志中的待办事项列表，主动报告哪些已完成、哪些仍待处理
-4. 基于最新进度，向用户确认下一步工作方向
+4. 基于最新进度直接推进当前 Phase 的下一个未完成验收项；仅在涉及付费调用、密钥、真实外部用户或不可逆操作时请求确认
+
+如果当前是轻量或稀疏工作副本，且 `vault/05-工作日志/` 不存在，不要阻塞或要求用户初始化数据。改为读取 `git status --short`、`git log --oneline -5`、当前 Phase GitHub Issue、README 和相关代码，以此判断项目状态。
 
 使用以下命令读取最新日志：
 ```
@@ -77,6 +79,15 @@ scripts/                  # 开发辅助脚本
 - 修改后端代码后建议手动重启 uvicorn（Windows 下 `--reload` 不稳定）
 - 支持平台：GitHub / StackOverflow / 掘金 / B站（插件化自动发现，新增爬虫无需改配置）
 - 前端审计规则：每次前端改动后需 Playwright CLI 验证（参见 memory/frontend_testing_rule）
+
+### macOS 工作副本
+
+- 从仓库根目录创建环境：`python3 -m venv .venv`
+- 安装后端：`.venv/bin/python -m pip install -e .`
+- 启动后端：`.venv/bin/python -m uvicorn needradar.main:app --host 127.0.0.1 --port 8900`
+- 运行测试：`.venv/bin/python -m pytest`
+- 前端命令在 `frontend/` 目录运行，不使用 `F:/NeedRadar` 等 Windows 绝对路径。
+- 缺少 `vault/`、`data/` 或 API Key 时，优先使用测试夹具、临时目录和 fake/mock provider，不要求用户先初始化运行数据。
 
 ## 当前证据路线
 
