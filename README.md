@@ -17,14 +17,16 @@
 
 ## What is NeedRadar?
 
-NeedRadar is an **end-to-end AI agent** that mines user needs from global tech discussions — GitHub Issues, Stack Overflow, Juejin, Bilibili — and transforms them into structured, verified insight reports.
+NeedRadar is an **end-to-end AI agent** that mines user needs from global tech discussions and transforms them into structured, verified insight reports. GitHub, Stack Overflow, and Juejin are fully supported; six additional keyword platforms are experimental.
+
+See the [crawler audit](docs/crawler-audit.md) for authentication, rate limits, support tiers, and test coverage.
 
 It's not just a scraper. It's a **needs discovery pipeline** with human-in-the-loop quality gates, RAG-powered context enrichment, and hallucination detection.
 
 ```
 Keyword → Crawl → AI Extract → Quality Gate → Report → Verify → Knowledge
             ↑          ↑              ↑
-         4 platforms  LLM + RAG    Human confirms
+        3 full + 6 exp LLM + RAG    Human confirms
 ```
 
 ## Why?
@@ -71,13 +73,16 @@ Open **http://localhost:5173** — the Agent Command Center.
 ```bash
 # Full pipeline: crawl → extract → report → verify
 python -m needradar.cli run "AI coding assistant" --platforms github,stackoverflow
+
+# Print reproducible platform, code, test, and Vault counts
+python -m needradar.cli stats
 ```
 
 ## Features
 
 | Feature | What it does |
 |---------|-------------|
-| 🕷️ **Multi-platform Crawl** | GitHub Issues/Discussions, Stack Overflow, Juejin, Bilibili — concurrent, incremental, fingerprint-based dedup |
+| 🕷️ **Multi-platform Crawl** | 3 fully supported and 6 experimental keyword platforms — concurrent, incremental, fingerprint-based dedup |
 | 🧠 **AI Needs Extraction** | LLM extracts structured requirements: title, description, pain point, scenario, sentiment, confidence |
 | 🚦 **Quality Gates** | 3 human-in-the-loop checkpoints (material → requirement → insight). Approve, reject, or edit before proceeding |
 | 📊 **Insight Reports** | RAG-enriched analysis with need clustering, pain point mapping, and actionable recommendations |
@@ -96,9 +101,9 @@ python -m needradar.cli run "AI coding assistant" --platforms github,stackoverfl
 │                                                         │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐  │
 │  │ Crawlers │  │   LLM    │  │ LanceDB  │  │ Vault  │  │
-│  │ GitHub   │  │ LiteLLM  │  │ (vector) │  │ (Obsi- │  │
-│  │ SO/Juejin│  │ DeepSeek │  │ 721 reqs │  │ dian)  │  │
-│  │ Bilibili │  │          │  │ 1134 rag │  │ 936 md │  │
+│  │ 3 full   │  │ LiteLLM  │  │ (vector) │  │ (Obsi- │  │
+│  │ 6 exper. │  │ DeepSeek │  │ semantic │  │ dian)  │  │
+│  │          │  │          │  │ RAG index│  │ Markdown│  │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └───┬────┘  │
 │       │              │              │            │       │
 │       └──────────────┴──────────────┴────────────┘       │
@@ -162,7 +167,7 @@ needradar/
          └──────┬──────┘
                 ▼
     ┌───────────────────────┐
-    │   1. CRAWL            │  GitHub / SO / Juejin / Bilibili
+    │   1. CRAWL            │  3 full + 6 experimental platforms
     │   Concurrent, incr.   │  Fingerprint dedup, noise filter
     └───────────┬───────────┘
                 ▼

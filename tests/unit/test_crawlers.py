@@ -96,3 +96,69 @@ async def test_stackoverflow_parse():
     assert "AI tool for writing code" in items[0].content
     assert items[0].tags == ["ai", "programming"]
     await crawler.close()
+
+
+@pytest.mark.asyncio
+async def test_juejin_parse_current_result_model():
+    mock_data = {
+        "data": [
+            {
+                "result_model": {
+                    "article_id": "7177324512008994875",
+                    "article_info": {
+                        "article_id": "7177324512008994875",
+                        "title": "AI tools",
+                        "brief_content": "A comparison of AI tools",
+                    },
+                    "author_user_info": {"user_name": "author"},
+                    "tags": [{"tag_name": "AI"}, {"tag_name": "Tools"}],
+                }
+            }
+        ],
+        "cursor": "",
+    }
+    crawler = JuejinCrawler()
+    crawler._request_with_retry = AsyncMock(return_value=_make_mock_response(mock_data))
+
+    items = await crawler.crawl("AI tools", max_items=1)
+
+    assert len(items) == 1
+    assert items[0].source_url == "https://juejin.cn/post/7177324512008994875"
+    assert items[0].title == "AI tools"
+    assert items[0].author == "author"
+    assert items[0].tags == ["AI", "Tools"]
+
+
+@pytest.mark.asyncio
+async def test_juejin_follows_cursor_when_page_is_below_requested_limit():
+    def page(article_id: str, cursor: str, has_more: bool) -> MagicMock:
+        return _make_mock_response(
+            {
+                "data": [
+                    {
+                        "result_model": {
+                            "article_info": {
+                                "article_id": article_id,
+                                "title": f"Article {article_id}",
+                                "brief_content": "Content",
+                            }
+                        }
+                    }
+                ],
+                "cursor": cursor,
+                "has_more": has_more,
+            }
+        )
+
+    crawler = JuejinCrawler()
+    crawler._request_with_retry = AsyncMock(
+        side_effect=[page("1", "next", True), page("2", "", False)]
+    )
+
+    items = await crawler.crawl("AI", max_items=2)
+
+    assert [item.source_url for item in items] == [
+        "https://juejin.cn/post/1",
+        "https://juejin.cn/post/2",
+    ]
+    assert crawler._request_with_retry.await_count == 2
