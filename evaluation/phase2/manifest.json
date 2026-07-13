@@ -1,0 +1,21 @@
+{
+  "sample_size": 100,
+  "platform_counts": {
+    "github": 34,
+    "stackoverflow": 33,
+    "juejin": 33
+  },
+  "sample_plan": {
+    "github": 34,
+    "stackoverflow": 33,
+    "juejin": 33
+  },
+  "keywords": {
+    "github": "AI tool",
+    "stackoverflow": "AI tool",
+    "juejin": "AI 工具"
+  },
+  "dataset_sha256": "573a7baa310f0a6f37a2ec0dc4b28bd73103b1216469fba177ae37ff8738779c",
+  "generated_at": "2026-07-13T02:55:15.333675+00:00",
+  "author_fields_stored": false
+}
