@@ -76,11 +76,12 @@ def test_update_preset(tmp_path, monkeypatch):
 
 def test_update_preset_auto_activates(tmp_path, monkeypatch):
     import needradar.llm.config_store as cs
+    import needradar.llm.provider as provider_module
     config_file = tmp_path / "llm_config.json"
     monkeypatch.setattr(cs, "_CONFIG_PATH", config_file)
+    monkeypatch.setattr(provider_module.settings, "deepseek_api_key", "")
     PRESETS["deepseek-v4-pro"].api_key = ""
-    from needradar.llm.provider import LLMProvider
-    provider = LLMProvider()
+    provider = provider_module.LLMProvider()
     assert provider.active_preset_id is None
     provider.update_preset("deepseek-v4-pro", api_key="sk-test")
     assert provider.active_preset_id == "deepseek-v4-pro"

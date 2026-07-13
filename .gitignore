@@ -102,6 +102,7 @@ vault/07-知识沉淀/*
 
 # Agent configs (project-specific, not for open source)
 .agents/
+.learnings/
 skills-lock.json
 design-system/
 
