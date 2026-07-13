@@ -1,0 +1,227 @@
+﻿id,platform,source_url,source_title,source_content,agent_a,agent_b,your_decision,notes
+2897c1ce1053d860,github,https://github.com/ZeroK-RTS/CrashReports/issues/175998,Spring UserReport [2025.06.24] Externally launched spring crashed with code 0,,yes,unclear,no,
+29a040b76a9a0e3b,github,https://github.com/codexrodrigues/praxis-codex-skills/issues/254,Evidence-driven follow-up: track real Praxis skill misses after 161-skill reconciliation,"## Objetivo
+
+Acompanhar a próxima fase do programa de skills Praxis após a reconciliação do manifesto com **161 skills Praxis ativas**.
+
+Esta issue não é uma wave para aumentar contagem de skills. O objetivo é registrar apenas evidências reais encontradas durante implementações, auditorias e migrações usando Praxis, especialmente no contexto de aceleração Ergon sem acoplar Praxis ao Ergon.
+
+## Premissa
+
+O estado atual já está dentro da faixa de cobertura forte:
+
+- 161 skills Praxis ativas no manifesto canônico;
+- 0 issues abertas de roadmap/review no momento da reconciliação;
+- preflight Python verde;
+- Wave 3 backend/HTTP proof entregue;
+- roadmap e live audit atualizados para tratar `146` como marco histórico, não como estado atual.
+
+Portanto, o próximo trabalho deve ser evidence-driven.
+
+## O que registrar aqui
+
+Abra comentário ou follow-up issue quando uma implementação real mostrar:
+
+1. uma skill roteia para o dono canônico errado;
+2. uma skill deixa fechar trabalho com validação fraca demais;
+3. uma skill recomenda ou permite adaptação local quando a solução correta é contrato/plataforma;
+4. uma skill está desatualizada em relação a `praxis-ui-angular`, `praxis-config-starter`, `praxis-metadata-starter`, quickstart, HTTP examples ou landing;
+5. uma superfície pública mudou e a skill não aponta para os artefatos derivados corretos;
+6. uma tarefa recorrente exige conhecimento canônico que ainda não está codificado;
+7. um uso de Praxis em Ergon revela oportunidade de generalizar conhecimento para a plataforma sem acoplar a skill ao Ergon.
+
+## O que não fazer
+
+- Não criar skills só para ir de 161 para 180, 198 ou 200.
+- Não criar uma skill por componente, arquivo ou export.
+- Não duplicar skill por alias de pacote quando a família existente pode ser curada.
+- Não colocar conhecimento específico de Ergon dentro de skills `praxis-*`.
+- Não resolver lacuna de plataforma com heurística textual, keyword routing ou adaptação de frontend.
+
+## Critério para abrir follow-up
+
+Cada follow-up deve trazer:
+
+- implementação ou auditoria que revelou o miss;
+- skill envolvida;
+- fonte canônica auditada;
+- classificação de aderência:
+  - `ja-suportado-so-ux`
+  - `ja-suportado-mal-nomeado-ou-mal-materializado`
+  - `suportado-parcialmente`
+  - `lacuna-real-de-contrato`
+- risco prático para futuras implementações;
+- validação mínima esperada após correção.
+
+## Próximo ciclo recomendado
+
+Usar esta issue como checkpoint após cada bloco relevante de trabalho Praxis/Ergon:
+
+- implementação de nova capability de plataforma;
+- correção de CI/PR em repositórios Praxis;
+- uso de skills em migração Ergon;
+- auditoria de source drift em pacote complexo;
+- publicação de docs/playgrounds/examples que espelham contratos públicos.
+
+Quando surgirem 3 a 5 evidências relacionadas na mesma família, abrir uma issue focada ou uma micro-wave específica para aquela família.
+",no,yes,no,
+5b5acb35134ef28c,github,https://github.com/vivekchand/clawmetry/issues/2146,E2E Robustness epic: 7-criterion gate (OSS + Cloud + Landing + cross-repo),"## Purpose
+
+Tracking issue for the E2E robustness investment (mandate 2026-05-17). A cron fires every 2 hours to close one gap per fire until all 7 criteria below are green for 7 consecutive days, at which point it posts a final summary and is disabled.
+
+## 7 Criteria (all must be green for 7 consecutive days)
+
+- [x] **C1 OSS golden path** -- wheel install + real OpenClaw + send message + all 9 canonical tabs render without auth errors. Runs on every PR in under 5 min. Workflow: `oss-golden-path.yml` + `tests/test_e2e_oss_golden_path.py`. **GREEN confirmed 2026-05-31: ""OSS golden path (wheel + OpenClaw + 9 tabs)"" PASSED on PR #2382 in 1m 12s.**
+- [x] **C2 Cloud golden path** -- synthetic signup + daemon connect + sync synthetic message + cloud dashboard renders `/cloud`, `/cloud/node/<id>`, `/cloud/account`, `/cloud/team`, `/cloud/billing` without JS errors. Runs on every PR in under 8 min. Workflow: `e2e.yml` (job: `Cloud golden-path browser E2E`). **GREEN confirmed 2026-05-31: workflow runs on every PR, PASSED on cloud#1168.**
+- [x] **C3 Landing golden path** -- hero loads + click Get Started + signup form submits + OTP delivered + handoff to cloud signup. Runs on every PR in under 3 min. Workflow: `landing-golden-path.yml` (job: `Landing golden path (C3)`). **GREEN confirmed 2026-05-31: PASSED on clawmetry-landing#384 in 18s.**
+- [x] **C4 Cross-repo handoff** -- landing signup to cloud account creation to daemon pair to first sync event lands. End-to-end across all 3 repos in under 10 min. Workflow: `cross-repo-handoff.yml` (job: `Cross-repo handoff (C4)`). **GREEN confirmed 2026-05-31: PASSED on PR #2382 in 20s.**
+- [x] **C5 Visual-diff covers ALL tabs post-auth** -- user-reported 2026-05-17: ""gateway token not passed for OSS so it never displays other screens."" Every OSS dashboard tab screenshots post-login. Same for cloud `/cloud/node/<id>` deep-link. Workflow: `pr-screenshots.yml` (job: `visual-diff`). **GREEN confirmed 2026-05-31: PASSED on PR #2382 in 5m 51s.**
+- [ ] **C6 Required-status-checks** -- every workflow above is marked required in branch protection / ruleset across all 3 repos. PRs cannot merge unless E2E passes. **RED -- requires manual action (see below).**
+- [x] **C7 Failure quarantine** -- flaky failures quarantined within 24h, not silently retried forever. Workflow: `quarantine-sweep.yml`. **GREEN: infrastructure in place, 0 tests currently quarantined (last triage 2026-05-22).**
+
+---
+
+## Current state (assessed 2026-05-31)
+
+| Criterion | Status | Job name (for required-status-check) | Notes |
+|-----------|--------|---------------------------------------|-------|
+| C1 OSS golden path | GREEN | `OSS golden path (wheel + OpenClaw + 9 tabs)` | PASSED PR #2382 today in 1m 12s. |
+| C2 Cloud golden path | GREEN | `Cloud golden-path browser E2E` | PASSED cloud#1168. `e2e.yml` runs on every PR. |
+| C3 Landing golden path | GREEN | `Landing golden path (C3)` | PASSED clawmetry-landing#384 today in 18s. |
+| C4 Cross-repo handoff | GREEN | `Cross-repo handoff (C4)` | PASSED PR #2382 today in 20s. |
+| C5 Visual-diff all tabs | GREEN | `visual-diff` | PASSED PR #2382 today in 5m 51s. |
+| C6 Required-status-checks | RED | N/A | Workflows exist but NONE are required. 1 manual step blocks the 7-day countdown (see C6 action below). |
+| C7 Failure quarantine | GREEN | N/A | `quarantine.txt` + conftest hook + `quarantine-sweep.yml` all in place. 0 tests quarantined. |
+
+**6 of 7 criteria green. C6 is the only blocker.**
+
+---
+
+## C6 manual action required
+
+None of the E2E workflows are configured as required status checks. This means PRs can merge even when E2E fails. The GitHub branch protection API cannot be set via Actions YAML -- it requires a repo admin to click or run a gh CLI command.
+
+**Option A: GitHub Settings UI**
+
+For each repo, go to Settings -> Rules -> Rulesets (or Branches -> Branch protection rules for classic protection), select the `main` branch rule, and add each job name as a required status check:
+
+| Repo | Job name to add |
+|------|-----------------|
+| vivekchand/clawmetry | `OSS golden path (wheel + OpenClaw + 9 tabs)` |
+| vivekchand/clawmetry | `Cross-repo handoff (C4)` |
+| vivekchand/clawmetry | `visual-diff` |
+| vivekchand/clawmetry-cloud | `Cloud golden-path browser E2E` |
+| vivekchand/clawmetry-landing | `Landing golden path (C3)` |
+
+**Option B: gh CLI (run locally with admin PAT)**
+
+```bash
+# clawmetry: add three required checks
+gh api repos/vivekchand/clawmetry/branches/main/protection \
+  --method PUT \
+  -H ""Accept: application/vnd.github+json"" \
+  -F ""required_status_checks[strict]=false"" \
+  -F ""required_status_checks[contexts][]=OSS golden path (wheel + OpenClaw + 9 tabs)"" \
+  -F ""required_status_checks[contexts][]=Cross-repo handoff (C4)"" \
+  -F ""required_status_checks[contexts][]=visual-diff"" \
+  -F ""enforce_admins=false"" \
+  -F ""required_pull_request_reviews=null"" \
+  -F ""restrictions=null""
+
+# clawmetry-cloud: add one required check
+gh api repos/vivekchand/clawmetry-cloud/branches/main/protection \
+  --method PUT \
+  -H ""Accept: application/vnd.github+json"" \
+  -F ""required_status_checks[strict]=false"" \
+  -F ""required_status_checks[contexts][]=Cloud golden-path browser E2E"" \
+  -F ""enforce_admins=false"" \
+  -F ""required_pull_request_reviews=null"" \
+  -F ""restrictions=null""
+
+# clawmetry-landing: add one required check
+gh api repos/vivekchand/clawmetry-landing/branches/main/protection \
+  --method PUT \
+  -H ""Accept: application/vnd.github+json"" \
+  -F ""required_status_checks[strict]=false"" \
+  -F ""required_status_checks[contexts][]=Landing golden path (C3)"" \
+  -F ""enforce_admins=false"" \
+  -F ""required_pull_request_reviews=null"" \
+  -F ""restrictions=null""
+```
+
+Once these are set, the next merge attempt on any PR with a failing E2E will be blocked. C6 flips to GREEN immediately.
+
+**After C6 is done: the 7-consecutive-day countdown begins.** The cron will post a final summary and request disabling the trigger after 7 clean days.
+
+---
+
+## Fire log
+
+| Fire | Timestamp | Gap closed | PR | Criterion |
+|------|-----------|------------|----|-----------|
+| 1 | 2026-05-26T00:00Z | C5 visual-diff gateway-token -- added explicit auth probe in e2e-critical, made health check fail with exit 1, added curl /api/auth/check annotation before Playwright. | #2147 | C5 |
+| 2 | 2026-05-27T00:00Z | C3 landing golden path -- entire test suite absent from clawmetry-landing. Added run_landing.py + test_landing_golden_path.py + landing-golden-path.yml. | clawmetry-landing#325 | C3 |
+| 3 | 2026-05-28T00:00Z | C4 daemon pair + event flow -- test_step_3 and test_step_4 were @pytest.mark.skip stubs. Replaced with DaemonSim-backed tests. | clawmetry-cloud#1168 (merged) | C4 |
+| 4 | 2026-05-31T00:00Z | Status audit: confirmed C1/C2/C3/C4/C5/C7 all GREEN from live PR check runs. C6 is the only remaining RED criterion. Documented exact required-status-check job names and gh CLI commands above. No code change needed -- C6 is a one-time manual admin action. | (tracking issue update) | C6 blocked on manual |
+
+---
+
+## Stop condition
+
+All 7 criteria green for 7 consecutive days triggers a final summary here and disables the cron trigger at https://claude.ai/code/scheduled.
+
+## Related
+
+- User mandate: 2026-05-17 -- ""gateway token is not passed for oss so it never displays other screens""
+- Repo scope: vivekchand/clawmetry, vivekchand/clawmetry-cloud, vivekchand/clawmetry-landing
+- Duplicate / older tracking issue: #1646 (superseded by this issue)",no,yes,no,
+c6c96129528f261c,stackoverflow,https://stackoverflow.com/questions/43908073,What is the List entity count(x/50) in Luis apart from Entity count?,"In LUIS AI tool there is a &quot;list entity count&quot; shown. What is it actually?
+",no,yes,no,
+dbd3b745c3c2491a,stackoverflow,https://stackoverflow.com/questions/79900825,How to build strong fundamentals of programming without using AI,"I am currently learning programming and I want to build strong fundamentals in subjects like logic building, problem solving, and understanding how programs actually work. However, I have noticed that many learners today rely heavily on AI tools to generate code or solve problems, which sometimes prevents them from fully understanding the concepts themselves.
+Because of this, I would like to know how a beginner can develop solid programming fundamentals without depending on AI tools. I am interested in learning effective methods such as practice strategies, learning resources, or study approaches that help improve programming logic and conceptual understanding.
+What are some recommended ways to learn programming deeply and build strong fundamentals while avoiding reliance on AI-generated solutions?
+",no,yes,no,
+f017ac0e207e5581,stackoverflow,https://stackoverflow.com/questions/79872256,"Monorepo + AI tools (Copilot, Cursor): does having full codebase context provide real advantages in practice?","I work in a frontend environment with multiple applications and shared libraries.
+Historically, these projects have lived in separate repositories (multi-repo), and shared functionality was either duplicated or partially reused, which led to inconsistencies and bugs being fixed in one project but not in others.
+Recently, I’ve been evaluating monorepos (e.g. Nx / Turborepo) not only from the usual perspectives (code sharing, refactors, CI optimization), but also from the angle of AI-assisted development.
+One potential advantage I see is that, in a monorepo:
+
+applications and shared libraries live in the same place
+
+contracts, types, and usages are visible together
+
+AI tools like GitHub Copilot, Cursor, or similar can access the full context of the system
+
+
+My hypothesis is that this could improve:
+
+refactors that touch shared APIs
+
+propagating changes across multiple apps
+
+consistency when updating reusable methods or types
+
+reducing copy/paste–driven divergence
+
+
+However, this is more an intuition than something I’ve validated extensively in production.
+My questions are:
+
+Have you observed real, practical benefits when using AI coding tools in a monorepo compared to multi-repo setups?
+
+Does having the full codebase context actually improve the quality of AI suggestions/refactors?
+
+Are there any downsides or limitations you’ve encountered when combining monorepos with AI-assisted development?
+
+
+I’m especially interested in experiences from teams working with TypeScript-heavy codebases and shared domain logic.
+",unclear,yes,yes,
+fc62fe2f882c82b8,stackoverflow,https://stackoverflow.com/questions/79820759,Struggling to Search for Coding Solutions Without Relying on AI Tools,"There is always a problem that has faced me since I entered the tech field, and it is almost like a cancerous issue. I fear it may kill my problem-solving skills, my thinking skills, my ability to focus and understand, and literally every part of my brain.
+The problem:
+If I face a technical issue while writing some code—
+something difficult that I want to solve but I don’t know how to search for it—
+I immediately run to AI tools to solve the problem for me.
+And as you know, this means I take my brain and place it aside, replacing it with this machine.
+The solution:
+I want people here who have a methodology—I repeat, a methodology—that they follow to search for something and find its solution before I end up falling into the abyss.
+",no,yes,no,
