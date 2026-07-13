@@ -4,6 +4,7 @@ import sys
 from unittest.mock import patch
 
 import pytest
+
 from needradar import cli
 
 
@@ -49,3 +50,19 @@ class TestArgparse:
         monkeypatch.setattr(sys, "argv", ["cli", "-v", "status"])
         with patch("needradar.cli.asyncio.run"), patch("needradar.cli._setup_logging"):
             cli.main()
+
+    def test_stats(self, monkeypatch):
+        monkeypatch.setattr(sys, "argv", ["cli", "stats"])
+        with patch("needradar.cli._show_project_stats") as show_stats, patch("needradar.cli._setup_logging"):
+            cli.main()
+        show_stats.assert_called_once_with()
+
+    def test_run_help_identifies_full_support_default(self, monkeypatch, capsys):
+        monkeypatch.setattr(sys, "argv", ["cli", "run", "--help"])
+
+        with pytest.raises(SystemExit) as exit_info:
+            cli.main()
+
+        assert exit_info.value.code == 0
+        help_text = " ".join(capsys.readouterr().out.split())
+        assert "full-support default: github,stackoverflow,juejin" in help_text

@@ -13,6 +13,8 @@ import sys
 
 from loguru import logger
 
+DEFAULT_PLATFORMS = ("github", "stackoverflow", "juejin")
+
 
 def _setup_logging(verbose: bool) -> None:
     logger.remove()
@@ -242,6 +244,15 @@ async def _show_status() -> None:
                 print(f"  [{t.status.value}] {t.keyword} @ {t.platform} — {t.total_items} items")
 
 
+def _show_project_stats() -> None:
+    from pathlib import Path
+
+    from needradar.services.project_stats import collect_project_stats, format_project_stats
+
+    root = Path(__file__).resolve().parents[2]
+    print(format_project_stats(collect_project_stats(root)))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="needradar",
@@ -254,8 +265,8 @@ def main() -> None:
     run_parser = sub.add_parser("run", help="Run full pipeline: crawl → extract → report → verify")
     run_parser.add_argument("keyword", help="Search keyword")
     run_parser.add_argument(
-        "--platforms", default="github,stackoverflow,juejin",
-        help="Comma-separated platforms (default: github,stackoverflow,juejin)",
+        "--platforms", default=",".join(DEFAULT_PLATFORMS),
+        help="Comma-separated platforms (full-support default: github,stackoverflow,juejin)",
     )
     run_parser.add_argument(
         "--agent", action="store_true",
@@ -268,6 +279,9 @@ def main() -> None:
 
     # status: show current state
     sub.add_parser("status", help="Show vault status and recent tasks")
+
+    # stats: reproducible repository and runtime content counts
+    sub.add_parser("stats", help="Show reproducible project statistics")
 
     # gates: list quality gates
     gates_parser = sub.add_parser("gates", help="List quality gates")
@@ -291,6 +305,8 @@ def main() -> None:
         asyncio.run(_generate_report(args.keyword))
     elif args.command == "status":
         asyncio.run(_show_status())
+    elif args.command == "stats":
+        _show_project_stats()
     elif args.command == "gates":
         asyncio.run(_list_gates(status=args.status, run_id=args.run_id))
     elif args.command == "distill":

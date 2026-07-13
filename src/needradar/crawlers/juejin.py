@@ -36,10 +36,17 @@ class JuejinCrawler(BaseCrawler):
                 break
 
             for entry in entries:
-                article_info = entry.get("article_info", entry.get("pin_info", {}))
-                article_id = article_info.get("article_id", article_info.get("pin_id", ""))
-                user_info = entry.get("author_user_info", {})
+                model = entry.get("result_model", entry)
+                article_info = model.get("article_info", model.get("pin_info", {}))
+                article_id = article_info.get(
+                    "article_id", model.get("article_id", article_info.get("pin_id", ""))
+                )
+                user_info = model.get("author_user_info", entry.get("author_user_info", {}))
                 content = article_info.get("brief_content") or article_info.get("content", "")
+                tags = model.get("tags", [])
+                tag_names = [tag.get("tag_name", "") for tag in tags if isinstance(tag, dict)]
+                if not tag_names and isinstance(entry.get("keywords"), str):
+                    tag_names = [keyword for keyword in entry["keywords"].split(",") if keyword]
 
                 if article_id:
                     source_url = f"https://juejin.cn/post/{article_id}"
@@ -53,7 +60,7 @@ class JuejinCrawler(BaseCrawler):
                         title=article_info.get("title", ""),
                         content=content,
                         author=user_info.get("user_name", ""),
-                        tags=[kw for kw in entry.get("keywords", "").split(",") if kw] if isinstance(entry.get("keywords"), str) else [],
+                        tags=tag_names,
                     )
                 )
 
@@ -62,7 +69,7 @@ class JuejinCrawler(BaseCrawler):
 
             # 掘金 cursor 是下一页的游标字符串
             cursor = str(data.get("cursor", ""))
-            if not cursor or cursor == "0" or len(entries) < page_size:
+            if not cursor or cursor == "0" or data.get("has_more") is False:
                 break
 
         return items[:max_items]
