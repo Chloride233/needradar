@@ -1,0 +1,353 @@
+{
+  "cache": {
+    "actual_cost_cny": 0.39386800000000005,
+    "cost_without_cache_cny": 1.106998496,
+    "savings_cny": 0.713130496,
+    "savings_rate": 0.6442018652932298
+  },
+  "categorical_transitions": {
+    "emotion": {
+      "improved": 8,
+      "unchanged": 35,
+      "worsened": 4
+    },
+    "sentiment": {
+      "improved": 5,
+      "unchanged": 37,
+      "worsened": 5
+    }
+  },
+  "configurations": {
+    "no_rag": {
+      "cache_hit_rate": 0.9490143120043426,
+      "cache_savings_cny": 0.21245951999999999,
+      "cached_tokens": 215040,
+      "cost_cny": 0.118799,
+      "cost_without_cache_cny": 0.33125852,
+      "description_mean_dice": 0.4039621201479212,
+      "duplicate_rate": 0.0,
+      "emotion_accuracy": 0.6595744680851063,
+      "extraction_failure_rate": 0.0,
+      "hitl_record_edit_rate": 0.0,
+      "pain_point_mean_dice": 0.37041265680709,
+      "proxy_edit_rate": 0.98,
+      "requirement_presence_accuracy": 0.49,
+      "sentiment_accuracy": 0.5957446808510638,
+      "title_mean_dice": 0.49465676662213864,
+      "total_tokens": 277611,
+      "use_case_mean_dice": 0.3267166791502923
+    },
+    "rag": {
+      "cache_hit_rate": 0.9724157532089444,
+      "cache_savings_cny": 0.250145792,
+      "cached_tokens": 253184,
+      "cost_cny": 0.14268300000000003,
+      "cost_without_cache_cny": 0.392828792,
+      "description_mean_dice": 0.36938289138318087,
+      "duplicate_rate": 0.01020408163265306,
+      "emotion_accuracy": 0.7446808510638298,
+      "extraction_failure_rate": 0.0,
+      "hitl_record_edit_rate": 0.0,
+      "pain_point_mean_dice": 0.3563007005529947,
+      "proxy_edit_rate": 0.98,
+      "requirement_presence_accuracy": 0.49,
+      "sentiment_accuracy": 0.5957446808510638,
+      "title_mean_dice": 0.5016995220556154,
+      "total_tokens": 325039,
+      "use_case_mean_dice": 0.3394832102868316
+    },
+    "rag_hitl": {
+      "cache_hit_rate": 0.9739841208261473,
+      "cache_savings_cny": 0.250525184,
+      "cached_tokens": 253568,
+      "cost_cny": 0.132386,
+      "cost_without_cache_cny": 0.382911184,
+      "description_mean_dice": 0.8662922067043133,
+      "duplicate_rate": 0.0,
+      "emotion_accuracy": 1.0,
+      "extraction_failure_rate": 0.0,
+      "hitl_record_edit_rate": 0.97,
+      "pain_point_mean_dice": 0.9107486245279286,
+      "proxy_edit_rate": 0.0,
+      "requirement_presence_accuracy": 1.0,
+      "sentiment_accuracy": 1.0,
+      "title_mean_dice": 0.7970512385361591,
+      "total_tokens": 320109,
+      "use_case_mean_dice": 0.9531547472104939
+    }
+  },
+  "hitl": {
+    "edited_fields": 437,
+    "edited_records": 97,
+    "field_counts": {
+      "description": 84,
+      "emotion": 21,
+      "pain_point": 87,
+      "requirement_present": 51,
+      "sentiment": 30,
+      "title": 72,
+      "use_case": 92
+    },
+    "post_review_requirement_accuracy": 1.0,
+    "pre_review_requirement_accuracy": 0.49,
+    "record_edit_rate": 0.97
+  },
+  "input_hashes": {
+    "dataset_sha256": "573a7baa310f0a6f37a2ec0dc4b28bd73103b1216469fba177ae37ff8738779c",
+    "gold_sha256": "155e2c400764fe3b4c960172600049cede145085dda65c8aaaa97601e962c729",
+    "prompt_sha256": "f358d52e140f301f14ff652b7d08e7dd51c9c3b2d42cf2fd305c481928e5c090",
+    "selection_sha256": "ae4724a216d7022294f12cb7741a1e5e36266a0ca6eea25941db156567772ea5"
+  },
+  "limitations": [
+    "The sample is query-stratified and platform is confounded with content type.",
+    "The proxy gold has only 7% targeted human review; simulated HITL is not 100-person human evidence.",
+    "The current retriever uses fallback-sha256-bow-384 embeddings and always injects top-3 context.",
+    "The two RAG model runs are independent stochastic calls; HITL pre-review metrics may differ from the standalone RAG run."
+  ],
+  "methodology": "100 frozen query-stratified discussions; proxy gold from two-agent blind annotation with 7% targeted human review",
+  "model_id": "deepseek-v4-flash:openai/deepseek-v4-flash",
+  "platform_requirement_accuracy": {
+    "github": {
+      "absolute_change": 0.0,
+      "baseline": 0.6176470588235294,
+      "current": 0.6176470588235294,
+      "relative_change": 0.0
+    },
+    "juejin": {
+      "absolute_change": 0.0,
+      "baseline": 0.0,
+      "current": 0.0,
+      "relative_change": null
+    },
+    "stackoverflow": {
+      "absolute_change": 0.0,
+      "baseline": 0.8484848484848485,
+      "current": 0.8484848484848485,
+      "relative_change": 0.0
+    }
+  },
+  "provider_params": {
+    "cache_prefix": true,
+    "fallback_to_default": false,
+    "max_tokens": 4096,
+    "preset_id": "deepseek-v4-flash",
+    "temperature": 0.3
+  },
+  "rag_cases": {
+    "largest_gains": [
+      {
+        "discussion_title": "Best AI Tools For Magento Enterprise Level Projects",
+        "field_changes": {
+          "description": 0.47148834429169156,
+          "pain_point": 0.36702375407545407,
+          "title": 0.30748552522746075,
+          "use_case": 0.33177337448969435
+        },
+        "id": "5a372c56011806b8",
+        "mean_text_similarity_change": 0.3694427495210752,
+        "platform": "stackoverflow",
+        "source_url": "https://stackoverflow.com/questions/79960475"
+      },
+      {
+        "discussion_title": "Getting started with AI tools in Python",
+        "field_changes": {
+          "description": 0.34712804148384524,
+          "pain_point": 0.44775463090199524,
+          "title": 0.32558139534883723,
+          "use_case": 0.26492537313432835
+        },
+        "id": "7f5bbcd428a898ce",
+        "mean_text_similarity_change": 0.34634736021725154,
+        "platform": "stackoverflow",
+        "source_url": "https://stackoverflow.com/questions/12629725"
+      },
+      {
+        "discussion_title": "Monorepo + AI tools (Copilot, Cursor): does having full codebase context provide real advantages in practice?",
+        "field_changes": {
+          "description": 0.19339035348887568,
+          "pain_point": 0.49514563106796117,
+          "title": 0.2016141794587751,
+          "use_case": 0.19043083036224587
+        },
+        "id": "f017ac0e207e5581",
+        "mean_text_similarity_change": 0.2701452485944644,
+        "platform": "stackoverflow",
+        "source_url": "https://stackoverflow.com/questions/79872256"
+      },
+      {
+        "discussion_title": "SYSTEM_PROMPT instructs the LLM to call 'query_multimodal_ai' but the registered tool is 'query_multimodal_api'",
+        "field_changes": {
+          "description": 0.09002066231082817,
+          "pain_point": 0.4831830157112363,
+          "title": 0.31865042174320524,
+          "use_case": 0.10491512041058035
+        },
+        "id": "085de6519b94ed47",
+        "mean_text_similarity_change": 0.2491923050439625,
+        "platform": "github",
+        "source_url": "https://github.com/ThatMattCat/havencore/issues/165"
+      },
+      {
+        "discussion_title": "Issues invoking Spring AI MCP tools via SSE in Spring Boot",
+        "field_changes": {
+          "description": 0.08736625699665362,
+          "pain_point": 0.3574327752409944,
+          "title": 0.39194139194139194,
+          "use_case": 0.11592112729336107
+        },
+        "id": "a922923efae8061c",
+        "mean_text_similarity_change": 0.23816538786810026,
+        "platform": "stackoverflow",
+        "source_url": "https://stackoverflow.com/questions/79767218"
+      }
+    ],
+    "largest_regressions": [
+      {
+        "discussion_title": "How to build an autonomous AI Agent with tool calling using the new Microsoft.Agents.AI framework in .NET?",
+        "field_changes": {
+          "description": -0.6252452762874432,
+          "pain_point": -0.48427672955974843,
+          "title": -0.4697552716638449,
+          "use_case": -0.2507852041530798
+        },
+        "id": "1132979c205a2394",
+        "mean_text_similarity_change": -0.4575156204160291,
+        "platform": "stackoverflow",
+        "source_url": "https://stackoverflow.com/questions/79946178"
+      },
+      {
+        "discussion_title": "Microsoft AI tools and database row-level security",
+        "field_changes": {
+          "description": -0.42218080149114634,
+          "pain_point": -0.4900919821869591,
+          "title": -0.2876923076923077,
+          "use_case": -0.31083252973320474
+        },
+        "id": "76737bb8ff4f9052",
+        "mean_text_similarity_change": -0.37769940527590445,
+        "platform": "stackoverflow",
+        "source_url": "https://stackoverflow.com/questions/79927183"
+      },
+      {
+        "discussion_title": "Tools for A9G GPRS+GPS Module of chinese AI thinker",
+        "field_changes": {
+          "description": -0.2928047787130057,
+          "pain_point": -0.4622299550529215,
+          "title": -0.35190813914218166,
+          "use_case": -0.1007905138339921
+        },
+        "id": "02b5d65bae63f4e0",
+        "mean_text_similarity_change": -0.30193334668552524,
+        "platform": "stackoverflow",
+        "source_url": "https://stackoverflow.com/questions/64831384"
+      },
+      {
+        "discussion_title": "fix(ai): Skill usage telemetry를 privacy-safe versioned schema로 전환",
+        "field_changes": {
+          "description": -0.3479529117616419,
+          "pain_point": -0.44830917874396137,
+          "title": -0.13788320155361355,
+          "use_case": -0.1311864406779661
+        },
+        "id": "10b971546306e791",
+        "mean_text_similarity_change": -0.26633293318429574,
+        "platform": "github",
+        "source_url": "https://github.com/greenheadHQ/nixos-config/issues/1099"
+      },
+      {
+        "discussion_title": "gh shim recursively selects another aidevops shim after hot deploy",
+        "field_changes": {
+          "description": -0.28743781094527365,
+          "pain_point": -0.31147559786660545,
+          "title": -0.2537634408602151,
+          "use_case": -0.08393559021174085
+        },
+        "id": "d8c7c3d251404b2b",
+        "mean_text_similarity_change": -0.23415310997095876,
+        "platform": "github",
+        "source_url": "https://github.com/marcusquinn/aidevops/issues/27479"
+      }
+    ]
+  },
+  "rag_vs_no_rag": {
+    "cost_cny": {
+      "absolute_change": 0.02388400000000003,
+      "baseline": 0.118799,
+      "current": 0.14268300000000003,
+      "relative_change": 0.20104546334565132
+    },
+    "description_mean_dice": {
+      "absolute_change": -0.034579228764740344,
+      "baseline": 0.4039621201479212,
+      "current": 0.36938289138318087,
+      "relative_change": -0.08560017645238188
+    },
+    "duplicate_rate": {
+      "absolute_change": 0.01020408163265306,
+      "baseline": 0.0,
+      "current": 0.01020408163265306,
+      "relative_change": null
+    },
+    "emotion_accuracy": {
+      "absolute_change": 0.08510638297872342,
+      "baseline": 0.6595744680851063,
+      "current": 0.7446808510638298,
+      "relative_change": 0.12903225806451615
+    },
+    "pain_point_mean_dice": {
+      "absolute_change": -0.014111956254095337,
+      "baseline": 0.37041265680709,
+      "current": 0.3563007005529947,
+      "relative_change": -0.03809793211640932
+    },
+    "proxy_edit_rate": {
+      "absolute_change": 0.0,
+      "baseline": 0.98,
+      "current": 0.98,
+      "relative_change": 0.0
+    },
+    "requirement_presence_accuracy": {
+      "absolute_change": 0.0,
+      "baseline": 0.49,
+      "current": 0.49,
+      "relative_change": 0.0
+    },
+    "sentiment_accuracy": {
+      "absolute_change": 0.0,
+      "baseline": 0.5957446808510638,
+      "current": 0.5957446808510638,
+      "relative_change": 0.0
+    },
+    "title_mean_dice": {
+      "absolute_change": 0.007042755433476766,
+      "baseline": 0.49465676662213864,
+      "current": 0.5016995220556154,
+      "relative_change": 0.014237661159615002
+    },
+    "total_tokens": {
+      "absolute_change": 47428,
+      "baseline": 277611,
+      "current": 325039,
+      "relative_change": 0.17084337436196692
+    },
+    "use_case_mean_dice": {
+      "absolute_change": 0.012766531136539305,
+      "baseline": 0.3267166791502923,
+      "current": 0.3394832102868316,
+      "relative_change": 0.039075235368276375
+    }
+  },
+  "records": 100,
+  "requirement_presence_transitions": {
+    "improved": 0,
+    "unchanged": 100,
+    "worsened": 0
+  },
+  "retriever_provenance": {
+    "corpus_records": 150,
+    "corpus_sha256": "aae92eead080126322d41926faddbdfa94f19ceb36681b03b28f5171353026fb",
+    "embedding_backend": "fallback-sha256-bow-384",
+    "table_name": "phase3_rag_aae92eead080_75045f16"
+  },
+  "schema_version": 3
+}

@@ -96,8 +96,14 @@ class LLMProvider:
     def get_health(self, preset_id: str) -> dict:
         return self._health.get(preset_id, {})
 
-    def update_preset(self, preset_id: str, *, api_key: str | None = None,
-                      temperature: float | None = None, max_tokens: int | None = None) -> ModelPreset:
+    def update_preset(
+        self,
+        preset_id: str,
+        *,
+        api_key: str | None = None,
+        temperature: float | None = None,
+        max_tokens: int | None = None,
+    ) -> ModelPreset:
         if preset_id not in PRESETS:
             raise ValueError(f"Unknown preset: {preset_id}")
         preset = PRESETS[preset_id]
@@ -151,7 +157,9 @@ class LLMProvider:
         max_tokens: int | None = None,
         temperature: float | None = None,
         response_format: dict | None = None,
+        extra_body: dict | None = None,
         cache_prefix: bool = True,
+        fallback_to_default: bool = True,
     ) -> str:
         # Scan user messages for injection attempts
         for msg in messages:
@@ -172,23 +180,35 @@ class LLMProvider:
         preset = self.active_preset
         if preset:
             return await self._call_model(
-                preset, messages,
-                model=model, max_tokens=max_tokens,
+                preset,
+                messages,
+                model=model,
+                max_tokens=max_tokens,
                 temperature=temperature,
                 response_format=response_format,
+                extra_body=extra_body,
+                fallback_to_default=fallback_to_default,
             )
         return await self._call_default(
-            messages, model=model, max_tokens=max_tokens,
-            temperature=temperature, response_format=response_format,
+            messages,
+            model=model,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            response_format=response_format,
+            extra_body=extra_body,
         )
 
     async def _call_model(
-        self, preset: ModelPreset,
+        self,
+        preset: ModelPreset,
         messages: list[dict[str, str]],
-        *, model: str | None = None,
+        *,
+        model: str | None = None,
         max_tokens: int | None = None,
         temperature: float | None = None,
         response_format: dict | None = None,
+        extra_body: dict | None = None,
+        fallback_to_default: bool = True,
     ) -> str:
         effective_model = model or preset.litellm_model
         effective_max_tokens = max_tokens or preset.max_tokens
@@ -201,18 +221,24 @@ class LLMProvider:
                 max_tokens=effective_max_tokens,
                 temperature=effective_temperature,
                 response_format=response_format,
+                extra_body=extra_body,
                 api_base=preset.base_url,
                 api_key=preset.api_key,
             )
         except Exception as e:
             logger.warning("preset_call_failed", preset=preset.id, error=str(e))
+            if not fallback_to_default:
+                raise
             logger.info("falling_back_to_default", model=settings.llm_default_model)
             # Remove shared prefix before fallback (different model, no cache benefit)
             if messages and messages[0].get("content", "").startswith("你是 NeedRadar"):
                 messages = messages[1:]
             return await self._call_default(
-                messages, max_tokens=max_tokens, temperature=temperature,
+                messages,
+                max_tokens=max_tokens,
+                temperature=temperature,
                 response_format=response_format,
+                extra_body=extra_body,
             )
         usage = response.usage
         input_tokens = usage.prompt_tokens if usage else 0
@@ -236,11 +262,14 @@ class LLMProvider:
         return validate_llm_output(response.choices[0].message.content or "")
 
     async def _call_default(
-        self, messages: list[dict[str, str]],
-        *, model: str | None = None,
+        self,
+        messages: list[dict[str, str]],
+        *,
+        model: str | None = None,
         max_tokens: int | None = None,
         temperature: float | None = None,
         response_format: dict | None = None,
+        extra_body: dict | None = None,
     ) -> str:
         effective_model = model or settings.llm_default_model
         effective_max_tokens = max_tokens or settings.llm_default_max_tokens
@@ -253,6 +282,7 @@ class LLMProvider:
                 max_tokens=effective_max_tokens,
                 temperature=effective_temperature,
                 response_format=response_format,
+                extra_body=extra_body,
                 fallbacks=[settings.llm_fallback_model],
             )
             usage = response.usage
@@ -285,6 +315,8 @@ class LLMProvider:
         prompt: str,
         text: str,
         schema: type[BaseModel],
+        *,
+        fallback_to_default: bool = True,
     ) -> BaseModel:
         messages = [
             {"role": "system", "content": prompt},
@@ -293,6 +325,7 @@ class LLMProvider:
         raw = await self.complete(
             messages,
             response_format={"type": "json_object"},
+            fallback_to_default=fallback_to_default,
         )
         data = safe_json_parse(raw)
         if data is None:

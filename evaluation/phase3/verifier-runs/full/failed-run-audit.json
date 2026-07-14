@@ -1,0 +1,73 @@
+{
+  "accepted": false,
+  "artifact_sha256": {
+    "metrics.json": "0276ff9552b506bb9711adf901248ed0a735260b46a805fd9c30a94d5ca58a61",
+    "predictions.jsonl": "08750c890c36836e3d6899bb1117ed6a458c7a5ffd259d43f5a9490e0155a098",
+    "run.json": "7587ac417a3917a9d52cf14e488d0e2237a8fa00001208a9cdf59815f941f4bf"
+  },
+  "cost_accounting": {
+    "naive_independent_calls": 600,
+    "planned_dag_calls": 150,
+    "provider_attempts": 114,
+    "recorded_cost_cny_lower_bound": 0.203212,
+    "responses_with_usage": 113,
+    "stage_calls_skipped_for_empty_claims": 36,
+    "structural_artifact_reuse_calls_saved": 450
+  },
+  "diagnostic_rule_fallback_ranking": {
+    "auroc": 0.48214285714285715,
+    "average_precision": 0.5532356532356533,
+    "records": 15
+  },
+  "extraction": {
+    "failure_kinds": {
+      "empty_or_malformed_json": 24,
+      "provider_error": 1,
+      "quote_offset_mismatch": 3
+    },
+    "predicted_claims": {
+      "hybrid": 36,
+      "llm_only": 0,
+      "rule_only": 39
+    },
+    "strata": {
+      "controlled": {
+        "hybrid_claims": 36,
+        "records": 18
+      },
+      "naturalistic": {
+        "hybrid_claims": 0,
+        "records": 12
+      }
+    },
+    "valid_llm_records": 0
+  },
+  "reason": "model-assisted claim extraction produced zero claims and required stages failed",
+  "records": 30,
+  "required_recovery": [
+    "disable provider thinking for structured verifier calls",
+    "derive quote offsets locally and cap hybrid claims at 12",
+    "exclude failed dependencies from downstream scores and report valid denominators",
+    "write a new schema-v2 run instead of resuming this directory"
+  ],
+  "stage_counts": {
+    "claim_extraction": {
+      "failed": 28,
+      "success": 2
+    },
+    "consistency": {
+      "failed": 5,
+      "success": 25
+    },
+    "fact_check": {
+      "failed": 4,
+      "success": 26
+    },
+    "input_loading": {
+      "success": 30
+    },
+    "source_resolution": {
+      "success": 30
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{"id":"c23f735220eaa93f","verdicts":["supported","supported","supported"],"internal_contradiction":false,"notes":"Atomic claim spans selected; both reviewers agreed on verdicts."}
+{"id":"1b6918c2a8ec68fe","verdicts":["partially","supported","contradicted"],"internal_contradiction":false,"notes":"Both reviewers treated the truncated title as partial and the platform attribution as contradicted."}
+{"id":"9549f97e2c56dd7b","verdicts":["supported","supported","unverifiable"],"internal_contradiction":false,"notes":"Adjudicated missing non-numeric evidence as unverifiable, not hallucination."}
+{"id":"dbb5b35e50b938d6","verdicts":["supported","supported","hallucination"],"internal_contradiction":false,"notes":"Both reviewers agreed the fabricated 97 percent claim is a hallucination."}
+{"id":"5e99a45dd8250986","verdicts":["partially","supported","partially"],"internal_contradiction":false,"notes":"Both reviewers treated truncated source titles as partial support."}
+{"id":"af63795e2b02907e","verdicts":["supported","supported","contradicted"],"internal_contradiction":false,"notes":"Generator attribution corrected to GitHub; the embedded source platform is Stack Overflow."}
+{"id":"e35e54440b8f0658","verdicts":["supported","supported","unverifiable"],"internal_contradiction":false,"notes":"Adjudicated missing non-numeric evidence as unverifiable, not hallucination."}
+{"id":"4d146b218dca2f06","verdicts":["supported","supported","hallucination"],"internal_contradiction":false,"notes":"Both reviewers agreed the fabricated 97 percent claim is a hallucination."}
+{"id":"02ff0c67b815c173","verdicts":["supported","supported","supported"],"internal_contradiction":false,"notes":"Both reviewers agreed on all verdicts."}
+{"id":"fbdeb826cdc8e7e9","verdicts":["supported","supported","contradicted"],"internal_contradiction":false,"notes":"Both reviewers agreed the source is not a Stack Overflow item."}
+{"id":"27defc095066a5b0","verdicts":["supported","supported","unverifiable"],"internal_contradiction":false,"notes":"Adjudicated missing non-numeric evidence as unverifiable, not hallucination."}
+{"id":"d55e036925cd22cb","verdicts":["supported","supported","hallucination"],"internal_contradiction":false,"notes":"Both reviewers agreed the fabricated 97 percent claim is a hallucination."}

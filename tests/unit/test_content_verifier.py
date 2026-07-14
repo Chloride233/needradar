@@ -1,4 +1,5 @@
 """Tests for ContentVerifier — hallucination detection and content verification."""
+
 import json
 from unittest.mock import AsyncMock, patch
 
@@ -8,12 +9,14 @@ from needradar.services.content_verifier import (
     PLATFORM_RELIABILITY,
     Claim,
     ContentVerifier,
+    VerificationStageError,
     get_verifier,
 )
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def verifier():
@@ -23,20 +26,35 @@ def verifier():
 @pytest.fixture
 def sample_claims():
     return [
-        Claim(text="Python is the most popular language", section="核心发现",
-              verdict="supported", confidence=0.9, evidence="Survey data confirms"),
-        Claim(text="99% of developers use AI", section="核心发现",
-              verdict="hallucination", confidence=0.2, evidence="No source"),
-        Claim(text="Need better tooling", section="用户痛点",
-              verdict="partially", confidence=0.6, evidence="Partial support"),
-        Claim(text="Market is growing", section="机会",
-              verdict="unverifiable", confidence=0.3, evidence=""),
+        Claim(
+            text="Python is the most popular language",
+            section="核心发现",
+            verdict="supported",
+            confidence=0.9,
+            evidence="Survey data confirms",
+        ),
+        Claim(
+            text="99% of developers use AI",
+            section="核心发现",
+            verdict="hallucination",
+            confidence=0.2,
+            evidence="No source",
+        ),
+        Claim(
+            text="Need better tooling",
+            section="用户痛点",
+            verdict="partially",
+            confidence=0.6,
+            evidence="Partial support",
+        ),
+        Claim(text="Market is growing", section="机会", verdict="unverifiable", confidence=0.3, evidence=""),
     ]
 
 
 # ---------------------------------------------------------------------------
 # Pure function tests
 # ---------------------------------------------------------------------------
+
 
 class TestTextOverlap:
     def test_identical_strings(self):
@@ -194,6 +212,7 @@ class TestPopUsage:
 class TestGetVerifier:
     def test_returns_singleton(self):
         import needradar.services.content_verifier as mod
+
         mod._verifier = None
         v1 = get_verifier()
         v2 = get_verifier()
@@ -212,6 +231,7 @@ class TestPlatformReliability:
 # ---------------------------------------------------------------------------
 # _collect_sources
 # ---------------------------------------------------------------------------
+
 
 class TestCollectSources:
     def test_empty_refs(self, verifier):
@@ -241,6 +261,7 @@ class TestCollectSources:
 # verify_report
 # ---------------------------------------------------------------------------
 
+
 class TestVerifyReport:
     @pytest.mark.asyncio
     async def test_not_found(self, verifier):
@@ -254,12 +275,14 @@ class TestVerifyReport:
     async def test_full_flow(self, verifier):
         report_body = "## 核心发现\n\n1. **Python dominates AI** surveys show.\n\n## 用户痛点深度分析\n\nDevs need better tooling.\n\n## 机会与建议\n\nAI market grows 25% annually."
 
-        with patch("needradar.services.content_verifier.vault") as mv, \
-             patch("needradar.services.content_verifier.llm") as ml:
-
+        with (
+            patch("needradar.services.content_verifier.vault") as mv,
+            patch("needradar.services.content_verifier.llm") as ml,
+        ):
             # vault: report + source need
             mv.find_by_title.side_effect = lambda stage, title: (
-                __import__("pathlib").Path("/v/report.md") if stage == "初稿"
+                __import__("pathlib").Path("/v/report.md")
+                if stage == "初稿"
                 else __import__("pathlib").Path(f"/v/{title}.md")
             )
             mv.read.side_effect = [
@@ -268,14 +291,24 @@ class TestVerifyReport:
             ]
 
             # LLM responses for 3 steps
-            claim_json = json.dumps([
-                {"text": "Python dominates AI", "section": "核心发现"},
-                {"text": "AI market grows 25% annually", "section": "机会与建议"},
-            ])
-            fact_json = json.dumps([
-                {"idx": 1, "verdict": "supported", "confidence": 0.9, "evidence": "Confirmed", "flags": []},
-                {"idx": 2, "verdict": "partially", "confidence": 0.7, "evidence": "Rate varies", "flags": ["exaggerated"]},
-            ])
+            claim_json = json.dumps(
+                [
+                    {"text": "Python dominates AI", "section": "核心发现"},
+                    {"text": "AI market grows 25% annually", "section": "机会与建议"},
+                ]
+            )
+            fact_json = json.dumps(
+                [
+                    {"idx": 1, "verdict": "supported", "confidence": 0.9, "evidence": "Confirmed", "flags": []},
+                    {
+                        "idx": 2,
+                        "verdict": "partially",
+                        "confidence": 0.7,
+                        "evidence": "Rate varies",
+                        "flags": ["exaggerated"],
+                    },
+                ]
+            )
             consistency_json = json.dumps({"consistent": True, "score": 95, "issues": []})
 
             ml.pop_last_usage.return_value = None
@@ -285,3 +318,108 @@ class TestVerifyReport:
             assert result.overall_score > 0
             assert len(result.claims) == 2
             assert result.hallucination_count == 0
+
+
+class TestStrictVerifier:
+    @pytest.mark.asyncio
+    async def test_extracts_exact_quote_and_disables_fallback(self):
+        body = "## Core\n\nDevelopers report that setup takes more than two hours on clean machines."
+        quote = "setup takes more than two hours"
+        start = body.index(quote)
+        provider = AsyncMock()
+        provider.complete.return_value = json.dumps(
+            [
+                {
+                    "quote": quote,
+                    "section": "Core",
+                }
+            ]
+        )
+        provider.pop_last_usage.return_value = None
+        strict_verifier = ContentVerifier(provider=provider, strict=True)
+
+        claims = await strict_verifier._extract_claims(body)
+
+        assert len(claims) == 1
+        assert claims[0].text == quote
+        assert claims[0].quote == quote
+        assert claims[0].start == start
+        assert claims[0].end == start + len(quote)
+        assert len(claims[0].claim_id) == 16
+        assert provider.complete.await_args.kwargs["fallback_to_default"] is False
+        assert provider.complete.await_args.kwargs["extra_body"] == {"thinking": {"type": "disabled"}}
+        traces = strict_verifier.pop_call_traces()
+        assert len(traces) == 1
+        assert traces[0]["status"] == "success"
+        assert len(traces[0]["prompt_sha256"]) == 64
+        assert len(traces[0]["input_sha256"]) == 64
+        assert len(traces[0]["output_sha256"]) == 64
+        assert "output" not in traces[0]
+
+    @pytest.mark.asyncio
+    async def test_rejects_quote_that_is_not_in_report(self):
+        body = "## Core\n\nDevelopers report that setup takes more than two hours on clean machines."
+        provider = AsyncMock()
+        provider.complete.return_value = json.dumps(
+            [
+                {
+                    "quote": "setup takes less than one hour",
+                    "section": "Core",
+                }
+            ]
+        )
+        strict_verifier = ContentVerifier(provider=provider, strict=True)
+
+        with pytest.raises(VerificationStageError, match="claim_extraction"):
+            await strict_verifier._extract_claims(body)
+
+    @pytest.mark.asyncio
+    async def test_rejects_more_than_one_fact_check_batch_of_claims(self):
+        body = " ".join(f"Claim number {index} is present in this report." for index in range(13))
+        provider = AsyncMock()
+        provider.complete.return_value = json.dumps(
+            [{"quote": f"Claim number {index} is present", "section": "Core"} for index in range(13)]
+        )
+        strict_verifier = ContentVerifier(provider=provider, strict=True)
+
+        with pytest.raises(VerificationStageError, match="at most 12 claims"):
+            await strict_verifier._extract_claims(body)
+
+    @pytest.mark.asyncio
+    async def test_fact_check_requires_every_batch_index(self):
+        provider = AsyncMock()
+        provider.complete.return_value = json.dumps(
+            [
+                {
+                    "idx": 1,
+                    "verdict": "supported",
+                    "confidence": 0.9,
+                    "evidence": "source one",
+                    "flags": [],
+                }
+            ]
+        )
+        strict_verifier = ContentVerifier(provider=provider, strict=True)
+        claims = [Claim(text="Claim one"), Claim(text="Claim two")]
+        sources = [{"platform": "github", "title": "Source", "content": "Evidence"}]
+
+        with pytest.raises(VerificationStageError, match="fact_check"):
+            await strict_verifier._fact_check_claims(claims, sources)
+
+    @pytest.mark.asyncio
+    async def test_consistency_parse_failure_is_not_a_perfect_score(self):
+        provider = AsyncMock()
+        provider.complete.return_value = "not json"
+        strict_verifier = ContentVerifier(provider=provider, strict=True)
+        body = "## 核心发现\n\nA\n\n## 用户痛点深度分析\n\nB"
+
+        with pytest.raises(VerificationStageError, match="consistency"):
+            await strict_verifier._check_consistency(body, [])
+
+    @pytest.mark.asyncio
+    async def test_missing_report_is_an_explicit_input_failure(self):
+        strict_verifier = ContentVerifier(provider=AsyncMock(), strict=True)
+        with patch("needradar.services.content_verifier.vault") as mock_vault:
+            mock_vault.find_by_title.return_value = None
+            with pytest.raises(VerificationStageError, match="input_loading"):
+                await strict_verifier.verify_report("Missing")

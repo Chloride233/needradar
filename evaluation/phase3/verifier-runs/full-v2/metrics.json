@@ -1,0 +1,396 @@
+{
+  "evidence": {
+    "no_evidence": {
+      "claim_extraction": {
+        "duplicate_rate": 0.0,
+        "f1": 0.8345323741007193,
+        "precision": 0.8656716417910447,
+        "recall": 0.8055555555555556,
+        "tail_recall": 0.5
+      },
+      "consistency": {
+        "f1": 0.4,
+        "precision": 0.5,
+        "recall": 0.3333333333333333
+      },
+      "ranking": {
+        "auroc": 0.5734265734265734,
+        "average_precision": 0.6493589743589744,
+        "records": 24
+      },
+      "records": 24,
+      "source_resolution": {
+        "expected_sources": 48,
+        "recall": 0.0,
+        "resolved_sources": 0
+      },
+      "suggestions": {
+        "coverage": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "unsupported_rate": 0.0
+      },
+      "verdicts": {
+        "flagged": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        },
+        "hallucination": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        },
+        "macro_f1": 0.017142857142857144,
+        "per_class": {
+          "contradicted": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "hallucination": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "partially": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "supported": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "unverifiable": {
+            "f1": 0.08571428571428572,
+            "precision": 0.04477611940298507,
+            "recall": 1.0
+          }
+        }
+      }
+    },
+    "snippet_200": {
+      "claim_extraction": {
+        "duplicate_rate": 0.0,
+        "f1": 0.8270676691729324,
+        "precision": 0.859375,
+        "recall": 0.7971014492753623,
+        "tail_recall": 0.5
+      },
+      "consistency": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "ranking": {
+        "auroc": 0.553030303030303,
+        "average_precision": 0.5826410455486543,
+        "records": 23
+      },
+      "records": 23,
+      "source_resolution": {
+        "expected_sources": 46,
+        "recall": 1.0,
+        "resolved_sources": 46
+      },
+      "suggestions": {
+        "coverage": 0.5555555555555556,
+        "f1": 0.6451612903225806,
+        "precision": 0.7692307692307693,
+        "recall": 0.5555555555555556,
+        "unsupported_rate": 0.23076923076923078
+      },
+      "verdicts": {
+        "flagged": {
+          "f1": 0.5833333333333334,
+          "precision": 0.5833333333333334,
+          "recall": 0.5833333333333334
+        },
+        "hallucination": {
+          "f1": 0.6666666666666666,
+          "precision": 0.5,
+          "recall": 1.0
+        },
+        "macro_f1": 0.42122322122322126,
+        "per_class": {
+          "contradicted": {
+            "f1": 0.4444444444444445,
+            "precision": 1.0,
+            "recall": 0.2857142857142857
+          },
+          "hallucination": {
+            "f1": 0.6666666666666666,
+            "precision": 0.5,
+            "recall": 1.0
+          },
+          "partially": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "supported": {
+            "f1": 0.8131868131868132,
+            "precision": 0.8604651162790697,
+            "recall": 0.7708333333333334
+          },
+          "unverifiable": {
+            "f1": 0.18181818181818182,
+            "precision": 0.125,
+            "recall": 0.3333333333333333
+          }
+        }
+      }
+    },
+    "snippet_800": {
+      "claim_extraction": {
+        "duplicate_rate": 0.0,
+        "f1": 0.8345323741007193,
+        "precision": 0.8656716417910447,
+        "recall": 0.8055555555555556,
+        "tail_recall": 0.5
+      },
+      "consistency": {
+        "f1": 0.4,
+        "precision": 0.5,
+        "recall": 0.3333333333333333
+      },
+      "ranking": {
+        "auroc": 0.5944055944055944,
+        "average_precision": 0.6313153663832397,
+        "records": 24
+      },
+      "records": 24,
+      "source_resolution": {
+        "expected_sources": 48,
+        "recall": 1.0,
+        "resolved_sources": 48
+      },
+      "suggestions": {
+        "coverage": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "unsupported_rate": 0.0
+      },
+      "verdicts": {
+        "flagged": {
+          "f1": 0.6666666666666666,
+          "precision": 0.6428571428571429,
+          "recall": 0.6923076923076923
+        },
+        "hallucination": {
+          "f1": 0.7142857142857143,
+          "precision": 0.5555555555555556,
+          "recall": 1.0
+        },
+        "macro_f1": 0.4639998299572768,
+        "per_class": {
+          "contradicted": {
+            "f1": 0.6153846153846154,
+            "precision": 0.8,
+            "recall": 0.5
+          },
+          "hallucination": {
+            "f1": 0.7142857142857143,
+            "precision": 0.5555555555555556,
+            "recall": 1.0
+          },
+          "partially": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "supported": {
+            "f1": 0.8085106382978724,
+            "precision": 0.8636363636363636,
+            "recall": 0.76
+          },
+          "unverifiable": {
+            "f1": 0.18181818181818182,
+            "precision": 0.125,
+            "recall": 0.3333333333333333
+          }
+        }
+      }
+    },
+    "titles_only": {
+      "claim_extraction": {
+        "duplicate_rate": 0.0,
+        "f1": 0.8345323741007193,
+        "precision": 0.8656716417910447,
+        "recall": 0.8055555555555556,
+        "tail_recall": 0.5
+      },
+      "consistency": {
+        "f1": 0.4,
+        "precision": 0.5,
+        "recall": 0.3333333333333333
+      },
+      "ranking": {
+        "auroc": 0.45454545454545453,
+        "average_precision": 0.6039716733215186,
+        "records": 24
+      },
+      "records": 24,
+      "source_resolution": {
+        "expected_sources": 48,
+        "recall": 1.0,
+        "resolved_sources": 48
+      },
+      "suggestions": {
+        "coverage": 0.0,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "unsupported_rate": 0.0
+      },
+      "verdicts": {
+        "flagged": {
+          "f1": 0.5925925925925927,
+          "precision": 0.5714285714285714,
+          "recall": 0.6153846153846154
+        },
+        "hallucination": {
+          "f1": 0.625,
+          "precision": 0.45454545454545453,
+          "recall": 1.0
+        },
+        "macro_f1": 0.3914101330767997,
+        "per_class": {
+          "contradicted": {
+            "f1": 0.5454545454545454,
+            "precision": 1.0,
+            "recall": 0.375
+          },
+          "hallucination": {
+            "f1": 0.625,
+            "precision": 0.45454545454545453,
+            "recall": 1.0
+          },
+          "partially": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "supported": {
+            "f1": 0.691358024691358,
+            "precision": 0.9032258064516129,
+            "recall": 0.56
+          },
+          "unverifiable": {
+            "f1": 0.09523809523809525,
+            "precision": 0.05555555555555555,
+            "recall": 0.3333333333333333
+          }
+        }
+      }
+    }
+  },
+  "extraction": {
+    "hybrid": {
+      "duplicate_rate": 0.0,
+      "f1": 0.7532467532467532,
+      "precision": 0.8656716417910447,
+      "recall": 0.6666666666666666,
+      "records": 29,
+      "tail_recall": 0.3
+    },
+    "llm_only": {
+      "duplicate_rate": 0.0,
+      "f1": 0.684931506849315,
+      "precision": 0.847457627118644,
+      "recall": 0.5747126436781609,
+      "records": 29,
+      "tail_recall": 0.0
+    },
+    "rule_only": {
+      "duplicate_rate": 0.0,
+      "f1": 0.6046511627906976,
+      "precision": 1.0,
+      "recall": 0.43333333333333335,
+      "records": 30,
+      "tail_recall": 0.4
+    }
+  },
+  "score_composition": {
+    "fact_consistency": {
+      "auroc": 0.5681818181818182,
+      "average_precision": 0.5852958937198067,
+      "records": 23
+    },
+    "fact_only": {
+      "auroc": 0.5681818181818182,
+      "average_precision": 0.5922403381642511,
+      "records": 23
+    },
+    "full_weighted": {
+      "auroc": 0.553030303030303,
+      "average_precision": 0.5826410455486543,
+      "records": 23
+    }
+  },
+  "stage_summary": {
+    "claim_extraction": {
+      "failed": 1,
+      "success": 29
+    },
+    "claim_extraction.hybrid": {
+      "failed": 1,
+      "success": 29
+    },
+    "claim_extraction.llm_only": {
+      "failed": 1,
+      "success": 29
+    },
+    "claim_extraction.rule_only": {
+      "success": 30
+    },
+    "consistency": {
+      "success": 30
+    },
+    "fact_check": {
+      "failed": 1,
+      "skipped": 6,
+      "success": 23
+    },
+    "fact_check.snippet_200": {
+      "failed": 1,
+      "skipped": 6,
+      "success": 23
+    },
+    "fact_check.snippet_800": {
+      "skipped": 6,
+      "success": 24
+    },
+    "fact_check.titles_only": {
+      "skipped": 6,
+      "success": 24
+    },
+    "input_loading": {
+      "success": 30
+    },
+    "source_resolution": {
+      "success": 30
+    }
+  },
+  "usage": {
+    "actual_calls": 139,
+    "actual_cost_cny": 0.076725,
+    "artifact_reuse_calls_saved": 450,
+    "cached_tokens": 29696,
+    "cost_without_provider_cache_cny": 0.106062768,
+    "final_stage_calls": 132,
+    "input_tokens": 64169,
+    "naive_independent_calls": 600,
+    "output_tokens": 20526,
+    "planned_dag_calls": 150,
+    "provider_cache_savings_cny": 0.029337768,
+    "responses_with_usage": 139,
+    "retry_attempts": 7,
+    "stage_calls_skipped": 18,
+    "total_tokens": 84695
+  }
+}
