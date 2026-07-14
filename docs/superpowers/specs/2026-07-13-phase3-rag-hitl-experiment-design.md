@@ -4,7 +4,7 @@
 
 Build the first reproducible Phase 3 experiment slice for GitHub Issue #4. The slice compares requirement extraction under three fixed configurations while preserving the Phase 2 dataset, proxy gold labels, and scoring methodology.
 
-This slice establishes experiment orchestration and attribution. It does not run paid model calls and does not implement the later eight-step hallucination-verifier ablation.
+This slice establishes experiment orchestration and attribution. Automated verification does not run paid model calls; real execution is separate and requires explicit approval. The slice does not implement the later eight-step hallucination-verifier ablation.
 
 ## Experimental Configurations
 
@@ -51,7 +51,7 @@ For every frozen discussion record:
 
 1. Apply the existing rule-based noise filter.
 2. For accepted records, build the same base extraction prompt used by Phase 2.
-3. In `rag` and `rag_hitl`, retrieve context with fixed parameters and append it to the prompt.
+3. In `rag` and `rag_hitl`, retrieve context with fixed parameters and append it to the user input. The system prompt remains byte-identical across records and configurations so provider prefix caching can reuse the stable prefix.
 4. Call the configured structured extraction provider.
 5. Store the pre-review prediction and per-call usage.
 6. In `rag_hitl`, compare the prediction with the matching gold record, apply corrections, and record edited fields.
@@ -87,8 +87,9 @@ Run-level provenance and accounting:
 - provider/model identifier;
 - fixed RAG parameters;
 - requested, completed, resumed, and failed counts;
-- input, output, and total tokens;
-- cost in CNY;
+- input, output, cached, and total tokens;
+- actual cost in CNY;
+- provider parameters and pricing used for the run;
 - experiment schema version.
 
 ### `metrics.json`
@@ -101,7 +102,8 @@ The existing Phase 2 metric output plus a Phase 3 comparison section containing:
 - duplicate and extraction-failure rates;
 - proxy record edit rate;
 - simulated HITL record and field edit rates;
-- token and cost totals;
+- token and actual-cost totals;
+- cache hit rate, counterfactual cost without caching, and cache savings;
 - absolute and relative changes from `no_rag`.
 
 For `rag_hitl`, metrics must expose both pre-review and post-review results.
@@ -119,7 +121,9 @@ For `rag_hitl`, metrics must expose both pre-review and post-review results.
 
 The report compares each configuration with `no_rag` using both absolute and relative differences. Relative differences with a zero baseline are reported as unavailable rather than coerced to zero or infinity.
 
-RAG attribution uses pre-review `rag` results. HITL attribution presents the RAG model result, simulated edit burden, and post-review result as three separate quantities. Token and cost accounting must distinguish model extraction from any retrieval cost when the retriever exposes usage.
+RAG attribution uses pre-review `rag` results. HITL attribution presents the RAG model result, simulated edit burden, and post-review result as three separate quantities. Token and cost accounting must distinguish model extraction from any retrieval cost when the retriever exposes usage. It must retain provider-reported cached tokens and use frozen pricing parameters to calculate cache hit rate, counterfactual no-cache cost, and cache savings. Actual provider cost remains authoritative.
+
+Application-level response reuse is prohibited across configurations because RAG changes the model input and HITL changes attribution. Records remain one call each; batching is excluded because it would change task difficulty, output coupling, and retry granularity.
 
 ## Tests
 
@@ -131,16 +135,26 @@ The implementation must include focused tests for:
 4. Simulated HITL changing only fields that differ from gold and reporting record and field edit rates exactly.
 5. Pre-review predictions remaining available for `rag_hitl` attribution.
 6. Token and cost totals remaining isolated by configuration.
-7. Resume succeeding with identical provenance.
-8. Resume rejecting changed inputs, prompt, model, configuration, or RAG parameters.
-9. A small fixed fake-provider fixture reproducing exact aggregate metrics.
-10. Existing Phase 2 benchmark and frozen-metric regression tests continuing to pass.
+7. Cached tokens flowing into cache hit rate, no-cache cost, and savings exactly.
+8. RAG context appearing in the user input while the system prompt stays identical to `no_rag`.
+9. Resume succeeding with identical provenance.
+10. Resume rejecting changed inputs, prompt, model, provider parameters, pricing, configuration, or RAG parameters.
+11. A small fixed fake-provider fixture reproducing exact aggregate metrics.
+12. Existing Phase 2 benchmark and frozen-metric regression tests continuing to pass.
 
 ## Reproducibility and Paid Calls
 
 The repository will expose one explicit script for running a selected configuration or all three configurations. The script defaults to the frozen Phase 2 paths and separate Phase 3 output directories.
 
 Automated tests use fake providers and retrievers and perform no network or paid calls. A real experiment requires an explicit provider configuration and user confirmation before execution. The generated run metadata is sufficient to reproduce or audit each result.
+
+## Execution Outcome
+
+After approval, the authoritative schema-v3 run completed 100 records in all three configurations with no extraction or retrieval failures. Requirement-presence accuracy was 49% both without and with RAG. RAG improved emotion accuracy from 65.96% to 74.47%, but increased tokens by 17.08%, cost by 20.10%, and duplicate rate from 0% to 1.02%; description and pain-point similarity declined.
+
+Simulated HITL edited 97 records and 437 fields, producing 100% post-review proxy accuracy. This is review-assisted output, not model quality. Prefix caching reduced combined actual cost from a CNY 1.106998 no-cache counterfactual to CNY 0.393868, a 64.42% saving.
+
+The authoritative artifacts are under `evaluation/phase3/runs/full-final`; `evaluation/phase3/full-report.md` and `full-report.json` contain the detailed comparison. The conclusion remains limited by the query-stratified sample, platform/content-type confounding, proxy gold with 7% targeted human review, fallback bag-of-words embeddings, and independent stochastic RAG calls.
 
 ## Scope Boundary
 

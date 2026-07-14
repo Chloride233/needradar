@@ -1,0 +1,52 @@
+{
+  "schema_version": 3,
+  "configuration": "no_rag",
+  "dataset_sha256": "573a7baa310f0a6f37a2ec0dc4b28bd73103b1216469fba177ae37ff8738779c",
+  "gold_sha256": "155e2c400764fe3b4c960172600049cede145085dda65c8aaaa97601e962c729",
+  "selection_sha256": "ae4724a216d7022294f12cb7741a1e5e36266a0ca6eea25941db156567772ea5",
+  "prompt_sha256": "f358d52e140f301f14ff652b7d08e7dd51c9c3b2d42cf2fd305c481928e5c090",
+  "model_id": "deepseek-v4-flash:openai/deepseek-v4-flash",
+  "rag_params": {},
+  "retriever_provenance": {},
+  "provider_params": {
+    "preset_id": "deepseek-v4-flash",
+    "temperature": 0.3,
+    "max_tokens": 4096,
+    "cache_prefix": true,
+    "fallback_to_default": false
+  },
+  "pricing": {
+    "input_per_million": 1.008,
+    "input_cache_hit_per_million": 0.02,
+    "output_per_million": 2.016
+  },
+  "max_discussion_chars": 47000,
+  "requested": 100,
+  "completed": 100,
+  "resumed": 0,
+  "extraction_failures": 0,
+  "retrieval_failures": 0,
+  "usage": {
+    "extraction": {
+      "input_tokens": 226593,
+      "output_tokens": 51018,
+      "cached_tokens": 215040,
+      "total_tokens": 277611,
+      "cost_cny": 0.118799
+    },
+    "retrieval": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cached_tokens": 0,
+      "total_tokens": 0,
+      "cost_cny": 0.0
+    },
+    "total": {
+      "input_tokens": 226593,
+      "output_tokens": 51018,
+      "cached_tokens": 215040,
+      "total_tokens": 277611,
+      "cost_cny": 0.118799
+    }
+  }
+}

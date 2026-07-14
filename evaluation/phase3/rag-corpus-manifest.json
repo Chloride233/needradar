@@ -1,0 +1,24 @@
+{
+  "sample_size": 150,
+  "platform_counts": {
+    "github": 50,
+    "stackoverflow": 50,
+    "juejin": 50
+  },
+  "sample_plan": {
+    "github": 50,
+    "stackoverflow": 50,
+    "juejin": 50
+  },
+  "keywords": {
+    "github": "AI tool",
+    "stackoverflow": "AI tool",
+    "juejin": "AI 工具"
+  },
+  "source_dataset_sha256": "573a7baa310f0a6f37a2ec0dc4b28bd73103b1216469fba177ae37ff8738779c",
+  "dataset_sha256": "aae92eead080126322d41926faddbdfa94f19ceb36681b03b28f5171353026fb",
+  "phase2_url_overlap": 0,
+  "author_fields_stored": false,
+  "gold_fields_stored": false,
+  "generated_at": "2026-07-13T11:23:07.332778+00:00"
+}

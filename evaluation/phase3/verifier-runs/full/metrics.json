@@ -1,0 +1,340 @@
+{
+  "evidence": {
+    "no_evidence": {
+      "claim_extraction": {
+        "duplicate_rate": 0.0,
+        "f1": 0.5714285714285715,
+        "precision": 1.0,
+        "recall": 0.4,
+        "tail_recall": 0.3
+      },
+      "consistency": {
+        "f1": 0.4444444444444444,
+        "precision": 0.3333333333333333,
+        "recall": 0.6666666666666666
+      },
+      "ranking": {
+        "auroc": 0.5625,
+        "average_precision": 0.6794721847353425,
+        "records": 24
+      },
+      "source_resolution": {
+        "expected_sources": 60,
+        "recall": 0.0,
+        "resolved_sources": 0
+      },
+      "suggestions": {
+        "coverage": 0.2857142857142857,
+        "f1": 0.42857142857142855,
+        "precision": 0.8571428571428571,
+        "recall": 0.2857142857142857,
+        "unsupported_rate": 0.14285714285714285
+      },
+      "verdicts": {
+        "flagged": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        },
+        "hallucination": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        },
+        "macro_f1": 0.02857142857142857,
+        "per_class": {
+          "contradicted": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "hallucination": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "partially": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "supported": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "unverifiable": {
+            "f1": 0.14285714285714285,
+            "precision": 0.08333333333333333,
+            "recall": 0.5
+          }
+        }
+      }
+    },
+    "snippet_200": {
+      "claim_extraction": {
+        "duplicate_rate": 0.0,
+        "f1": 0.5483870967741935,
+        "precision": 1.0,
+        "recall": 0.37777777777777777,
+        "tail_recall": 0.3
+      },
+      "consistency": {
+        "f1": 0.4444444444444444,
+        "precision": 0.3333333333333333,
+        "recall": 0.6666666666666666
+      },
+      "ranking": {
+        "auroc": 0.5625,
+        "average_precision": 0.6794721847353425,
+        "records": 24
+      },
+      "source_resolution": {
+        "expected_sources": 60,
+        "recall": 1.0,
+        "resolved_sources": 60
+      },
+      "suggestions": {
+        "coverage": 0.2857142857142857,
+        "f1": 0.42857142857142855,
+        "precision": 0.8571428571428571,
+        "recall": 0.2857142857142857,
+        "unsupported_rate": 0.14285714285714285
+      },
+      "verdicts": {
+        "flagged": {
+          "f1": 0.28571428571428575,
+          "precision": 0.5,
+          "recall": 0.2
+        },
+        "hallucination": {
+          "f1": 0.4,
+          "precision": 0.5,
+          "recall": 0.3333333333333333
+        },
+        "macro_f1": 0.31636363636363635,
+        "per_class": {
+          "contradicted": {
+            "f1": 0.1818181818181818,
+            "precision": 0.5,
+            "recall": 0.1111111111111111
+          },
+          "hallucination": {
+            "f1": 0.4,
+            "precision": 0.5,
+            "recall": 0.3333333333333333
+          },
+          "partially": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "supported": {
+            "f1": 0.5,
+            "precision": 1.0,
+            "recall": 0.3333333333333333
+          },
+          "unverifiable": {
+            "f1": 0.5,
+            "precision": 0.5,
+            "recall": 0.5
+          }
+        }
+      }
+    },
+    "snippet_800": {
+      "claim_extraction": {
+        "duplicate_rate": 0.0,
+        "f1": 0.5714285714285715,
+        "precision": 1.0,
+        "recall": 0.4,
+        "tail_recall": 0.3
+      },
+      "consistency": {
+        "f1": 0.4444444444444444,
+        "precision": 0.3333333333333333,
+        "recall": 0.6666666666666666
+      },
+      "ranking": {
+        "auroc": 0.5625,
+        "average_precision": 0.6794721847353425,
+        "records": 24
+      },
+      "source_resolution": {
+        "expected_sources": 60,
+        "recall": 1.0,
+        "resolved_sources": 60
+      },
+      "suggestions": {
+        "coverage": 0.2857142857142857,
+        "f1": 0.42857142857142855,
+        "precision": 0.8571428571428571,
+        "recall": 0.2857142857142857,
+        "unsupported_rate": 0.14285714285714285
+      },
+      "verdicts": {
+        "flagged": {
+          "f1": 0.4545454545454545,
+          "precision": 0.7142857142857143,
+          "recall": 0.3333333333333333
+        },
+        "hallucination": {
+          "f1": 0.5454545454545454,
+          "precision": 0.6,
+          "recall": 0.5
+        },
+        "macro_f1": 0.3887949260042283,
+        "per_class": {
+          "contradicted": {
+            "f1": 0.3636363636363636,
+            "precision": 1.0,
+            "recall": 0.2222222222222222
+          },
+          "hallucination": {
+            "f1": 0.5454545454545454,
+            "precision": 0.6,
+            "recall": 0.5
+          },
+          "partially": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "supported": {
+            "f1": 0.5348837209302325,
+            "precision": 1.0,
+            "recall": 0.36507936507936506
+          },
+          "unverifiable": {
+            "f1": 0.5,
+            "precision": 0.5,
+            "recall": 0.5
+          }
+        }
+      }
+    },
+    "titles_only": {
+      "claim_extraction": {
+        "duplicate_rate": 0.0,
+        "f1": 0.5,
+        "precision": 1.0,
+        "recall": 0.3333333333333333,
+        "tail_recall": 0.25
+      },
+      "consistency": {
+        "f1": 0.4444444444444444,
+        "precision": 0.3333333333333333,
+        "recall": 0.6666666666666666
+      },
+      "ranking": {
+        "auroc": 0.5625,
+        "average_precision": 0.6794721847353425,
+        "records": 24
+      },
+      "source_resolution": {
+        "expected_sources": 60,
+        "recall": 1.0,
+        "resolved_sources": 60
+      },
+      "suggestions": {
+        "coverage": 0.2857142857142857,
+        "f1": 0.42857142857142855,
+        "precision": 0.8571428571428571,
+        "recall": 0.2857142857142857,
+        "unsupported_rate": 0.14285714285714285
+      },
+      "verdicts": {
+        "flagged": {
+          "f1": 0.33333333333333337,
+          "precision": 1.0,
+          "recall": 0.2
+        },
+        "hallucination": {
+          "f1": 0.6666666666666666,
+          "precision": 1.0,
+          "recall": 0.5
+        },
+        "macro_f1": 0.2893459915611814,
+        "per_class": {
+          "contradicted": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "hallucination": {
+            "f1": 0.6666666666666666,
+            "precision": 1.0,
+            "recall": 0.5
+          },
+          "partially": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "supported": {
+            "f1": 0.4050632911392405,
+            "precision": 1.0,
+            "recall": 0.25396825396825395
+          },
+          "unverifiable": {
+            "f1": 0.37499999999999994,
+            "precision": 0.3,
+            "recall": 0.5
+          }
+        }
+      }
+    }
+  },
+  "extraction": {
+    "hybrid": {
+      "duplicate_rate": 0.0,
+      "f1": 0.5714285714285715,
+      "precision": 1.0,
+      "recall": 0.4,
+      "tail_recall": 0.3
+    },
+    "llm_only": {
+      "duplicate_rate": 0.0,
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "tail_recall": 0.0
+    },
+    "rule_only": {
+      "duplicate_rate": 0.0,
+      "f1": 0.6046511627906976,
+      "precision": 1.0,
+      "recall": 0.43333333333333335,
+      "tail_recall": 0.4
+    }
+  },
+  "score_composition": {
+    "fact_consistency": {
+      "auroc": 0.5555555555555556,
+      "average_precision": 0.6810484070116928,
+      "records": 24
+    },
+    "fact_only": {
+      "auroc": 0.5380952380952381,
+      "average_precision": 0.581041396491707,
+      "records": 29
+    },
+    "full_weighted": {
+      "auroc": 0.5625,
+      "average_precision": 0.6794721847353425,
+      "records": 24
+    }
+  },
+  "usage": {
+    "actual_calls": 113,
+    "actual_cost_cny": 0.203212,
+    "artifact_reuse_calls_saved": 487,
+    "cached_tokens": 9088,
+    "cost_without_provider_cache_cny": 0.21218702399999997,
+    "input_tokens": 50955,
+    "naive_independent_calls": 600,
+    "output_tokens": 79774,
+    "provider_cache_savings_cny": 0.00897502399999997,
+    "total_tokens": 130729
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "conclusions": [
+    "RAG did not improve requirement-presence accuracy and increased cost and duplication.",
+    "Simulated HITL reached proxy-perfect post-review output only by editing 97% of records; it is not model quality.",
+    "Hybrid claim extraction improved aggregate F1, but regressed on long reports and tail recall.",
+    "Longer evidence improved verdict classification, while report-level ranking remained weak.",
+    "Consistency and source-prior weighting did not improve AUROC; full weighting reduced it."
+  ],
+  "criteria": [
+    {
+      "evidence": "evaluation/phase3/full-report.md",
+      "id": "three_configurations",
+      "passed": true,
+      "title": "Compare no RAG, RAG, and RAG plus HITL"
+    },
+    {
+      "evidence": "evaluation/phase3/full-report.json",
+      "id": "quality_cost_metrics",
+      "passed": true,
+      "title": "Measure accuracy, duplication, edit rate, tokens, and cost"
+    },
+    {
+      "evidence": "evaluation/phase3/verifier-runs/full-v2/report.md",
+      "id": "verifier_ablation",
+      "interpretation": "Interchangeable components use paired ablations; structural stages use stage-specific audit metrics. Literal cumulative step prefixes are not treated as causal ablations.",
+      "passed": true,
+      "title": "Ablate verifier components and audit all eight stages"
+    },
+    {
+      "evidence": "evaluation/phase3/full-report.md and verifier-runs/full-v2/report.md",
+      "id": "negative_cases",
+      "passed": true,
+      "title": "Analyze limited and negative gains"
+    },
+    {
+      "evidence": "evaluation/phase3/README.md and artifact regression tests",
+      "id": "reproducibility",
+      "passed": true,
+      "title": "Publish reproducible configuration and reports"
+    }
+  ],
+  "issue": "https://github.com/Chloride233/needradar/issues/4",
+  "phase": 3,
+  "phase4_handoff": [
+    "Measure real reviewer time and edit burden instead of simulated HITL only.",
+    "Evaluate long-report extraction and structured-output failures before production automation.",
+    "Keep fact-only scoring as the evidence-backed baseline until source priors show a gain."
+  ],
+  "rag_hitl": {
+    "cache_savings_rate": 0.6442018652932298,
+    "hitl_edited_fields": 437,
+    "hitl_record_edit_rate": 0.97,
+    "no_rag_requirement_accuracy": 0.49,
+    "rag_cost_relative_change": 0.20104546334565132,
+    "rag_requirement_accuracy": 0.49,
+    "records_per_configuration": 100
+  },
+  "source_sha256": {
+    "evaluation/phase3/full-report.json": "b83d28e98dcc41477bdbfc34206b845fc393c255a0d191d52f525a5e8c4902d5",
+    "evaluation/phase3/verifier-runs/full-v2/report.json": "acc7bcb9419fa10a78f3bd5bdf8d1915697ac7942ff483d501a38a1e774db329"
+  },
+  "status": "passed",
+  "verifier": {
+    "actual_cost_cny": 0.076725,
+    "fact_only_auroc": 0.5681818181818182,
+    "full_weighted_auroc": 0.553030303030303,
+    "hybrid_extraction_f1": 0.7532467532467532,
+    "paired_denominators": {
+      "evidence": 23,
+      "extraction": 29,
+      "score_composition": 23
+    },
+    "provider_cache_savings_rate": 0.27660760277348223,
+    "records": 30,
+    "snippet_800_macro_f1": 0.4483116883116883,
+    "stage_failures": 2
+  }
+}

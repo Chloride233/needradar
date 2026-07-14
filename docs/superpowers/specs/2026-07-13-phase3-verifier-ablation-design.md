@@ -170,6 +170,10 @@ This application-level artifact reuse is reported separately from provider prefi
 
 Stable instructions remain in system messages and variable report, claim, and evidence content remains in user messages to maximize provider prefix-cache reuse.
 
+All strict structured-output calls disable provider thinking. The effective `extra_body` is frozen in provenance because the paid trial showed that thinking consumed the 2,000-token extraction budget before a final JSON response was emitted. The model returns exact report quotes, while the runner derives character offsets locally. Hybrid extraction is capped at 12 claims; exceeding the cap fails that configuration instead of creating a second fact-check batch and breaking the 150-call ceiling.
+
+Provider attempts, responses with usage, calls skipped because no claims were available, provider-cache savings, and structural artifact reuse are separate counters. Prompt, input, parameters, and output are persisted as SHA-256 traces without storing an additional copy of the external payload or raw response.
+
 ## Outputs
 
 Write all artifacts under `evaluation/phase3/verifier-runs/<run-name>/`:
@@ -180,6 +184,8 @@ Write all artifacts under `evaluation/phase3/verifier-runs/<run-name>/`:
 - `report.md`: findings, negative results, representative failures, and limitations.
 
 The runner supports exact resume. It rejects changed benchmark hashes, gold hashes, prompt hashes, schema, model, provider parameters, pricing, or component configuration.
+
+The first paid run under `verifier-runs/full/` is frozen as rejected failure evidence. Schema-v2 execution writes to `verifier-runs/full-v2/` and never resumes or overwrites the rejected run.
 
 ## Error Semantics
 

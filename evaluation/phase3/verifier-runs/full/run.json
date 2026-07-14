@@ -1,0 +1,51 @@
+{
+  "completed": 30,
+  "configurations": {
+    "evidence": [
+      "no_evidence",
+      "titles_only",
+      "snippet_200",
+      "snippet_800"
+    ],
+    "extraction": [
+      "rule_only",
+      "llm_only",
+      "hybrid"
+    ],
+    "score": [
+      "fact_only",
+      "fact_consistency",
+      "full_weighted"
+    ]
+  },
+  "gold_sha256": "acc1ce2066341c2ecf9ca0f7fa6b78afd078034fdd4cf635a327183a2b6bad92",
+  "input_sha256": "a7125166ccbe3f505f96feca289eb8a1ed4ae6abbcaaf7ee119dff2662d6eca9",
+  "manifest_sha256": "9045f455de27ead777b637ba0ec63309d6960899577f65f1c63a150f51a2ef55",
+  "model_id": "deepseek-v4-flash:openai/deepseek-v4-flash",
+  "pricing": {
+    "input_cache_hit_per_million": 0.02,
+    "input_per_million": 1.008,
+    "output_per_million": 2.016
+  },
+  "provider_params": {
+    "cache_prefix": true,
+    "fallback_to_default": false,
+    "max_tokens": 4096,
+    "preset_id": "deepseek-v4-flash",
+    "temperature": 0.3
+  },
+  "requested": 30,
+  "schema_version": 1,
+  "usage": {
+    "actual_calls": 113,
+    "actual_cost_cny": 0.203212,
+    "artifact_reuse_calls_saved": 487,
+    "cached_tokens": 9088,
+    "cost_without_provider_cache_cny": 0.21218702399999997,
+    "input_tokens": 50955,
+    "naive_independent_calls": 600,
+    "output_tokens": 79774,
+    "provider_cache_savings_cny": 0.00897502399999997,
+    "total_tokens": 130729
+  }
+}

@@ -37,7 +37,7 @@ Most teams build features based on intuition. NeedRadar replaces that with a sys
 
 - **Crawl** real discussions from where developers actually talk
 - **Extract** structured needs with LLM (pain points, scenarios, sentiment)
-- **Verify** reports against source material (8-step hallucination detection)
+- **Verify** reports against source material (eight-stage verification pipeline)
 - **Learn** — every human correction feeds back into the knowledge base
 
 ## Quick Start
@@ -86,7 +86,7 @@ python -m needradar.cli stats
 | 🧠 **AI Needs Extraction** | LLM extracts structured requirements: title, description, pain point, scenario, sentiment, confidence |
 | 🚦 **Quality Gates** | 3 human-in-the-loop checkpoints (material → requirement → insight). Approve, reject, or edit before proceeding |
 | 📊 **Insight Reports** | RAG-enriched analysis with need clustering, pain point mapping, and actionable recommendations |
-| ✅ **Content Verification** | 8-step hallucination detection: claim extraction → fact check → consistency → source reliability → weighted score |
+| ✅ **Content Verification** | Eight-stage verification pipeline: claim extraction → fact check → consistency → source reliability → weighted score |
 | 🔮 **RAG Knowledge Base** | Vault content vectorized into LanceDB. Historical context enriches every LLM call |
 | 📝 **Obsidian Native** | All content stored as Markdown in an Obsidian vault — browse, search, link with your existing knowledge base |
 | 💰 **Cost Tracking** | Token usage, cost breakdown, cache hit rate, budget alerts — DeepSeek V4 Flash at ¥1/M input |
@@ -185,7 +185,7 @@ needradar/
     └───────────┬───────────┘
                 ▼
     ┌───────────────────────┐
-    │   3. REPORT + VERIFY   │  RAG analysis + 8-step verification
+    │   3. REPORT + VERIFY   │  RAG analysis + eight-stage verification pipeline
     │   Insight report       │  Hallucination detection
     └───────────┬───────────┘
                 ▼

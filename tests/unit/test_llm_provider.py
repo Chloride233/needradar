@@ -1,4 +1,5 @@
 """Tests for LLMProvider with mocked litellm."""
+
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -62,6 +63,7 @@ class TestComplete:
     async def test_complete_with_preset(self, provider):
         provider.activate_preset("deepseek-v4-pro")
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-pro"].api_key = "sk-test"
 
         mock_resp = MagicMock()
@@ -85,6 +87,7 @@ class TestComplete:
     async def test_complete_injects_prefix_to_system_message(self, provider):
         provider.activate_preset("deepseek-v4-pro")
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-pro"].api_key = "sk-test"
 
         mock_resp = MagicMock()
@@ -108,6 +111,7 @@ class TestComplete:
     async def test_complete_no_prefix_when_disabled(self, provider):
         provider.activate_preset("deepseek-v4-pro")
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-pro"].api_key = "sk-test"
 
         mock_resp = MagicMock()
@@ -117,9 +121,7 @@ class TestComplete:
 
         with patch("needradar.llm.provider.litellm.acompletion", new_callable=AsyncMock) as m:
             m.return_value = mock_resp
-            await provider.complete(
-                [{"role": "system", "content": "custom"}], cache_prefix=False
-            )
+            await provider.complete([{"role": "system", "content": "custom"}], cache_prefix=False)
             assert m.call_args[1]["messages"][0]["content"] == "custom"
 
         PRESETS["deepseek-v4-pro"].api_key = ""
@@ -128,6 +130,7 @@ class TestComplete:
     async def test_complete_tracks_usage_in_last_usage(self, provider):
         provider.activate_preset("deepseek-v4-flash")
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-flash"].api_key = "sk-test"
 
         mu = MagicMock()
@@ -167,6 +170,50 @@ class TestComplete:
             result = await provider.complete([{"role": "user", "content": "hi"}])
             assert result == "default response"
 
+    @pytest.mark.asyncio
+    async def test_complete_can_disable_preset_fallback(self, provider):
+        provider.activate_preset("deepseek-v4-pro")
+        from needradar.llm.model_presets import PRESETS
+
+        PRESETS["deepseek-v4-pro"].api_key = "sk-test"
+        with (
+            patch(
+                "needradar.llm.provider.litellm.acompletion",
+                new_callable=AsyncMock,
+                side_effect=RuntimeError("transient provider error"),
+            ),
+            patch.object(provider, "_call_default", new_callable=AsyncMock) as fallback,
+        ):
+            with pytest.raises(RuntimeError, match="transient provider error"):
+                await provider.complete(
+                    [{"role": "user", "content": "hi"}],
+                    fallback_to_default=False,
+                )
+            fallback.assert_not_awaited()
+
+        PRESETS["deepseek-v4-pro"].api_key = ""
+
+    @pytest.mark.asyncio
+    async def test_complete_passes_provider_extra_body(self, provider):
+        provider.activate_preset("deepseek-v4-flash")
+        from needradar.llm.model_presets import PRESETS
+
+        PRESETS["deepseek-v4-flash"].api_key = "sk-test"
+        mock_resp = MagicMock()
+        mock_resp.choices = [MagicMock()]
+        mock_resp.choices[0].message.content = "[]"
+        mock_resp.usage = None
+
+        with patch("needradar.llm.provider.litellm.acompletion", new_callable=AsyncMock) as completion:
+            completion.return_value = mock_resp
+            await provider.complete(
+                [{"role": "user", "content": "test"}],
+                extra_body={"thinking": {"type": "disabled"}},
+            )
+
+        assert completion.await_args.kwargs["extra_body"] == {"thinking": {"type": "disabled"}}
+        PRESETS["deepseek-v4-flash"].api_key = ""
+
 
 class TestUpdatePreset:
     def test_unknown_preset_raises(self, provider):
@@ -197,13 +244,12 @@ class TestExtractStructured:
 
         provider.activate_preset("deepseek-v4-pro")
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-pro"].api_key = "sk-test"
 
         mock_resp = MagicMock()
         mock_resp.choices = [MagicMock()]
-        mock_resp.choices[0].message.content = (
-            '{"title": "AI Tool", "description": "Need AI features"}'
-        )
+        mock_resp.choices[0].message.content = '{"title": "AI Tool", "description": "Need AI features"}'
         mock_resp.usage = MagicMock()
         mock_resp.usage.prompt_tokens = 5
         mock_resp.usage.completion_tokens = 3
@@ -212,9 +258,7 @@ class TestExtractStructured:
 
         with patch("needradar.llm.provider.litellm.acompletion", new_callable=AsyncMock) as m:
             m.return_value = mock_resp
-            result = await provider.extract_structured(
-                "Extract requirements", "User wants AI", ExtractedRequirement
-            )
+            result = await provider.extract_structured("Extract requirements", "User wants AI", ExtractedRequirement)
             assert result.title == "AI Tool"
 
         PRESETS["deepseek-v4-pro"].api_key = ""
@@ -225,6 +269,7 @@ class TestExtractStructured:
 
         provider.activate_preset("deepseek-v4-pro")
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-pro"].api_key = "sk-test"
 
         mock_resp = MagicMock()
@@ -248,6 +293,7 @@ class TestTestConnection:
     @pytest.mark.asyncio
     async def test_no_api_key_configured(self, provider):
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-pro"].api_key = ""
         result = await provider.test_connection("deepseek-v4-pro")
         assert result["success"] is False
@@ -261,6 +307,7 @@ class TestTestConnection:
     @pytest.mark.asyncio
     async def test_successful_connection(self, provider):
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-pro"].api_key = "sk-test"
 
         mock_resp = MagicMock()
@@ -279,6 +326,7 @@ class TestTestConnection:
     @pytest.mark.asyncio
     async def test_connection_error_handling(self, provider):
         from needradar.llm.model_presets import PRESETS
+
         PRESETS["deepseek-v4-pro"].api_key = "sk-test"
 
         with patch("needradar.llm.provider.litellm.acompletion", new_callable=AsyncMock) as m:

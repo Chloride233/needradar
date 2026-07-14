@@ -1,0 +1,31 @@
+{
+  "adjudication_sha256": "dea66d8c491b140e2c6401b67c92e8aefad179b21e808337978be221d8569398",
+  "author_fields_stored": false,
+  "clean_reports": 15,
+  "complete": true,
+  "flagged_reports": 15,
+  "gold_canonical_sha256": "765c074dee3aff16ab9ead3b02794c036cd32bf2a58ac1ae4ded98a715c95d97",
+  "gold_fields_in_inputs": false,
+  "gold_records": 30,
+  "gold_sha256": "acc1ce2066341c2ecf9ca0f7fa6b78afd078034fdd4cf635a327183a2b6bad92",
+  "input_canonical_sha256": "fc72bcfbdfc8a79a4fe34e693e78ee283039e4453735fb6271c2cafdd0f6841e",
+  "input_records": 30,
+  "input_sha256": "a7125166ccbe3f505f96feca289eb8a1ed4ae6abbcaaf7ee119dff2662d6eca9",
+  "length_counts": {
+    "long": 10,
+    "medium": 10,
+    "short": 10
+  },
+  "pending_annotations": 0,
+  "platform_counts": {
+    "github": 10,
+    "juejin": 10,
+    "stackoverflow": 10
+  },
+  "schema_version": 1,
+  "source_corpus_sha256": "aae92eead080126322d41926faddbdfa94f19ceb36681b03b28f5171353026fb",
+  "stratum_counts": {
+    "controlled": 18,
+    "naturalistic": 12
+  }
+}

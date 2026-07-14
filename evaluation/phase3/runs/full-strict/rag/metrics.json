@@ -1,0 +1,721 @@
+{
+  "categorical_field_accuracy": {
+    "emotion": {
+      "accuracy": 0.8085106382978723,
+      "correct": 38,
+      "total": 47
+    },
+    "sentiment": {
+      "accuracy": 0.6170212765957447,
+      "correct": 29,
+      "total": 47
+    }
+  },
+  "confidence_calibration": {
+    "count": 47,
+    "mean_absolute_error": 0.060638297872340416
+  },
+  "duplicates": {
+    "count": 0,
+    "rate_among_accepted": 0.0
+  },
+  "extraction_failures": {
+    "count": 1,
+    "rate": 0.01
+  },
+  "failure_analysis": {
+    "by_content_type": {
+      "article": {
+        "dominant_failure_modes": [
+          {
+            "count": 33,
+            "name": "false_positive_requirement",
+            "rate": 1.0,
+            "total": 33
+          }
+        ],
+        "failure_modes": {
+          "description_similarity_below_0_5": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "emotion_mismatch": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "false_negative_requirement": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "false_positive_requirement": {
+            "count": 33,
+            "rate": 1.0,
+            "total": 33
+          },
+          "pain_point_similarity_below_0_5": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "sentiment_mismatch": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "title_similarity_below_0_5": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "use_case_similarity_below_0_5": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          }
+        },
+        "record_count": 33,
+        "requirement_presence_confusion": {
+          "error": 0,
+          "false_negative": 0,
+          "false_positive": 33,
+          "true_negative": 0,
+          "true_positive": 0
+        }
+      },
+      "issue": {
+        "dominant_failure_modes": [
+          {
+            "count": 17,
+            "name": "use_case_similarity_below_0_5",
+            "rate": 0.8947368421052632,
+            "total": 19
+          },
+          {
+            "count": 15,
+            "name": "description_similarity_below_0_5",
+            "rate": 0.7894736842105263,
+            "total": 19
+          },
+          {
+            "count": 14,
+            "name": "pain_point_similarity_below_0_5",
+            "rate": 0.7368421052631579,
+            "total": 19
+          },
+          {
+            "count": 12,
+            "name": "false_positive_requirement",
+            "rate": 0.8,
+            "total": 15
+          },
+          {
+            "count": 9,
+            "name": "title_similarity_below_0_5",
+            "rate": 0.47368421052631576,
+            "total": 19
+          },
+          {
+            "count": 8,
+            "name": "sentiment_mismatch",
+            "rate": 0.42105263157894735,
+            "total": 19
+          },
+          {
+            "count": 2,
+            "name": "emotion_mismatch",
+            "rate": 0.10526315789473684,
+            "total": 19
+          }
+        ],
+        "failure_modes": {
+          "description_similarity_below_0_5": {
+            "count": 15,
+            "rate": 0.7894736842105263,
+            "total": 19
+          },
+          "emotion_mismatch": {
+            "count": 2,
+            "rate": 0.10526315789473684,
+            "total": 19
+          },
+          "false_negative_requirement": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 19
+          },
+          "false_positive_requirement": {
+            "count": 12,
+            "rate": 0.8,
+            "total": 15
+          },
+          "pain_point_similarity_below_0_5": {
+            "count": 14,
+            "rate": 0.7368421052631579,
+            "total": 19
+          },
+          "sentiment_mismatch": {
+            "count": 8,
+            "rate": 0.42105263157894735,
+            "total": 19
+          },
+          "title_similarity_below_0_5": {
+            "count": 9,
+            "rate": 0.47368421052631576,
+            "total": 19
+          },
+          "use_case_similarity_below_0_5": {
+            "count": 17,
+            "rate": 0.8947368421052632,
+            "total": 19
+          }
+        },
+        "record_count": 34,
+        "requirement_presence_confusion": {
+          "error": 1,
+          "false_negative": 0,
+          "false_positive": 12,
+          "true_negative": 2,
+          "true_positive": 19
+        }
+      },
+      "question": {
+        "dominant_failure_modes": [
+          {
+            "count": 25,
+            "name": "pain_point_similarity_below_0_5",
+            "rate": 0.8928571428571429,
+            "total": 28
+          },
+          {
+            "count": 25,
+            "name": "use_case_similarity_below_0_5",
+            "rate": 0.8928571428571429,
+            "total": 28
+          },
+          {
+            "count": 19,
+            "name": "description_similarity_below_0_5",
+            "rate": 0.6785714285714286,
+            "total": 28
+          },
+          {
+            "count": 18,
+            "name": "title_similarity_below_0_5",
+            "rate": 0.6428571428571429,
+            "total": 28
+          },
+          {
+            "count": 10,
+            "name": "sentiment_mismatch",
+            "rate": 0.35714285714285715,
+            "total": 28
+          },
+          {
+            "count": 7,
+            "name": "emotion_mismatch",
+            "rate": 0.25,
+            "total": 28
+          },
+          {
+            "count": 5,
+            "name": "false_positive_requirement",
+            "rate": 1.0,
+            "total": 5
+          }
+        ],
+        "failure_modes": {
+          "description_similarity_below_0_5": {
+            "count": 19,
+            "rate": 0.6785714285714286,
+            "total": 28
+          },
+          "emotion_mismatch": {
+            "count": 7,
+            "rate": 0.25,
+            "total": 28
+          },
+          "false_negative_requirement": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 28
+          },
+          "false_positive_requirement": {
+            "count": 5,
+            "rate": 1.0,
+            "total": 5
+          },
+          "pain_point_similarity_below_0_5": {
+            "count": 25,
+            "rate": 0.8928571428571429,
+            "total": 28
+          },
+          "sentiment_mismatch": {
+            "count": 10,
+            "rate": 0.35714285714285715,
+            "total": 28
+          },
+          "title_similarity_below_0_5": {
+            "count": 18,
+            "rate": 0.6428571428571429,
+            "total": 28
+          },
+          "use_case_similarity_below_0_5": {
+            "count": 25,
+            "rate": 0.8928571428571429,
+            "total": 28
+          }
+        },
+        "record_count": 33,
+        "requirement_presence_confusion": {
+          "error": 0,
+          "false_negative": 0,
+          "false_positive": 5,
+          "true_negative": 0,
+          "true_positive": 28
+        }
+      }
+    },
+    "by_platform": {
+      "github": {
+        "dominant_failure_modes": [
+          {
+            "count": 17,
+            "name": "use_case_similarity_below_0_5",
+            "rate": 0.8947368421052632,
+            "total": 19
+          },
+          {
+            "count": 15,
+            "name": "description_similarity_below_0_5",
+            "rate": 0.7894736842105263,
+            "total": 19
+          },
+          {
+            "count": 14,
+            "name": "pain_point_similarity_below_0_5",
+            "rate": 0.7368421052631579,
+            "total": 19
+          },
+          {
+            "count": 12,
+            "name": "false_positive_requirement",
+            "rate": 0.8,
+            "total": 15
+          },
+          {
+            "count": 9,
+            "name": "title_similarity_below_0_5",
+            "rate": 0.47368421052631576,
+            "total": 19
+          },
+          {
+            "count": 8,
+            "name": "sentiment_mismatch",
+            "rate": 0.42105263157894735,
+            "total": 19
+          },
+          {
+            "count": 2,
+            "name": "emotion_mismatch",
+            "rate": 0.10526315789473684,
+            "total": 19
+          }
+        ],
+        "failure_modes": {
+          "description_similarity_below_0_5": {
+            "count": 15,
+            "rate": 0.7894736842105263,
+            "total": 19
+          },
+          "emotion_mismatch": {
+            "count": 2,
+            "rate": 0.10526315789473684,
+            "total": 19
+          },
+          "false_negative_requirement": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 19
+          },
+          "false_positive_requirement": {
+            "count": 12,
+            "rate": 0.8,
+            "total": 15
+          },
+          "pain_point_similarity_below_0_5": {
+            "count": 14,
+            "rate": 0.7368421052631579,
+            "total": 19
+          },
+          "sentiment_mismatch": {
+            "count": 8,
+            "rate": 0.42105263157894735,
+            "total": 19
+          },
+          "title_similarity_below_0_5": {
+            "count": 9,
+            "rate": 0.47368421052631576,
+            "total": 19
+          },
+          "use_case_similarity_below_0_5": {
+            "count": 17,
+            "rate": 0.8947368421052632,
+            "total": 19
+          }
+        },
+        "record_count": 34,
+        "requirement_presence_confusion": {
+          "error": 1,
+          "false_negative": 0,
+          "false_positive": 12,
+          "true_negative": 2,
+          "true_positive": 19
+        }
+      },
+      "juejin": {
+        "dominant_failure_modes": [
+          {
+            "count": 33,
+            "name": "false_positive_requirement",
+            "rate": 1.0,
+            "total": 33
+          }
+        ],
+        "failure_modes": {
+          "description_similarity_below_0_5": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "emotion_mismatch": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "false_negative_requirement": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "false_positive_requirement": {
+            "count": 33,
+            "rate": 1.0,
+            "total": 33
+          },
+          "pain_point_similarity_below_0_5": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "sentiment_mismatch": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "title_similarity_below_0_5": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          },
+          "use_case_similarity_below_0_5": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 0
+          }
+        },
+        "record_count": 33,
+        "requirement_presence_confusion": {
+          "error": 0,
+          "false_negative": 0,
+          "false_positive": 33,
+          "true_negative": 0,
+          "true_positive": 0
+        }
+      },
+      "stackoverflow": {
+        "dominant_failure_modes": [
+          {
+            "count": 25,
+            "name": "pain_point_similarity_below_0_5",
+            "rate": 0.8928571428571429,
+            "total": 28
+          },
+          {
+            "count": 25,
+            "name": "use_case_similarity_below_0_5",
+            "rate": 0.8928571428571429,
+            "total": 28
+          },
+          {
+            "count": 19,
+            "name": "description_similarity_below_0_5",
+            "rate": 0.6785714285714286,
+            "total": 28
+          },
+          {
+            "count": 18,
+            "name": "title_similarity_below_0_5",
+            "rate": 0.6428571428571429,
+            "total": 28
+          },
+          {
+            "count": 10,
+            "name": "sentiment_mismatch",
+            "rate": 0.35714285714285715,
+            "total": 28
+          },
+          {
+            "count": 7,
+            "name": "emotion_mismatch",
+            "rate": 0.25,
+            "total": 28
+          },
+          {
+            "count": 5,
+            "name": "false_positive_requirement",
+            "rate": 1.0,
+            "total": 5
+          }
+        ],
+        "failure_modes": {
+          "description_similarity_below_0_5": {
+            "count": 19,
+            "rate": 0.6785714285714286,
+            "total": 28
+          },
+          "emotion_mismatch": {
+            "count": 7,
+            "rate": 0.25,
+            "total": 28
+          },
+          "false_negative_requirement": {
+            "count": 0,
+            "rate": 0.0,
+            "total": 28
+          },
+          "false_positive_requirement": {
+            "count": 5,
+            "rate": 1.0,
+            "total": 5
+          },
+          "pain_point_similarity_below_0_5": {
+            "count": 25,
+            "rate": 0.8928571428571429,
+            "total": 28
+          },
+          "sentiment_mismatch": {
+            "count": 10,
+            "rate": 0.35714285714285715,
+            "total": 28
+          },
+          "title_similarity_below_0_5": {
+            "count": 18,
+            "rate": 0.6428571428571429,
+            "total": 28
+          },
+          "use_case_similarity_below_0_5": {
+            "count": 25,
+            "rate": 0.8928571428571429,
+            "total": 28
+          }
+        },
+        "record_count": 33,
+        "requirement_presence_confusion": {
+          "error": 0,
+          "false_negative": 0,
+          "false_positive": 5,
+          "true_negative": 0,
+          "true_positive": 28
+        }
+      }
+    },
+    "content_type_by_platform": {
+      "github": "issue",
+      "juejin": "article",
+      "stackoverflow": "question"
+    },
+    "platform_content_type_relationship": "one-to-one in this query-stratified sample"
+  },
+  "human_audited_requirement_edit_rate": {
+    "count": 6,
+    "rate": 0.8571428571428571,
+    "total": 7
+  },
+  "methodology": "proxy gold: two-agent blind annotation with 7% targeted human review",
+  "phase3": {
+    "baseline_comparison": {
+      "metrics": {
+        "cache_hit_rate": {
+          "absolute_change": -0.1265856594332918,
+          "baseline": 0.9740130047943317,
+          "current": 0.8474273453610399,
+          "relative_change": -0.1299630074857379
+        },
+        "cache_savings_cny": {
+          "absolute_change": -0.012393471999999961,
+          "baseline": 0.21296537599999998,
+          "current": 0.20057190400000002,
+          "relative_change": -0.05819477434679317
+        },
+        "cached_tokens": {
+          "absolute_change": -12544,
+          "baseline": 215552,
+          "current": 203008,
+          "relative_change": -0.05819477434679335
+        },
+        "cost_cny": {
+          "absolute_change": 0.04229799999999992,
+          "baseline": 0.11660800000000004,
+          "current": 0.15890599999999996,
+          "relative_change": 0.3627366904500541
+        },
+        "cost_without_cache_cny": {
+          "absolute_change": 0.029904527999999986,
+          "baseline": 0.32957337600000003,
+          "current": 0.359477904,
+          "relative_change": 0.09073708672389842
+        },
+        "description_mean_dice": {
+          "absolute_change": 0.010169584954675848,
+          "baseline": 0.3873209965081487,
+          "current": 0.39749058146282457,
+          "relative_change": 0.026256219121500408
+        },
+        "duplicate_rate": {
+          "absolute_change": 0.0,
+          "baseline": 0.0,
+          "current": 0.0,
+          "relative_change": null
+        },
+        "emotion_accuracy": {
+          "absolute_change": 0.10638297872340419,
+          "baseline": 0.7021276595744681,
+          "current": 0.8085106382978723,
+          "relative_change": 0.1515151515151514
+        },
+        "extraction_failure_rate": {
+          "absolute_change": 0.01,
+          "baseline": 0.0,
+          "current": 0.01,
+          "relative_change": null
+        },
+        "hitl_record_edit_rate": {
+          "absolute_change": 0.0,
+          "baseline": 0.0,
+          "current": 0.0,
+          "relative_change": null
+        },
+        "pain_point_mean_dice": {
+          "absolute_change": 0.011146946800421276,
+          "baseline": 0.3242304094371832,
+          "current": 0.33537735623760445,
+          "relative_change": 0.03437970799768829
+        },
+        "proxy_edit_rate": {
+          "absolute_change": 0.0,
+          "baseline": 0.98,
+          "current": 0.98,
+          "relative_change": 0.0
+        },
+        "requirement_presence_accuracy": {
+          "absolute_change": 0.0,
+          "baseline": 0.49,
+          "current": 0.49,
+          "relative_change": 0.0
+        },
+        "sentiment_accuracy": {
+          "absolute_change": -0.04255319148936165,
+          "baseline": 0.6595744680851063,
+          "current": 0.6170212765957447,
+          "relative_change": -0.064516129032258
+        },
+        "title_mean_dice": {
+          "absolute_change": 0.02223809835001317,
+          "baseline": 0.45137942982015516,
+          "current": 0.47361752817016833,
+          "relative_change": 0.04926697337287519
+        },
+        "total_tokens": {
+          "absolute_change": 23958,
+          "baseline": 274131,
+          "current": 298089,
+          "relative_change": 0.08739617190321415
+        },
+        "use_case_mean_dice": {
+          "absolute_change": 0.005854172889419418,
+          "baseline": 0.32035100877119066,
+          "current": 0.3262051816606101,
+          "relative_change": 0.018274245215818052
+        }
+      },
+      "status": "available"
+    },
+    "configuration": "rag",
+    "hitl": {
+      "edited_fields": 0,
+      "edited_records": 0,
+      "field_counts": {},
+      "record_edit_rate": 0.0
+    },
+    "pre_hitl": null,
+    "summary": {
+      "cache_hit_rate": 0.8474273453610399,
+      "cache_savings_cny": 0.20057190400000002,
+      "cached_tokens": 203008,
+      "cost_cny": 0.15890599999999996,
+      "cost_without_cache_cny": 0.359477904,
+      "description_mean_dice": 0.39749058146282457,
+      "duplicate_rate": 0.0,
+      "emotion_accuracy": 0.8085106382978723,
+      "extraction_failure_rate": 0.01,
+      "hitl_record_edit_rate": 0.0,
+      "pain_point_mean_dice": 0.33537735623760445,
+      "proxy_edit_rate": 0.98,
+      "requirement_presence_accuracy": 0.49,
+      "sentiment_accuracy": 0.6170212765957447,
+      "title_mean_dice": 0.47361752817016833,
+      "total_tokens": 298089,
+      "use_case_mean_dice": 0.3262051816606101
+    }
+  },
+  "proxy_record_edit_rate": {
+    "count": 98,
+    "rate": 0.98
+  },
+  "record_count": 100,
+  "rejection": {
+    "count": 2,
+    "precision": 1.0,
+    "rate": 0.02,
+    "recall": 0.03773584905660377
+  },
+  "requirement_presence": {
+    "accuracy": 0.49,
+    "correct": 49
+  },
+  "text_field_similarity": {
+    "description": {
+      "at_or_above_0_5": 13,
+      "mean_dice": 0.39749058146282457,
+      "total": 47
+    },
+    "pain_point": {
+      "at_or_above_0_5": 8,
+      "mean_dice": 0.33537735623760445,
+      "total": 47
+    },
+    "title": {
+      "at_or_above_0_5": 20,
+      "mean_dice": 0.47361752817016833,
+      "total": 47
+    },
+    "use_case": {
+      "at_or_above_0_5": 5,
+      "mean_dice": 0.3262051816606101,
+      "total": 47
+    }
+  }
+}
