@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-15T09:57:16.693727+00:00",
+  "artifact_hashes_verified": true,
+  "manifest_sha256": "ca9fe7d934fe3a50b9ebab049d74248ca755a08d9a7f4ca113f98b80782680c6",
+  "candidate_snapshot_sha256": "5fb066c57c4a1d734dabddc243795f5176ccb1f7c609142b33a0578f5043e977",
+  "label_status": "missing_human_labels",
+  "label_provenance": null,
+  "quality": null,
+  "gate_calibration": {},
+  "negative_cases": {},
+  "system": {
+    "BAAI/bge-reranker-v2-m3": {
+      "successful_queries": 31,
+      "failed_queries": 0,
+      "valid_denominator": 31,
+      "success_rate": 1.0,
+      "latency_p50_ms": 414.166,
+      "latency_p95_ms": 856.7719999999999,
+      "end_to_end_latency_p50_ms": 436.652,
+      "end_to_end_latency_p95_ms": 918.29,
+      "input_tokens": 284747,
+      "output_tokens": 0,
+      "total_tokens": 284747,
+      "actual_cost_cny": 0.0,
+      "cost_per_successful_query_cny": 0.0,
+      "retry_count": 0,
+      "estimated_context_token_upper_bound_change": -2249
+    },
+    "Qwen/Qwen3-Reranker-0.6B": {
+      "successful_queries": 31,
+      "failed_queries": 0,
+      "valid_denominator": 31,
+      "success_rate": 1.0,
+      "latency_p50_ms": 422.575,
+      "latency_p95_ms": 524.1469999999999,
+      "end_to_end_latency_p50_ms": 433.07,
+      "end_to_end_latency_p95_ms": 535.4525,
+      "input_tokens": 293063,
+      "output_tokens": 0,
+      "total_tokens": 293063,
+      "actual_cost_cny": 0.02051441,
+      "cost_per_successful_query_cny": 0.0006617551612903226,
+      "retry_count": 0,
+      "estimated_context_token_upper_bound_change": -15765
+    }
+  },
+  "failure_types": {},
+  "selection": {
+    "status": "blocked",
+    "reason": "Human relevance labels are incomplete."
+  },
+  "limitations": [
+    "Hybrid recall uses deterministic dense cosine plus n-gram full-text reciprocal-rank fusion.",
+    "No production capability or model advantage is claimed without completed human relevance labels and both model runs.",
+    "Provider model revisions are not immutable, so later runs may drift.",
+    "Context token change is a conservative UTF-8 byte upper bound, not provider tokenizer output."
+  ]
+}

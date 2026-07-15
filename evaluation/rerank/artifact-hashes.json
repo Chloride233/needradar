@@ -1,0 +1,10 @@
+{
+  "evaluation/rerank/annotation-protocol.md": "c14887f04e9f4baa1b179d28d415dcb6d361b4fffe5605bc78ef0fbc855d3bbb",
+  "evaluation/rerank/annotation-template.csv": "7b61ece9418c5bb23847cb79d336c0f21d5571b6729e865ef0898b9b2302ef4e",
+  "evaluation/rerank/candidates.jsonl": "5fb066c57c4a1d734dabddc243795f5176ccb1f7c609142b33a0578f5043e977",
+  "evaluation/rerank/labels-manifest-template.json": "11a8e1676487d30a2b2d7075844581cae67a8301f7a4b1038e6d1e7e4c668556",
+  "evaluation/rerank/manifest.json": "ca9fe7d934fe3a50b9ebab049d74248ca755a08d9a7f4ca113f98b80782680c6",
+  "evaluation/rerank/recall-latency.jsonl": "90e8afdd0974d8234db912588d002f76e20d0b2285a009a7f96a549383508418",
+  "evaluation/rerank/report.json": "c5e2060133a232866bdfee9485d33349e40d2b89b2dd3459bbdf4e1753f6a267",
+  "evaluation/rerank/report.md": "cf925c60f92bb211728c6323ee4541495ff7cd70dcd2b90c5f90882dd02b3c6f"
+}
