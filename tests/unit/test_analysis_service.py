@@ -1,4 +1,5 @@
 """Tests for AnalysisService — the core pipeline orchestrator."""
+
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -21,6 +22,7 @@ from needradar.services.analysis_service import (
 # ---------------------------------------------------------------------------
 # Fixtures & helpers
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def fake_item():
@@ -50,6 +52,7 @@ def fake_extracted():
 # _load_prompts / invalidate_prompts_cache
 # ---------------------------------------------------------------------------
 
+
 class TestLoadPrompts:
     def test_loads_real_prompts_and_caches(self):
         """_load_prompts reads the real config/prompts.yaml and caches the result."""
@@ -71,6 +74,7 @@ class TestLoadPrompts:
 # ---------------------------------------------------------------------------
 # AnalysisService — unit tests
 # ---------------------------------------------------------------------------
+
 
 class TestInit:
     @pytest.mark.asyncio
@@ -209,9 +213,7 @@ class TestFilterNewItems:
     @pytest.mark.asyncio
     async def test_mixed(self, db_session, fake_item):
         svc = AnalysisService(db_session)
-        new_item = RawDiscussionItem(
-            platform="github", source_url="http://github.com/new", title="New", content="c"
-        )
+        new_item = RawDiscussionItem(platform="github", source_url="http://github.com/new", title="New", content="c")
         fp = CrawlFingerprint(keyword="python", platform="github", source_url=fake_item.source_url)
         db_session.add(fp)
         await db_session.flush()
@@ -252,6 +254,7 @@ class TestRecordUsage:
 # extract_and_store
 # ---------------------------------------------------------------------------
 
+
 class TestExtractAndStore:
     @pytest.mark.asyncio
     async def test_new_requirement_stored(self, db_session, fake_item, fake_extracted):
@@ -260,10 +263,12 @@ class TestExtractAndStore:
         mock_vs.query = AsyncMock(return_value=[])
         mock_vs.add = AsyncMock()
 
-        with patch("needradar.services.analysis_service._load_prompts") as mp, \
-             patch("needradar.services.analysis_service.llm") as ml, \
-             patch("needradar.services.analysis_service.vault") as mv, \
-             patch.object(svc, "_get_vector_store", return_value=mock_vs):
+        with (
+            patch("needradar.services.analysis_service._load_prompts") as mp,
+            patch("needradar.services.analysis_service.llm") as ml,
+            patch("needradar.services.analysis_service.vault") as mv,
+            patch.object(svc, "_get_vector_store", return_value=mock_vs),
+        ):
             mp.return_value = {"_system_rules": "R", "requirement_extraction": "E"}
             ml.extract_structured = AsyncMock(return_value=fake_extracted)
             ml.pop_last_usage.return_value = None
@@ -279,14 +284,17 @@ class TestExtractAndStore:
     async def test_vector_dedup_skips_storage(self, db_session, fake_item, fake_extracted):
         svc = AnalysisService(db_session)
         from needradar.vector.base import SearchResult
+
         mock_vs = MagicMock()
         mock_vs.query = AsyncMock(return_value=[SearchResult(id="Existing", score=0.95)])
 
-        with patch("needradar.services.analysis_service._load_prompts") as mp, \
-             patch("needradar.services.analysis_service.llm") as ml, \
-             patch("needradar.services.analysis_service.vault") as mv, \
-             patch("needradar.services.analysis_service.settings") as ms, \
-             patch.object(svc, "_get_vector_store", return_value=mock_vs):
+        with (
+            patch("needradar.services.analysis_service._load_prompts") as mp,
+            patch("needradar.services.analysis_service.llm") as ml,
+            patch("needradar.services.analysis_service.vault") as mv,
+            patch("needradar.services.analysis_service.settings") as ms,
+            patch.object(svc, "_get_vector_store", return_value=mock_vs),
+        ):
             mp.return_value = {"_system_rules": "", "requirement_extraction": "E"}
             ml.extract_structured = AsyncMock(return_value=fake_extracted)
             ml.pop_last_usage.return_value = None
@@ -305,10 +313,12 @@ class TestExtractAndStore:
         mock_vs = MagicMock()
         mock_vs.query = AsyncMock(side_effect=RuntimeError("Vector store down"))
 
-        with patch("needradar.services.analysis_service._load_prompts") as mp, \
-             patch("needradar.services.analysis_service.llm") as ml, \
-             patch("needradar.services.analysis_service.vault") as mv, \
-             patch.object(svc, "_get_vector_store", return_value=mock_vs):
+        with (
+            patch("needradar.services.analysis_service._load_prompts") as mp,
+            patch("needradar.services.analysis_service.llm") as ml,
+            patch("needradar.services.analysis_service.vault") as mv,
+            patch.object(svc, "_get_vector_store", return_value=mock_vs),
+        ):
             mp.return_value = {"_system_rules": "", "requirement_extraction": "E"}
             ml.extract_structured = AsyncMock(return_value=fake_extracted)
             ml.pop_last_usage.return_value = None
@@ -326,10 +336,12 @@ class TestExtractAndStore:
         mock_vs.query = AsyncMock(return_value=[])
         mock_vs.add = AsyncMock(side_effect=RuntimeError("add failed"))
 
-        with patch("needradar.services.analysis_service._load_prompts") as mp, \
-             patch("needradar.services.analysis_service.llm") as ml, \
-             patch("needradar.services.analysis_service.vault") as mv, \
-             patch.object(svc, "_get_vector_store", return_value=mock_vs):
+        with (
+            patch("needradar.services.analysis_service._load_prompts") as mp,
+            patch("needradar.services.analysis_service.llm") as ml,
+            patch("needradar.services.analysis_service.vault") as mv,
+            patch.object(svc, "_get_vector_store", return_value=mock_vs),
+        ):
             mp.return_value = {"_system_rules": "", "requirement_extraction": "E"}
             ml.extract_structured = AsyncMock(return_value=fake_extracted)
             ml.pop_last_usage.return_value = None
@@ -344,7 +356,81 @@ class TestExtractAndStore:
 # run_pipeline
 # ---------------------------------------------------------------------------
 
+
 class TestRunPipeline:
+    @pytest.mark.asyncio
+    async def test_uses_go_collector_when_enabled(self, db_session):
+        svc = AnalysisService(db_session)
+        go_client = MagicMock()
+        go_client.collect = AsyncMock(return_value=([], 1))
+        go_client.close = AsyncMock()
+
+        with (
+            patch("needradar.services.analysis_service.settings") as mock_settings,
+            patch("needradar.services.analysis_service.GoCollectorClient", return_value=go_client),
+            patch("needradar.services.analysis_service.create_crawler") as create_python_crawler,
+        ):
+            mock_settings.collector_backend = "go"
+            mock_settings.collector_go_url = "http://collector.test"
+            mock_settings.collector_go_timeout_seconds = 10
+            mock_settings.collector_go_poll_interval_seconds = 0
+            mock_settings.collector_go_fallback_to_python = True
+            tasks = await svc.run_pipeline("context", ["github"])
+
+        assert tasks[0].status == TaskStatus.COMPLETED
+        go_client.collect.assert_awaited_once_with("context", "github", tasks[0].id)
+        go_client.close.assert_awaited_once()
+        create_python_crawler.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_go_collector_failure_falls_back_to_python(self, db_session):
+        import asyncio
+
+        svc = AnalysisService(db_session)
+        go_client = MagicMock()
+        go_client.collect = AsyncMock(side_effect=RuntimeError("collector offline"))
+        go_client.close = AsyncMock()
+        python_crawler = MagicMock()
+        python_crawler.crawl = AsyncMock(return_value=[])
+        python_crawler.close = AsyncMock()
+        real_wait_for = asyncio.wait_for
+
+        async def wait_once(awaitable, timeout):
+            return await real_wait_for(awaitable, timeout)
+
+        with (
+            patch("needradar.services.analysis_service.settings") as mock_settings,
+            patch("needradar.services.analysis_service.GoCollectorClient", return_value=go_client),
+            patch("needradar.services.analysis_service.create_crawler", return_value=python_crawler),
+            patch("needradar.services.analysis_service.asyncio.wait_for", side_effect=wait_once) as wait_for,
+        ):
+            mock_settings.collector_backend = "go"
+            mock_settings.collector_go_url = "http://collector.test"
+            mock_settings.collector_go_timeout_seconds = 10
+            mock_settings.collector_go_poll_interval_seconds = 0
+            mock_settings.collector_go_fallback_to_python = True
+            tasks = await svc.run_pipeline("context", ["github"])
+
+        assert tasks[0].status == TaskStatus.COMPLETED
+        python_crawler.crawl.assert_awaited_once()
+        python_crawler.close.assert_awaited_once()
+        wait_for.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_pipeline_does_not_multiply_crawler_retries(self, db_session):
+        import httpx
+
+        svc = AnalysisService(db_session)
+        mock_crawler = MagicMock()
+        mock_crawler.crawl = AsyncMock(side_effect=httpx.ConnectTimeout("offline"))
+        mock_crawler.close = AsyncMock()
+
+        with patch("needradar.services.analysis_service.create_crawler", return_value=mock_crawler):
+            tasks = await svc.run_pipeline("python", ["github"])
+
+        assert tasks[0].status == TaskStatus.FAILED
+        assert mock_crawler.crawl.await_count == 1
+
     @pytest.mark.asyncio
     async def test_creates_tasks(self, db_session):
         svc = AnalysisService(db_session)
@@ -370,11 +456,13 @@ class TestRunPipeline:
         mock_vs.query = AsyncMock(return_value=[])
         mock_vs.add = AsyncMock()
 
-        with patch("needradar.services.analysis_service.create_crawler") as mc, \
-             patch("needradar.services.analysis_service._load_prompts") as mp, \
-             patch("needradar.services.analysis_service.llm") as ml, \
-             patch("needradar.services.analysis_service.vault") as mv, \
-             patch.object(svc, "_get_vector_store", return_value=mock_vs):
+        with (
+            patch("needradar.services.analysis_service.create_crawler") as mc,
+            patch("needradar.services.analysis_service._load_prompts") as mp,
+            patch("needradar.services.analysis_service.llm") as ml,
+            patch("needradar.services.analysis_service.vault") as mv,
+            patch.object(svc, "_get_vector_store", return_value=mock_vs),
+        ):
             mc.return_value = mock_crawler
             mp.return_value = {"_system_rules": "", "requirement_extraction": "E"}
             ml.extract_structured = AsyncMock(return_value=fake_extracted)
@@ -389,6 +477,7 @@ class TestRunPipeline:
     async def test_crawl_timeout_marks_failed(self, db_session):
         svc = AnalysisService(db_session)
         import asyncio
+
         mock_crawler = MagicMock()
         mock_crawler.crawl = AsyncMock(side_effect=asyncio.TimeoutError())
         mock_crawler.close = AsyncMock()
@@ -422,11 +511,13 @@ class TestRunPipeline:
         mock_vs.query = AsyncMock(return_value=[])
         mock_vs.add = AsyncMock()
 
-        with patch("needradar.services.analysis_service.create_crawler") as mc, \
-             patch("needradar.services.analysis_service._load_prompts") as mp, \
-             patch("needradar.services.analysis_service.llm") as ml, \
-             patch("needradar.services.analysis_service.vault") as mv, \
-             patch.object(svc, "_get_vector_store", return_value=mock_vs):
+        with (
+            patch("needradar.services.analysis_service.create_crawler") as mc,
+            patch("needradar.services.analysis_service._load_prompts") as mp,
+            patch("needradar.services.analysis_service.llm") as ml,
+            patch("needradar.services.analysis_service.vault") as mv,
+            patch.object(svc, "_get_vector_store", return_value=mock_vs),
+        ):
             mc.return_value = mock_crawler
             mp.return_value = {"_system_rules": "", "requirement_extraction": "E"}
             ml.extract_structured = AsyncMock(return_value=fake_extracted)
@@ -485,6 +576,7 @@ class TestRunPipeline:
     async def test_skips_failed_in_extraction(self, db_session):
         svc = AnalysisService(db_session)
         import asyncio
+
         mock_crawler = MagicMock()
         mock_crawler.crawl = AsyncMock(side_effect=asyncio.TimeoutError())
         mock_crawler.close = AsyncMock()
@@ -501,9 +593,11 @@ class TestRunPipeline:
         mock_crawler.crawl = AsyncMock(return_value=[fake_item])
         mock_crawler.close = AsyncMock()
 
-        with patch("needradar.services.analysis_service.create_crawler") as mc, \
-             patch("needradar.services.analysis_service._load_prompts") as mp, \
-             patch("needradar.services.analysis_service.llm") as ml:
+        with (
+            patch("needradar.services.analysis_service.create_crawler") as mc,
+            patch("needradar.services.analysis_service._load_prompts") as mp,
+            patch("needradar.services.analysis_service.llm") as ml,
+        ):
             mc.return_value = mock_crawler
             mp.return_value = {"_system_rules": "", "requirement_extraction": "E"}
             ml.extract_structured = AsyncMock(side_effect=ValueError("parse error"))

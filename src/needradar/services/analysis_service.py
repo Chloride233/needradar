@@ -12,9 +12,11 @@ from needradar.core.config import settings
 from needradar.crawlers.factory import create_crawler
 from needradar.llm.provider import llm
 from needradar.models.crawl_task import CrawlTask, TaskStatus
-from needradar.models.fingerprint import CrawlFingerprint
 from needradar.models.llm_usage import LLMUsage
 from needradar.schemas.schemas import ExtractedRequirement, NoiseVerdict, RawDiscussionItem
+from needradar.services.collector_scheduler import run_bounded
+from needradar.services.crawl_reliability import filter_new_items, save_fingerprints
+from needradar.services.go_collector import GoCollectorClient
 from needradar.services.noise_filter import NoiseFilter
 from needradar.services.vault_store import vault
 
@@ -45,6 +47,7 @@ class AnalysisService:
     def _get_vector_store(self):
         if self._vector_store is None:
             from needradar.vector import create_vector_store
+
             self._vector_store = create_vector_store()
         return self._vector_store
 
@@ -65,6 +68,8 @@ class AnalysisService:
         return f"{rules}\n\n{task_prompt}" if rules else task_prompt
 
     async def _load_known_urls(self, keyword: str, platform: str) -> set[str]:
+        from needradar.models.fingerprint import CrawlFingerprint
+
         result = await self._db.execute(
             select(CrawlFingerprint.source_url).where(
                 CrawlFingerprint.keyword == keyword,
@@ -74,25 +79,21 @@ class AnalysisService:
         return {row[0] for row in result.all()}
 
     async def _save_fingerprints(self, keyword: str, platform: str, items: list[RawDiscussionItem]) -> None:
-        for item in items:
-            self._db.add(CrawlFingerprint(
-                keyword=keyword,
-                platform=platform,
-                source_url=item.source_url,
-            ))
+        save_fingerprints(self._db, keyword, platform, items)
 
     async def _filter_new_items(
-        self, keyword: str, platform: str, items: list[RawDiscussionItem],
+        self,
+        keyword: str,
+        platform: str,
+        items: list[RawDiscussionItem],
     ) -> tuple[list[RawDiscussionItem], int]:
-        known = await self._load_known_urls(keyword, platform)
-        new_items = [item for item in items if item.source_url not in known]
-        return new_items, len(items) - len(new_items)
+        return await filter_new_items(self._db, keyword, platform, items)
 
-    async def run_pipeline(self, keyword: str, platforms: list[str], existing_task_ids: list[int] | None = None) -> list[CrawlTask]:
+    async def run_pipeline(
+        self, keyword: str, platforms: list[str], existing_task_ids: list[int] | None = None
+    ) -> list[CrawlTask]:
         if existing_task_ids:
-            result = await self._db.execute(
-                select(CrawlTask).where(CrawlTask.id.in_(existing_task_ids))
-            )
+            result = await self._db.execute(select(CrawlTask).where(CrawlTask.id.in_(existing_task_ids)))
             tasks = list(result.scalars().all())
         else:
             tasks: list[CrawlTask] = []
@@ -105,16 +106,33 @@ class AnalysisService:
         # Phase 1: Crawl all platforms concurrently
         crawl_results: dict[int, list] = {}
         crawlers: dict[int, object] = {}
+        go_collector = None
+        if settings.collector_backend == "go":
+            go_collector = GoCollectorClient(
+                settings.collector_go_url,
+                timeout_seconds=settings.collector_go_timeout_seconds,
+                poll_interval_seconds=settings.collector_go_poll_interval_seconds,
+            )
 
         async def _crawl_one(task: CrawlTask) -> None:
-            crawler = create_crawler(task.platform)
-            crawlers[task.id] = crawler
             try:
                 task.status = TaskStatus.RUNNING
                 await self._safe_flush()
                 await self._db.commit()
 
-                raw_items = await asyncio.wait_for(crawler.crawl(keyword), timeout=MAX_PIPELINE_SECONDS)
+                async def collect() -> tuple[list[RawDiscussionItem], int]:
+                    if go_collector is not None:
+                        try:
+                            return await go_collector.collect(keyword, task.platform, task.id)
+                        except Exception as error:
+                            if not settings.collector_go_fallback_to_python:
+                                raise
+                            logger.warning("go_collector_fallback", platform=task.platform, error=str(error))
+                    crawler = create_crawler(task.platform)
+                    crawlers[task.id] = crawler
+                    return await crawler.crawl(keyword), 1
+
+                raw_items, attempts = await asyncio.wait_for(collect(), timeout=MAX_PIPELINE_SECONDS)
                 task.total_items = len(raw_items)
 
                 # Incremental filter: skip already-seen URLs
@@ -148,10 +166,14 @@ class AnalysisService:
 
                 crawl_results[task.id] = clean_items
                 logger.info(
-                    "crawl_done", platform=task.platform,
-                    total=len(raw_items), new=len(new_items),
-                    skipped=skipped, noise=len(noise_items),
+                    "crawl_done",
+                    platform=task.platform,
+                    total=len(raw_items),
+                    new=len(new_items),
+                    skipped=skipped,
+                    noise=len(noise_items),
                     clean=len(clean_items),
+                    attempts=attempts,
                 )
             except asyncio.TimeoutError:
                 task.status = TaskStatus.FAILED
@@ -162,7 +184,7 @@ class AnalysisService:
                 task.error_message = str(e)[:2000]
                 logger.error("crawl_failed", platform=task.platform, error=str(e))
 
-        await asyncio.gather(*[_crawl_one(t) for t in tasks])
+        await run_bounded(tasks, _crawl_one, max(1, len(tasks)))
         await self._safe_flush()
         await self._db.commit()
 
@@ -185,6 +207,7 @@ class AnalysisService:
                     task.error_message = f"处理超时，已处理 {idx}/{len(filtered_items)} 条"
                     break
                 import time as _time
+
                 start_t = _time.monotonic()
                 try:
                     await self.extract_and_store(keyword, filtered.item)
@@ -203,6 +226,8 @@ class AnalysisService:
                 await crawler.close()
             except Exception:
                 pass
+        if go_collector is not None:
+            await go_collector.close()
 
         await self._safe_flush()
         await self._db.commit()
@@ -216,6 +241,7 @@ class AnalysisService:
         rag_context = ""
         try:
             from needradar.services.rag_retriever import get_retriever
+
             retriever = get_retriever()
             rag_context = await retriever.retrieve_context(
                 query=f"{keyword} {item.title}",
@@ -264,6 +290,7 @@ class AnalysisService:
                 return None
 
         from datetime import date
+
         meta = {
             "标题": extracted.title,
             "阶段": "需求",
@@ -304,14 +331,16 @@ class AnalysisService:
             from needradar.services.link_service import EntityLinkService
 
             svc = EntityLinkService(self._db)
-            await svc.create(EntityLinkCreateRequest(
-                source_type="requirement",
-                source_id=vault_path,
-                link_type=LinkType.DERIVED_FROM,
-                target_type="raw_discussion",
-                target_id=item.source_url,
-                metadata={"title": item.title, "platform": item.platform},
-            ))
+            await svc.create(
+                EntityLinkCreateRequest(
+                    source_type="requirement",
+                    source_id=vault_path,
+                    link_type=LinkType.DERIVED_FROM,
+                    target_type="raw_discussion",
+                    target_id=item.source_url,
+                    metadata={"title": item.title, "platform": item.platform},
+                )
+            )
         except Exception as e:
             logger.warning("entity_link_failed", link_type="derived_from", error=str(e))
 
