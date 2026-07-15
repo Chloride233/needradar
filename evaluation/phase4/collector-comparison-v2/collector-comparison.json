@@ -1,0 +1,1490 @@
+{
+  "combinations": [
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 5.601748154044659,
+        "p95_latency_reduction_percent": 6.062641071408178,
+        "p99_latency_reduction_percent": 6.1250695241782065,
+        "peak_rss_reduction_percent": 68.25169092027055,
+        "throughput_increase_percent": 6.5502540131430225
+      },
+      "concurrency": 1,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 2860.053,
+            "median": 2848.456,
+            "min": 2843.951,
+            "min_max_spread_percent": 0.5652887037749526
+          },
+          "p95_latency_ms": {
+            "max": 5447.077,
+            "median": 5411.983,
+            "min": 5389.563,
+            "min_max_spread_percent": 1.0627158289299896
+          },
+          "p99_latency_ms": {
+            "max": 5677.698,
+            "median": 5638.648,
+            "min": 5613.637,
+            "min_max_spread_percent": 1.1361056763961965
+          },
+          "peak_rss_bytes": {
+            "max": 25837568.0,
+            "median": 25378816.0,
+            "min": 25018368.0,
+            "min_max_spread_percent": 3.227888960619755
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.03,
+            "min": 0.03,
+            "min_max_spread_percent": 33.33333333333334
+          },
+          "throughput_tasks_per_second": {
+            "max": 176.37002879880768,
+            "median": 175.5849994794247,
+            "min": 174.37579258582167,
+            "min_max_spread_percent": 1.1357668473380595
+          },
+          "user_cpu_seconds": {
+            "max": 0.15,
+            "median": 0.13,
+            "min": 0.09,
+            "min_max_spread_percent": 46.15384615384615
+          },
+          "wall_seconds": {
+            "max": 5.734740959,
+            "median": 5.695247333,
+            "min": 5.669897583,
+            "min_max_spread_percent": 1.1385524141204104
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 3045.7670420291834,
+            "median": 3017.4880829872563,
+            "min": 2949.720582982991,
+            "min_max_spread_percent": 3.1829938148789068
+          },
+          "p95_latency_ms": {
+            "max": 5810.793458018452,
+            "median": 5761.268000002019,
+            "min": 5676.926249987446,
+            "min_max_spread_percent": 2.323571964209255
+          },
+          "p99_latency_ms": {
+            "max": 6053.088125016075,
+            "median": 6006.553582963534,
+            "min": 5925.985749985557,
+            "min_max_spread_percent": 2.116061619611947
+          },
+          "peak_rss_bytes": {
+            "max": 80019456.0,
+            "median": 79937536.0,
+            "min": 79822848.0,
+            "min_max_spread_percent": 0.2459520393523263
+          },
+          "system_cpu_seconds": {
+            "max": 0.06,
+            "median": 0.05,
+            "min": 0.04,
+            "min_max_spread_percent": 39.99999999999999
+          },
+          "throughput_tasks_per_second": {
+            "max": 167.04624096782982,
+            "median": 164.79078450415165,
+            "min": 163.58015005121925,
+            "min_max_spread_percent": 2.1033281242272652
+          },
+          "user_cpu_seconds": {
+            "max": 0.75,
+            "median": 0.68,
+            "min": 0.64,
+            "min_max_spread_percent": 16.176470588235293
+          },
+          "wall_seconds": {
+            "max": 6.113211167044938,
+            "median": 6.068300499988254,
+            "min": 5.986366375000216,
+            "min_max_spread_percent": 2.0902852791315634
+          }
+        }
+      },
+      "scenario": "normal"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 9.967252587982754,
+        "p95_latency_reduction_percent": 11.688027907299817,
+        "p99_latency_reduction_percent": 11.725010612721903,
+        "peak_rss_reduction_percent": 67.36324523663184,
+        "throughput_increase_percent": 14.539223328672692
+      },
+      "concurrency": 4,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 711.733,
+            "median": 710.833,
+            "min": 706.831,
+            "min_max_spread_percent": 0.6896134535115745
+          },
+          "p95_latency_ms": {
+            "max": 1357.37,
+            "median": 1351.88,
+            "min": 1350.533,
+            "min_max_spread_percent": 0.5057401544515777
+          },
+          "p99_latency_ms": {
+            "max": 1414.342,
+            "median": 1408.477,
+            "min": 1408.12,
+            "min_max_spread_percent": 0.44175375245745635
+          },
+          "peak_rss_bytes": {
+            "max": 26198016.0,
+            "median": 26099712.0,
+            "min": 25755648.0,
+            "min_max_spread_percent": 1.694915254237288
+          },
+          "system_cpu_seconds": {
+            "max": 0.02,
+            "median": 0.02,
+            "min": 0.02,
+            "min_max_spread_percent": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 704.4546922987024,
+            "median": 704.2941904220261,
+            "min": 701.5301218001789,
+            "min_max_spread_percent": 0.41524842009147506
+          },
+          "user_cpu_seconds": {
+            "max": 0.09,
+            "median": 0.08,
+            "min": 0.06,
+            "min_max_spread_percent": 37.5
+          },
+          "wall_seconds": {
+            "max": 1.425455542,
+            "median": 1.419861208,
+            "min": 1.419537709,
+            "min_max_spread_percent": 0.4167895401787621
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 826.5112080262043,
+            "median": 789.527166984044,
+            "min": 774.4731249986216,
+            "min_max_spread_percent": 6.591044007562856
+          },
+          "p95_latency_ms": {
+            "max": 1560.15745800687,
+            "median": 1530.8003750396892,
+            "min": 1471.0677079856396,
+            "min_max_spread_percent": 5.819815011406735
+          },
+          "p99_latency_ms": {
+            "max": 1624.2101659881882,
+            "median": 1595.556124986615,
+            "min": 1531.8252500146627,
+            "min_max_spread_percent": 5.790138906852963
+          },
+          "peak_rss_bytes": {
+            "max": 80117760.0,
+            "median": 79970304.0,
+            "min": 79724544.0,
+            "min_max_spread_percent": 0.4917025199754148
+          },
+          "system_cpu_seconds": {
+            "max": 0.06,
+            "median": 0.04,
+            "min": 0.03,
+            "min_max_spread_percent": 75.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 647.3423294586016,
+            "median": 614.8934574150544,
+            "min": 609.1530887430949,
+            "min_max_spread_percent": 6.210708579670065
+          },
+          "user_cpu_seconds": {
+            "max": 0.5,
+            "median": 0.44,
+            "min": 0.41,
+            "min_max_spread_percent": 20.45454545454546
+          },
+          "wall_seconds": {
+            "max": 1.6416234580101445,
+            "median": 1.62629799998831,
+            "min": 1.5447777080116794,
+            "min_max_spread_percent": 5.954981805251025
+          }
+        }
+      },
+      "scenario": "normal"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 19.437600767791967,
+        "p95_latency_reduction_percent": 23.761135979413275,
+        "p99_latency_reduction_percent": 23.636781688750933,
+        "peak_rss_reduction_percent": 66.16864510847319,
+        "throughput_increase_percent": 30.719766992817494
+      },
+      "concurrency": 16,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 182.854,
+            "median": 180.43,
+            "min": 179.059,
+            "min_max_spread_percent": 2.10330876240094
+          },
+          "p95_latency_ms": {
+            "max": 342.283,
+            "median": 337.399,
+            "min": 336.627,
+            "min_max_spread_percent": 1.6763535161633574
+          },
+          "p99_latency_ms": {
+            "max": 353.471,
+            "median": 348.726,
+            "min": 348.065,
+            "min_max_spread_percent": 1.5502142082896044
+          },
+          "peak_rss_bytes": {
+            "max": 27344896.0,
+            "median": 27082752.0,
+            "min": 26722304.0,
+            "min_max_spread_percent": 2.2988505747126435
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.01,
+            "min": 0.01,
+            "min_max_spread_percent": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 2827.63679838912,
+            "median": 2822.09113866007,
+            "min": 2784.5690322508785,
+            "min_max_spread_percent": 1.5260940920104404
+          },
+          "user_cpu_seconds": {
+            "max": 0.07,
+            "median": 0.05,
+            "min": 0.04,
+            "min_max_spread_percent": 60.00000000000001
+          },
+          "wall_seconds": {
+            "max": 0.359122,
+            "median": 0.354347167,
+            "min": 0.353652209,
+            "min_max_spread_percent": 1.5436248711422607
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 234.47304201545194,
+            "median": 223.9630419644527,
+            "min": 212.79512502951548,
+            "min_max_spread_percent": 9.679238501045708
+          },
+          "p95_latency_ms": {
+            "max": 450.3095829859376,
+            "median": 442.55512504605576,
+            "min": 418.8105840003118,
+            "min_max_spread_percent": 7.117531173624476
+          },
+          "p99_latency_ms": {
+            "max": 464.508333010599,
+            "median": 456.66750002419576,
+            "min": 433.88012499781325,
+            "min_max_spread_percent": 6.706894624899512
+          },
+          "peak_rss_bytes": {
+            "max": 80117760.0,
+            "median": 80052224.0,
+            "min": 80003072.0,
+            "min_max_spread_percent": 0.14326647564469913
+          },
+          "system_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.04,
+            "min": 0.04,
+            "min_max_spread_percent": 25.000000000000007
+          },
+          "throughput_tasks_per_second": {
+            "max": 2269.9598975036065,
+            "median": 2158.8862982100727,
+            "min": 2127.8955670883233,
+            "min_max_spread_percent": 6.580445229240111
+          },
+          "user_cpu_seconds": {
+            "max": 0.41,
+            "median": 0.38,
+            "min": 0.37,
+            "min_max_spread_percent": 10.52631578947368
+          },
+          "wall_seconds": {
+            "max": 0.4699478750117123,
+            "median": 0.4632017910480499,
+            "min": 0.4405364170088433,
+            "min_max_spread_percent": 6.349599369277495
+          }
+        }
+      },
+      "scenario": "normal"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 38.473734167872806,
+        "p95_latency_reduction_percent": 37.379433752075705,
+        "p99_latency_reduction_percent": 37.1401491682481,
+        "peak_rss_reduction_percent": 65.47911547911548,
+        "throughput_increase_percent": 59.699443760823186
+      },
+      "concurrency": 50,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 57.05,
+            "median": 56.916,
+            "min": 56.8,
+            "min_max_spread_percent": 0.439243797877574
+          },
+          "p95_latency_ms": {
+            "max": 107.856,
+            "median": 107.432,
+            "min": 106.628,
+            "min_max_spread_percent": 1.1430486261076722
+          },
+          "p99_latency_ms": {
+            "max": 113.489,
+            "median": 113.08,
+            "min": 112.034,
+            "min_max_spread_percent": 1.2866996816413143
+          },
+          "peak_rss_bytes": {
+            "max": 27852800.0,
+            "median": 27623424.0,
+            "min": 27328512.0,
+            "min_max_spread_percent": 1.8979833926453145
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.0,
+            "min": 0.0,
+            "min_max_spread_percent": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 8920.351324825602,
+            "median": 8838.349868766412,
+            "min": 8806.961289935189,
+            "min_max_spread_percent": 1.2829321827496247
+          },
+          "user_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.04,
+            "min": 0.04,
+            "min_max_spread_percent": 0.0
+          },
+          "wall_seconds": {
+            "max": 0.113546542,
+            "median": 0.113143292,
+            "min": 0.112103208,
+            "min_max_spread_percent": 1.275669086948614
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 109.1816250118427,
+            "median": 92.50683302525431,
+            "min": 86.53720800066367,
+            "min_max_spread_percent": 24.478642572270438
+          },
+          "p95_latency_ms": {
+            "max": 213.31608400214463,
+            "median": 171.5602499898523,
+            "min": 166.40837502200156,
+            "min_max_spread_percent": 27.341828298173752
+          },
+          "p99_latency_ms": {
+            "max": 222.31412504334003,
+            "median": 179.89224998746067,
+            "min": 174.56795804901049,
+            "min_max_spread_percent": 26.541536390621427
+          },
+          "peak_rss_bytes": {
+            "max": 80412672.0,
+            "median": 80019456.0,
+            "min": 79609856.0,
+            "min_max_spread_percent": 1.0032760032760033
+          },
+          "system_cpu_seconds": {
+            "max": 0.07,
+            "median": 0.04,
+            "min": 0.02,
+            "min_max_spread_percent": 125.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 5704.495723637542,
+            "median": 5534.364842249125,
+            "min": 4477.774831181417,
+            "min_max_spread_percent": 22.165522646634823
+          },
+          "user_cpu_seconds": {
+            "max": 0.4,
+            "median": 0.37,
+            "min": 0.29,
+            "min_max_spread_percent": 29.729729729729744
+          },
+          "wall_seconds": {
+            "max": 0.22332520899362862,
+            "median": 0.18068920797668397,
+            "min": 0.1753003330086358,
+            "min_max_spread_percent": 26.578718520471867
+          }
+        }
+      },
+      "scenario": "normal"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 5.697303612042678,
+        "p95_latency_reduction_percent": 5.81188827887259,
+        "p99_latency_reduction_percent": 5.677273235930431,
+        "peak_rss_reduction_percent": 67.95081967213115,
+        "throughput_increase_percent": 6.018099920883043
+      },
+      "concurrency": 1,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 3200.144,
+            "median": 3186.981,
+            "min": 3183.306,
+            "min_max_spread_percent": 0.5283370060881988
+          },
+          "p95_latency_ms": {
+            "max": 6070.276,
+            "median": 6052.03,
+            "min": 6045.489,
+            "min_max_spread_percent": 0.4095650550311261
+          },
+          "p99_latency_ms": {
+            "max": 6325.295,
+            "median": 6306.597,
+            "min": 6298.027,
+            "min_max_spread_percent": 0.4323726409028518
+          },
+          "peak_rss_bytes": {
+            "max": 26296320.0,
+            "median": 25624576.0,
+            "min": 25526272.0,
+            "min_max_spread_percent": 3.0051150895140664
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.04,
+            "min": 0.03,
+            "min_max_spread_percent": 25.000000000000007
+          },
+          "throughput_tasks_per_second": {
+            "max": 157.18122611754853,
+            "median": 156.98287085329255,
+            "min": 156.51728689413258,
+            "min_max_spread_percent": 0.42293736877600624
+          },
+          "user_cpu_seconds": {
+            "max": 0.15,
+            "median": 0.12,
+            "min": 0.11,
+            "min_max_spread_percent": 33.33333333333333
+          },
+          "wall_seconds": {
+            "max": 6.3890706250000004,
+            "median": 6.37012175,
+            "min": 6.362082958,
+            "min_max_spread_percent": 0.4236601443292699
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 3443.80845798878,
+            "median": 3379.52266697539,
+            "min": 3330.0557080074213,
+            "min_max_spread_percent": 3.3659413233989417
+          },
+          "p95_latency_ms": {
+            "max": 6504.566167015582,
+            "median": 6425.47120800009,
+            "min": 6312.787000031676,
+            "min_max_spread_percent": 2.9846708634400203
+          },
+          "p99_latency_ms": {
+            "max": 6768.942375027109,
+            "median": 6686.190291948151,
+            "min": 6575.925000011921,
+            "min_max_spread_percent": 2.8868064860138563
+          },
+          "peak_rss_bytes": {
+            "max": 80232448.0,
+            "median": 79953920.0,
+            "min": 79626240.0,
+            "min_max_spread_percent": 0.7581967213114754
+          },
+          "system_cpu_seconds": {
+            "max": 0.07,
+            "median": 0.05,
+            "min": 0.04,
+            "min_max_spread_percent": 60.00000000000001
+          },
+          "throughput_tasks_per_second": {
+            "max": 150.57644617716568,
+            "median": 148.0717641331456,
+            "min": 146.2558145829584,
+            "min_max_spread_percent": 2.9179307881563252
+          },
+          "user_cpu_seconds": {
+            "max": 0.81,
+            "median": 0.66,
+            "min": 0.53,
+            "min_max_spread_percent": 42.42424242424242
+          },
+          "wall_seconds": {
+            "max": 6.8373349999892525,
+            "median": 6.753482041996904,
+            "min": 6.641144916007761,
+            "min_max_spread_percent": 2.9050211840569453
+          }
+        }
+      },
+      "scenario": "retry_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 10.16996200318729,
+        "p95_latency_reduction_percent": 11.049175360074043,
+        "p99_latency_reduction_percent": 11.099749436337392,
+        "peak_rss_reduction_percent": 66.81052198931361,
+        "throughput_increase_percent": 12.472647183876303
+      },
+      "concurrency": 4,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 800.849,
+            "median": 770.934,
+            "min": 768.425,
+            "min_max_spread_percent": 4.205807501031229
+          },
+          "p95_latency_ms": {
+            "max": 1496.299,
+            "median": 1463.04,
+            "min": 1458.696,
+            "min_max_spread_percent": 2.570196303587056
+          },
+          "p99_latency_ms": {
+            "max": 1557.538,
+            "median": 1526.369,
+            "min": 1520.361,
+            "min_max_spread_percent": 2.4356495709752957
+          },
+          "peak_rss_bytes": {
+            "max": 26591232.0,
+            "median": 26460160.0,
+            "min": 26411008.0,
+            "min_max_spread_percent": 0.6811145510835914
+          },
+          "system_cpu_seconds": {
+            "max": 0.02,
+            "median": 0.02,
+            "min": 0.01,
+            "min_max_spread_percent": 50.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 650.0662676253085,
+            "median": 647.555487198735,
+            "min": 634.6574366387828,
+            "min_max_spread_percent": 2.3795383239176706
+          },
+          "user_cpu_seconds": {
+            "max": 0.08,
+            "median": 0.08,
+            "min": 0.05,
+            "min_max_spread_percent": 37.5
+          },
+          "wall_seconds": {
+            "max": 1.575653167,
+            "median": 1.5442692089999999,
+            "min": 1.538304708,
+            "min_max_spread_percent": 2.418519956386694
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 891.694208025001,
+            "median": 858.2140419748612,
+            "min": 832.5742090237327,
+            "min_max_spread_percent": 6.88872427037264
+          },
+          "p95_latency_ms": {
+            "max": 1664.824708015658,
+            "median": 1644.7739590075798,
+            "min": 1615.0195419904776,
+            "min_max_spread_percent": 3.0280857592876593
+          },
+          "p99_latency_ms": {
+            "max": 1737.1371670160443,
+            "median": 1716.9456669944339,
+            "min": 1687.87062499905,
+            "min_max_spread_percent": 2.869429299020091
+          },
+          "peak_rss_bytes": {
+            "max": 80265216.0,
+            "median": 79724544.0,
+            "min": 79675392.0,
+            "min_max_spread_percent": 0.7398273736128237
+          },
+          "system_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.05,
+            "min": 0.03,
+            "min_max_spread_percent": 40.00000000000001
+          },
+          "throughput_tasks_per_second": {
+            "max": 584.7793626243894,
+            "median": 575.7448618952452,
+            "min": 568.7011619008963,
+            "min_max_spread_percent": 2.7925912652640297
+          },
+          "user_cpu_seconds": {
+            "max": 0.53,
+            "median": 0.48,
+            "min": 0.45,
+            "min_max_spread_percent": 16.66666666666667
+          },
+          "wall_seconds": {
+            "max": 1.7583927499945275,
+            "median": 1.736880459007807,
+            "min": 1.710046667023562,
+            "min_max_spread_percent": 2.7835008863294686
+          }
+        }
+      },
+      "scenario": "retry_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 20.0662520310254,
+        "p95_latency_reduction_percent": 22.845863147321214,
+        "p99_latency_reduction_percent": 22.832114629308105,
+        "peak_rss_reduction_percent": 65.84117887842817,
+        "throughput_increase_percent": 29.39614619645237
+      },
+      "concurrency": 16,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 194.897,
+            "median": 194.168,
+            "min": 193.654,
+            "min_max_spread_percent": 0.6401672778212656
+          },
+          "p95_latency_ms": {
+            "max": 367.363,
+            "median": 365.578,
+            "min": 364.52,
+            "min_max_spread_percent": 0.7776726170612066
+          },
+          "p99_latency_ms": {
+            "max": 384.116,
+            "median": 382.1,
+            "min": 381.173,
+            "min_max_spread_percent": 0.7702172206228692
+          },
+          "peak_rss_bytes": {
+            "max": 27541504.0,
+            "median": 27344896.0,
+            "min": 26279936.0,
+            "min_max_spread_percent": 4.613541042540444
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.01,
+            "min": 0.01,
+            "min_max_spread_percent": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 2577.832277276651,
+            "median": 2571.669755109173,
+            "min": 2557.183415898393,
+            "min_max_spread_percent": 0.8029359655233598
+          },
+          "user_cpu_seconds": {
+            "max": 0.06,
+            "median": 0.05,
+            "min": 0.04,
+            "min_max_spread_percent": 39.99999999999999
+          },
+          "wall_seconds": {
+            "max": 0.39105525,
+            "median": 0.388852417,
+            "min": 0.387922833,
+            "min_max_spread_percent": 0.8055542059289806
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 243.61274996772408,
+            "median": 242.91116697713733,
+            "min": 208.7192500475794,
+            "min_max_spread_percent": 14.364716268243377
+          },
+          "p95_latency_ms": {
+            "max": 500.41591603076085,
+            "median": 473.82812498835847,
+            "min": 401.4452500268817,
+            "min_max_spread_percent": 20.88746125112577
+          },
+          "p99_latency_ms": {
+            "max": 523.7367910449393,
+            "median": 495.1541670016013,
+            "min": 418.826709035784,
+            "min_max_spread_percent": 21.18735719108187
+          },
+          "peak_rss_bytes": {
+            "max": 80199680.0,
+            "median": 80052224.0,
+            "min": 79757312.0,
+            "min_max_spread_percent": 0.5525992632009824
+          },
+          "system_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.03,
+            "min": 0.03,
+            "min_max_spread_percent": 66.66666666666669
+          },
+          "throughput_tasks_per_second": {
+            "max": 2305.7727483303406,
+            "median": 1987.4392172428393,
+            "min": 1877.0869392979744,
+            "min_max_spread_percent": 21.569756967313904
+          },
+          "user_cpu_seconds": {
+            "max": 0.44,
+            "median": 0.37,
+            "min": 0.36,
+            "min_max_spread_percent": 21.621621621621625
+          },
+          "wall_seconds": {
+            "max": 0.5327403750270605,
+            "median": 0.5031600419897586,
+            "min": 0.43369408400030807,
+            "min_max_spread_percent": 19.684848310901533
+          }
+        }
+      },
+      "scenario": "retry_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 34.189198841860076,
+        "p95_latency_reduction_percent": 33.97461691518692,
+        "p99_latency_reduction_percent": 33.87945185399755,
+        "peak_rss_reduction_percent": 65.66462167689161,
+        "throughput_increase_percent": 48.61424972742823
+      },
+      "concurrency": 50,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 63.904,
+            "median": 61.812,
+            "min": 60.89,
+            "min_max_spread_percent": 4.876075842878411
+          },
+          "p95_latency_ms": {
+            "max": 116.837,
+            "median": 115.888,
+            "min": 115.366,
+            "min_max_spread_percent": 1.2693290073174128
+          },
+          "p99_latency_ms": {
+            "max": 122.45,
+            "median": 121.373,
+            "min": 120.079,
+            "min_max_spread_percent": 1.9534822406960437
+          },
+          "peak_rss_bytes": {
+            "max": 28639232.0,
+            "median": 27508736.0,
+            "min": 27049984.0,
+            "min_max_spread_percent": 5.77724836212031
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.01,
+            "min": 0.0,
+            "min_max_spread_percent": 100.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 7896.978669660442,
+            "median": 7818.791683933165,
+            "min": 7756.234517537897,
+            "min_max_spread_percent": 1.8000754824017207
+          },
+          "user_cpu_seconds": {
+            "max": 0.08,
+            "median": 0.04,
+            "min": 0.04,
+            "min_max_spread_percent": 100.0
+          },
+          "wall_seconds": {
+            "max": 0.128928541,
+            "median": 0.127897,
+            "min": 0.126630708,
+            "min_max_spread_percent": 1.7966277551467187
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 127.77520797681063,
+            "median": 93.9237920101732,
+            "min": 86.49450005032122,
+            "min_max_spread_percent": 43.951279056128996
+          },
+          "p95_latency_ms": {
+            "max": 194.89108299603686,
+            "median": 175.52037502173334,
+            "min": 147.1482920460403,
+            "min_max_spread_percent": 27.20071156644061
+          },
+          "p99_latency_ms": {
+            "max": 200.47604100545868,
+            "median": 183.5632090223953,
+            "min": 152.43304200703278,
+            "min_max_spread_percent": 26.172455392498883
+          },
+          "peak_rss_bytes": {
+            "max": 80363520.0,
+            "median": 80117760.0,
+            "min": 79904768.0,
+            "min_max_spread_percent": 0.5725971370143149
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.03,
+            "min": 0.02,
+            "min_max_spread_percent": 66.66666666666667
+          },
+          "throughput_tasks_per_second": {
+            "max": 6286.808950756582,
+            "median": 5261.131888949764,
+            "min": 4818.213827422678,
+            "min_max_spread_percent": 27.914052609448404
+          },
+          "user_cpu_seconds": {
+            "max": 0.36,
+            "median": 0.32,
+            "min": 0.29,
+            "min_max_spread_percent": 21.875000000000004
+          },
+          "wall_seconds": {
+            "max": 0.20754579099593684,
+            "median": 0.19007316697388887,
+            "min": 0.15906320803333074,
+            "min_max_spread_percent": 25.50732632832195
+          }
+        }
+      },
+      "scenario": "retry_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 4.8905534572676075,
+        "p95_latency_reduction_percent": 5.669695981023094,
+        "p99_latency_reduction_percent": 5.768628068486479,
+        "peak_rss_reduction_percent": 68.06550665301944,
+        "throughput_increase_percent": 6.145717720863484
+      },
+      "concurrency": 1,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 2867.343,
+            "median": 2848.571,
+            "min": 2838.855,
+            "min_max_spread_percent": 1.0000803911856095
+          },
+          "p95_latency_ms": {
+            "max": 5436.831,
+            "median": 5409.028,
+            "min": 5402.121,
+            "min_max_spread_percent": 0.6417049421818491
+          },
+          "p99_latency_ms": {
+            "max": 5664.904,
+            "median": 5636.984,
+            "min": 5634.108,
+            "min_max_spread_percent": 0.546320514658198
+          },
+          "peak_rss_bytes": {
+            "max": 25985024.0,
+            "median": 25559040.0,
+            "min": 24657920.0,
+            "min_max_spread_percent": 5.1923076923076925
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.03,
+            "min": 0.03,
+            "min_max_spread_percent": 33.33333333333334
+          },
+          "throughput_tasks_per_second": {
+            "max": 175.71199560161105,
+            "median": 175.5965550808986,
+            "min": 174.79802178603606,
+            "min_max_spread_percent": 0.5204964386424987
+          },
+          "user_cpu_seconds": {
+            "max": 0.16,
+            "median": 0.13,
+            "min": 0.1,
+            "min_max_spread_percent": 46.15384615384615
+          },
+          "wall_seconds": {
+            "max": 5.720888542,
+            "median": 5.694872542,
+            "min": 5.691131084,
+            "min_max_spread_percent": 0.522530711276448
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 3031.0740420245565,
+            "median": 2995.045291027054,
+            "min": 2956.266916997265,
+            "min_max_spread_percent": 2.49769595309321
+          },
+          "p95_latency_ms": {
+            "max": 5815.034875005949,
+            "median": 5734.136083046906,
+            "min": 5620.059541950468,
+            "min_max_spread_percent": 3.4002564681352787
+          },
+          "p99_latency_ms": {
+            "max": 6051.87249998562,
+            "median": 5982.067208038643,
+            "min": 5852.899249992333,
+            "min_max_spread_percent": 3.3261620619358596
+          },
+          "peak_rss_bytes": {
+            "max": 80117760.0,
+            "median": 80035840.0,
+            "min": 79872000.0,
+            "min_max_spread_percent": 0.3070624360286591
+          },
+          "system_cpu_seconds": {
+            "max": 0.07,
+            "median": 0.06,
+            "min": 0.05,
+            "min_max_spread_percent": 33.33333333333334
+          },
+          "throughput_tasks_per_second": {
+            "max": 169.1515928219555,
+            "median": 165.42971195755004,
+            "min": 163.6506655802979,
+            "min_max_spread_percent": 3.3252353380565354
+          },
+          "user_cpu_seconds": {
+            "max": 0.72,
+            "median": 0.64,
+            "min": 0.52,
+            "min_max_spread_percent": 31.249999999999993
+          },
+          "wall_seconds": {
+            "max": 6.110577041981742,
+            "median": 6.044863332994282,
+            "min": 5.911856833961792,
+            "min_max_spread_percent": 3.2874226772884674
+          }
+        }
+      },
+      "scenario": "duplicate_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 12.707132938381827,
+        "p95_latency_reduction_percent": 13.724682050878497,
+        "p99_latency_reduction_percent": 13.633312333176326,
+        "peak_rss_reduction_percent": 67.30848013109382,
+        "throughput_increase_percent": 15.833367692228128
+      },
+      "concurrency": 4,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 714.893,
+            "median": 711.62,
+            "min": 703.364,
+            "min_max_spread_percent": 1.6201062364745222
+          },
+          "p95_latency_ms": {
+            "max": 1360.163,
+            "median": 1357.808,
+            "min": 1343.29,
+            "min_max_spread_percent": 1.2426646477263388
+          },
+          "p99_latency_ms": {
+            "max": 1429.365,
+            "median": 1414.376,
+            "min": 1399.374,
+            "min_max_spread_percent": 2.1204403920881
+          },
+          "peak_rss_bytes": {
+            "max": 27017216.0,
+            "median": 26148864.0,
+            "min": 25575424.0,
+            "min_max_spread_percent": 5.513784461152882
+          },
+          "system_cpu_seconds": {
+            "max": 0.02,
+            "median": 0.02,
+            "min": 0.01,
+            "min_max_spread_percent": 50.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 708.9850800095016,
+            "median": 701.3251420034205,
+            "min": 692.0198917214883,
+            "min_max_spread_percent": 2.4190189787792598
+          },
+          "user_cpu_seconds": {
+            "max": 0.11,
+            "median": 0.08,
+            "min": 0.05,
+            "min_max_spread_percent": 75.0
+          },
+          "wall_seconds": {
+            "max": 1.445045167,
+            "median": 1.425872167,
+            "min": 1.410466917,
+            "min_max_spread_percent": 2.4250596091479797
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 822.0842499868013,
+            "median": 815.209791995585,
+            "min": 780.4679160472006,
+            "min_max_spread_percent": 5.104984550998392
+          },
+          "p95_latency_ms": {
+            "max": 1592.3613329650834,
+            "median": 1573.8081670133397,
+            "min": 1526.3233330333605,
+            "min_max_spread_percent": 4.196064127500689
+          },
+          "p99_latency_ms": {
+            "max": 1658.1149169942364,
+            "median": 1637.6406670315191,
+            "min": 1585.1141250459477,
+            "min_max_spread_percent": 4.457680699918992
+          },
+          "peak_rss_bytes": {
+            "max": 80150528.0,
+            "median": 79986688.0,
+            "min": 79839232.0,
+            "min_max_spread_percent": 0.38918476034412125
+          },
+          "system_cpu_seconds": {
+            "max": 0.07,
+            "median": 0.04,
+            "min": 0.03,
+            "min_max_spread_percent": 100.00000000000003
+          },
+          "throughput_tasks_per_second": {
+            "max": 626.0041827002211,
+            "median": 605.4603746537503,
+            "min": 587.7784405564644,
+            "min_max_spread_percent": 6.313500229576086
+          },
+          "user_cpu_seconds": {
+            "max": 0.61,
+            "median": 0.5,
+            "min": 0.38,
+            "min_max_spread_percent": 46.0
+          },
+          "wall_seconds": {
+            "max": 1.70132133300649,
+            "median": 1.6516357500222512,
+            "min": 1.597433415998239,
+            "min_max_spread_percent": 6.290001715381334
+          }
+        }
+      },
+      "scenario": "duplicate_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 16.76306168453773,
+        "p95_latency_reduction_percent": 19.013371504170053,
+        "p99_latency_reduction_percent": 19.560413543470816,
+        "peak_rss_reduction_percent": 65.91514654642344,
+        "throughput_increase_percent": 24.42183539078527
+      },
+      "concurrency": 16,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 182.214,
+            "median": 181.149,
+            "min": 180.528,
+            "min_max_spread_percent": 0.9307255353327962
+          },
+          "p95_latency_ms": {
+            "max": 349.081,
+            "median": 341.826,
+            "min": 339.917,
+            "min_max_spread_percent": 2.6808961284396284
+          },
+          "p99_latency_ms": {
+            "max": 361.438,
+            "median": 353.279,
+            "min": 351.158,
+            "min_max_spread_percent": 2.9098814251625407
+          },
+          "peak_rss_bytes": {
+            "max": 27574272.0,
+            "median": 27246592.0,
+            "min": 26574848.0,
+            "min_max_spread_percent": 3.668069753457607
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.01,
+            "min": 0.01,
+            "min_max_spread_percent": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 2804.202195698171,
+            "median": 2785.81892803777,
+            "min": 2730.8318054693495,
+            "min_max_spread_percent": 2.6337099475629264
+          },
+          "user_cpu_seconds": {
+            "max": 0.07,
+            "median": 0.06,
+            "min": 0.05,
+            "min_max_spread_percent": 33.33333333333334
+          },
+          "wall_seconds": {
+            "max": 0.366188792,
+            "median": 0.358960875,
+            "min": 0.356607666,
+            "min_max_spread_percent": 2.669128216271479
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 226.5078339842148,
+            "median": 217.63054199982435,
+            "min": 216.00454102735966,
+            "min_max_spread_percent": 4.826203555962116
+          },
+          "p95_latency_ms": {
+            "max": 460.85716696688905,
+            "median": 422.0770840183832,
+            "min": 408.86929200496525,
+            "min_max_spread_percent": 12.317151755071244
+          },
+          "p99_latency_ms": {
+            "max": 478.3632089965977,
+            "median": 439.1855000285432,
+            "min": 423.8294590031728,
+            "min_max_spread_percent": 12.417019685276642
+          },
+          "peak_rss_bytes": {
+            "max": 80396288.0,
+            "median": 79937536.0,
+            "min": 79888384.0,
+            "min_max_spread_percent": 0.6353761016601763
+          },
+          "system_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.03,
+            "min": 0.02,
+            "min_max_spread_percent": 100.00000000000003
+          },
+          "throughput_tasks_per_second": {
+            "max": 2321.9908574341407,
+            "median": 2239.0112790797884,
+            "min": 2058.727957197588,
+            "min_max_spread_percent": 11.75799794741326
+          },
+          "user_cpu_seconds": {
+            "max": 0.39,
+            "median": 0.38,
+            "min": 0.32,
+            "min_max_spread_percent": 18.42105263157895
+          },
+          "wall_seconds": {
+            "max": 0.4857368340017274,
+            "median": 0.44662570900982246,
+            "min": 0.43066491704666987,
+            "min_max_spread_percent": 12.330664322291925
+          }
+        }
+      },
+      "scenario": "duplicate_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 34.269806348617806,
+        "p95_latency_reduction_percent": 35.42063526044899,
+        "p99_latency_reduction_percent": 35.418059369452806,
+        "peak_rss_reduction_percent": 66.1339889366933,
+        "throughput_increase_percent": 55.454860380887794
+      },
+      "concurrency": 50,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 57.695,
+            "median": 56.744,
+            "min": 56.271,
+            "min_max_spread_percent": 2.5095164246440143
+          },
+          "p95_latency_ms": {
+            "max": 108.084,
+            "median": 106.704,
+            "min": 106.331,
+            "min_max_spread_percent": 1.642862498125656
+          },
+          "p99_latency_ms": {
+            "max": 113.495,
+            "median": 112.165,
+            "min": 111.524,
+            "min_max_spread_percent": 1.7572326483305878
+          },
+          "peak_rss_bytes": {
+            "max": 28262400.0,
+            "median": 27082752.0,
+            "min": 27049984.0,
+            "min_max_spread_percent": 4.476709013914096
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.0,
+            "min": 0.0,
+            "min_max_spread_percent": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 8963.213849958041,
+            "median": 8911.077471793655,
+            "min": 8807.0194622448,
+            "min_max_spread_percent": 1.7528114664881516
+          },
+          "user_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.04,
+            "min": 0.04,
+            "min_max_spread_percent": 0.0
+          },
+          "wall_seconds": {
+            "max": 0.113545792,
+            "median": 0.112219875,
+            "min": 0.111567125,
+            "min_max_spread_percent": 1.7632054927881569
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 91.47370897699147,
+            "median": 86.32866700645536,
+            "min": 73.17033299477771,
+            "min_max_spread_percent": 21.20196756987468
+          },
+          "p95_latency_ms": {
+            "max": 179.3801669846289,
+            "median": 165.22924997843802,
+            "min": 138.33545800298452,
+            "min_max_spread_percent": 24.841067176060285
+          },
+          "p99_latency_ms": {
+            "max": 187.8101250040345,
+            "median": 173.67858398938552,
+            "min": 144.3760420079343,
+            "min_max_spread_percent": 25.00831248068829
+          },
+          "peak_rss_bytes": {
+            "max": 80084992.0,
+            "median": 79970304.0,
+            "min": 79708160.0,
+            "min_max_spread_percent": 0.47121491497643925
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.03,
+            "min": 0.03,
+            "min_max_spread_percent": 33.33333333333334
+          },
+          "throughput_tasks_per_second": {
+            "max": 6892.404398779622,
+            "median": 5732.260445225176,
+            "min": 5289.684017857321,
+            "min_max_spread_percent": 27.95965738537448
+          },
+          "user_cpu_seconds": {
+            "max": 0.36,
+            "median": 0.32,
+            "min": 0.29,
+            "min_max_spread_percent": 21.875000000000004
+          },
+          "wall_seconds": {
+            "max": 0.18904720898717642,
+            "median": 0.17445125000085682,
+            "min": 0.14508724998449907,
+            "min_max_spread_percent": 25.198993416476778
+          }
+        }
+      },
+      "scenario": "duplicate_10pct"
+    }
+  ],
+  "comparison_ranges": {
+    "p50_latency_reduction_percent": {
+      "max": 38.473734167872806,
+      "min": 4.8905534572676075
+    },
+    "p95_latency_reduction_percent": {
+      "max": 37.379433752075705,
+      "min": 5.669695981023094
+    },
+    "p99_latency_reduction_percent": {
+      "max": 37.1401491682481,
+      "min": 5.677273235930431
+    },
+    "peak_rss_reduction_percent": {
+      "max": 68.25169092027055,
+      "min": 65.47911547911548
+    },
+    "throughput_increase_percent": {
+      "max": 59.699443760823186,
+      "min": 6.018099920883043
+    }
+  },
+  "experiment_id": "needradar-collector-scheduler-v2-20260715",
+  "functional_equivalence": true,
+  "limitations": [
+    "Deterministic fake I/O does not model public platform latency, quotas, payload variance, or failures.",
+    "The comparison excludes SQLite, Vault, LLM, RAG, report generation, and content verification.",
+    "The Go service uses in-process state; this benchmark does not establish restart recovery or production SLA.",
+    "Results apply only to the frozen local machine, workload, runtime versions, and concurrency matrix.",
+    "The machine was not dedicated; macOS system and desktop processes are recorded in load snapshots but excluded from the user-workload refusal rule."
+  ],
+  "manifest_sha256": "9b7b0472d1b9580b2d98d3fd5e51ca4f1b71b9fdd08590d99466ba18ba303f8a",
+  "measurement_runs_per_combination": 5,
+  "negative_cases": [],
+  "runs_sha256": "a676458721c8b6665ec336778841f1abf14edea3c84eee9b869b9125161d75d3",
+  "schema_version": 2,
+  "startup": {
+    "go": {
+      "peak_rss_bytes": {
+        "max": 10993664.0,
+        "median": 10731520.0,
+        "min": 10665984.0,
+        "min_max_spread_percent": 3.0534351145038165
+      },
+      "system_cpu_seconds": {
+        "max": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "min_max_spread_percent": 0.0
+      },
+      "user_cpu_seconds": {
+        "max": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "min_max_spread_percent": 0.0
+      },
+      "wall_seconds": {
+        "max": 0.011120666982606053,
+        "median": 0.007959165959618986,
+        "min": 0.006250291015021503,
+        "min_max_spread_percent": 61.19203937063904
+      }
+    },
+    "python": {
+      "peak_rss_bytes": {
+        "max": 78020608.0,
+        "median": 77692928.0,
+        "min": 77578240.0,
+        "min_max_spread_percent": 0.5693800084352594
+      },
+      "system_cpu_seconds": {
+        "max": 0.06,
+        "median": 0.03,
+        "min": 0.03,
+        "min_max_spread_percent": 100.0
+      },
+      "user_cpu_seconds": {
+        "max": 0.37,
+        "median": 0.24,
+        "min": 0.23,
+        "min_max_spread_percent": 58.33333333333333
+      },
+      "wall_seconds": {
+        "max": 0.5407266659894958,
+        "median": 0.2910165829816833,
+        "min": 0.2704334169975482,
+        "min_max_spread_percent": 92.87898518448344
+      }
+    }
+  },
+  "startup_runs_sha256": "f020ffb861982bee88d621e253529b6a3a237255941f99e604ef264bfb0465c6",
+  "task_count": 1000,
+  "variation": {
+    "p95_latency_ms": {
+      "go": {
+        "concurrency": 16,
+        "min_max_spread_percent": 2.6808961284396284,
+        "scenario": "duplicate_10pct"
+      },
+      "python": {
+        "concurrency": 50,
+        "min_max_spread_percent": 27.341828298173752,
+        "scenario": "normal"
+      }
+    },
+    "peak_rss_bytes": {
+      "go": {
+        "concurrency": 50,
+        "min_max_spread_percent": 5.77724836212031,
+        "scenario": "retry_10pct"
+      },
+      "python": {
+        "concurrency": 50,
+        "min_max_spread_percent": 1.0032760032760033,
+        "scenario": "normal"
+      }
+    },
+    "throughput_tasks_per_second": {
+      "go": {
+        "concurrency": 16,
+        "min_max_spread_percent": 2.6337099475629264,
+        "scenario": "duplicate_10pct"
+      },
+      "python": {
+        "concurrency": 50,
+        "min_max_spread_percent": 27.95965738537448,
+        "scenario": "duplicate_10pct"
+      }
+    }
+  }
+}

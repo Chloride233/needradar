@@ -5,7 +5,7 @@ import json
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from loguru import logger
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sse_starlette.sse import EventSourceResponse
 
@@ -20,6 +20,7 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 @router.get("/platforms")
 async def list_platforms():
     from needradar.crawlers.factory import available_platforms
+
     return {"platforms": available_platforms()}
 
 
@@ -54,14 +55,13 @@ async def _run_pipeline(keyword: str, task_ids: list[int]) -> None:
             report_path = None
             try:
                 from needradar.services.report_service import get_report_service
+
                 rs = get_report_service()
                 report_path = await rs.generate_report(keyword)
                 report_name = report_path.name
 
                 # Attach report path to all tasks in this batch
-                tasks = (await db.execute(
-                    select(CrawlTask).where(CrawlTask.id.in_(task_ids))
-                )).scalars().all()
+                tasks = (await db.execute(select(CrawlTask).where(CrawlTask.id.in_(task_ids)))).scalars().all()
                 for t in tasks:
                     t.report_path = report_name
                 await _retry_commit(db)
@@ -74,6 +74,7 @@ async def _run_pipeline(keyword: str, task_ids: list[int]) -> None:
                 try:
                     from needradar.models.verification import VerificationResult, VerificationStatus
                     from needradar.services.content_verifier import get_verifier
+
                     report_title = report_path.stem
                     verifier = get_verifier()
                     v_output = await verifier.verify_report(report_title)
@@ -89,15 +90,12 @@ async def _run_pipeline(keyword: str, task_ids: list[int]) -> None:
                             total_claims=len(v_output.claims),
                             hallucination_count=v_output.hallucination_count,
                             flagged_count=v_output.flagged_count,
-                            claims_json=json.dumps(
-                                [c.__dict__ for c in v_output.claims], ensure_ascii=False
-                            ),
-                            suggestions_json=json.dumps(
-                                v_output.suggestions, ensure_ascii=False
-                            ),
+                            claims_json=json.dumps([c.__dict__ for c in v_output.claims], ensure_ascii=False),
+                            suggestions_json=json.dumps(v_output.suggestions, ensure_ascii=False),
                         )
                         vdb.add(v_result)
                         from needradar.models.llm_usage import LLMUsage
+
                         for u in verifier._usage_records:
                             vdb.add(LLMUsage(**u))
                         await vdb.commit()
@@ -134,13 +132,20 @@ async def create_task(
 
     # Auto-cleanup stale tasks (pending/running > 1 hour)
     from datetime import datetime, timedelta, timezone
+
     cutoff = datetime.now(timezone.utc) - timedelta(hours=1)
-    stale = (await db.execute(
-        select(CrawlTask).where(
-            CrawlTask.status.in_([TaskStatus.PENDING, TaskStatus.RUNNING]),
-            CrawlTask.updated_at < cutoff,
+    stale = (
+        (
+            await db.execute(
+                select(CrawlTask).where(
+                    CrawlTask.status.in_([TaskStatus.PENDING, TaskStatus.RUNNING]),
+                    CrawlTask.updated_at < cutoff,
+                )
+            )
         )
-    )).scalars().all()
+        .scalars()
+        .all()
+    )
     for t in stale:
         t.status = TaskStatus.FAILED
         t.error_message = "任务超时，已自动清理"
@@ -150,6 +155,7 @@ async def create_task(
     if mode == "agent":
         # Agent mode: use PipelineOrchestrator with quality gates
         from needradar.services.pipeline_orchestrator import PipelineOrchestrator
+
         orchestrator = PipelineOrchestrator(db)
         platforms = [p.value for p in request.platforms]
         run = await orchestrator.start(request.keyword, platforms)
@@ -181,6 +187,31 @@ async def create_task(
         items=[TaskResponse.model_validate(t) for t in tasks],
         total=len(tasks),
     )
+
+
+@router.post("/{task_id}/retry", response_model=TaskResponse)
+async def retry_task(
+    task_id: int,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+):
+    """Resume a failed crawl task without creating a duplicate task row."""
+    result = await db.execute(
+        update(CrawlTask)
+        .where(CrawlTask.id == task_id, CrawlTask.status == TaskStatus.FAILED)
+        .values(status=TaskStatus.PENDING, error_message=None)
+    )
+    if result.rowcount != 1:
+        await db.rollback()
+        if await db.get(CrawlTask, task_id) is None:
+            raise HTTPException(status_code=404, detail="任务不存在")
+        raise HTTPException(status_code=409, detail="只有失败任务可以重试")
+    await db.commit()
+    task = await db.get(CrawlTask, task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="任务不存在")
+    background_tasks.add_task(_run_pipeline, task.keyword, [task.id])
+    return TaskResponse.model_validate(task)
 
 
 @router.get("", response_model=TaskListResponse)
@@ -239,6 +270,7 @@ async def get_task(task_id: int, db: AsyncSession = Depends(get_db)):
 async def index_vault_endpoint(force: bool = False):
     """Index vault markdown files into LanceDB for RAG retrieval."""
     from needradar.services.vault_vectorizer import index_vault
+
     try:
         stats = await index_vault(force=force)
         return {"status": "ok", **stats}

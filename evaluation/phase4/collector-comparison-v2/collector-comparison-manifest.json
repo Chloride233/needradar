@@ -1,0 +1,222 @@
+{
+  "artifacts": {
+    "go_binary": "/private/tmp/needradar-collector-bench",
+    "go_binary_sha256": "43d59b0c49f8b8f06f44945681b5481e1ecce6b59cae6e07267796a2690a3769",
+    "sources_sha256": {
+      "go_requester": "6043c0a96a950287db774bd95dbeecf9381078d7e30e7e2c390497ecb63cdd4b",
+      "go_runner": "1dd99f1525d4f72c54c1ab4ab16992b35822c16565c420bb93af07e85d0301ed",
+      "go_service": "492aa200d18fa7e21e555208258f8e3f6c1608081031ec916681b201dd8ba8bc",
+      "python_contract": "b3d8b0beb33b20accdd98b4f9b56c1741a2896b304edde1fb14cdc108209697b",
+      "python_dedup": "eb2202d7b9541c6deba8c3c089199f9a96ae064f95db7c7ef4ff35aa16c564ae",
+      "python_orchestrator": "c7ed65cc12dfcf56bf5b688c2e78a54b7e6d3b148ccdf0491408bf5abd0b60fd",
+      "python_retry": "dcb7c3a6a9e8273c077de3d8682c90db1de91707dc66a52b291f2cebb675a68a",
+      "python_runner": "f5622c175d026eb74963feff7d9d9b81bf58d2a215fe82a63a5ff2d3eb72573c",
+      "python_scheduler": "02bf0e1ded8c8e12dafdd500310f7a4f32a1718d7485ebd38436ebc10972e179"
+    },
+    "workload": "evaluation/phase4/collector-comparison-workload.json",
+    "workload_sha256": "2f69c3a121d1beaefd56b9e0c08056d918e89a490fb432d48c8e52f6502661ce"
+  },
+  "environment": {
+    "architecture": "arm64",
+    "cpu": "Apple M4",
+    "go_version": "go version go1.26.5 darwin/arm64",
+    "gomaxprocs": 10,
+    "logical_cpus": 10,
+    "os": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python_version": "3.14.6"
+  },
+  "experiment_id": "needradar-collector-scheduler-v2-20260715",
+  "formal": {
+    "concurrency": [
+      1,
+      4,
+      16,
+      50
+    ],
+    "measurement_runs": 5,
+    "order": "fixed-seed shuffled combinations with pairwise language interleaving",
+    "task_count": 1000,
+    "warmup_runs": 3
+  },
+  "limitations": [
+    "Deterministic fake I/O does not model public platform latency, quotas, payload variance, or failures.",
+    "The comparison excludes SQLite, Vault, LLM, RAG, report generation, and content verification.",
+    "The Go service uses in-process state; this benchmark does not establish restart recovery or production SLA.",
+    "Results apply only to the frozen local machine, workload, runtime versions, and concurrency matrix.",
+    "The machine was not dedicated; macOS system and desktop processes are recorded in load snapshots but excluded from the user-workload refusal rule."
+  ],
+  "preparation_load_check": {
+    "known_high_load": true,
+    "policy": {
+      "named_process_cpu_percent": 10,
+      "non_system_process_cpu_percent": 40,
+      "system_processes_excluded": true
+    },
+    "suspicious": [
+      {
+        "command": "/Users/yang/Library/Application Support/Steam/Steam.AppBundle/Steam/Contents/MacOS/steam_osx",
+        "cpu_percent": 97.0,
+        "memory_percent": 0.2,
+        "pid": 82416,
+        "system_process": false
+      }
+    ],
+    "top_processes": [
+      {
+        "command": "/Users/yang/Library/Application Support/Steam/Steam.AppBundle/Steam/Contents/MacOS/steam_osx",
+        "cpu_percent": 97.0,
+        "memory_percent": 0.2,
+        "pid": 82416,
+        "system_process": false
+      },
+      {
+        "command": "/System/Library/PrivateFrameworks/StorageManagement.framework/PlugIns/ApplicationsStorageExtension.appex/Contents/MacOS/ApplicationsStorageExtension -AppleLanguages (\"zh-Hans-CN\")",
+        "cpu_percent": 24.3,
+        "memory_percent": 0.1,
+        "pid": 41973,
+        "system_process": true
+      },
+      {
+        "command": "/System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon",
+        "cpu_percent": 22.0,
+        "memory_percent": 0.7,
+        "pid": 467,
+        "system_process": true
+      },
+      {
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python scripts/run_collector_comparison.py --prepare",
+        "cpu_percent": 20.4,
+        "memory_percent": 0.4,
+        "pid": 18452,
+        "system_process": false
+      },
+      {
+        "command": "/System/Library/PrivateFrameworks/FileProvider.framework/Support/fileproviderd",
+        "cpu_percent": 10.6,
+        "memory_percent": 0.2,
+        "pid": 826,
+        "system_process": true
+      },
+      {
+        "command": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/150.0.7871.115/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer) --type=renderer --user-data-dir=/Users/yang/Library/Application Support/Codex --sta",
+        "cpu_percent": 9.7,
+        "memory_percent": 2.0,
+        "pid": 41014,
+        "system_process": false
+      },
+      {
+        "command": "/Users/yang/Applications/GW.app/Contents/MacOS/GW",
+        "cpu_percent": 6.9,
+        "memory_percent": 1.5,
+        "pid": 1123,
+        "system_process": false
+      },
+      {
+        "command": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/150.0.7871.115/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service) --type=gpu-process --user-data-dir=/Users/yang/Library/Application Support/Codex --st",
+        "cpu_percent": 6.8,
+        "memory_percent": 0.5,
+        "pid": 40994,
+        "system_process": false
+      },
+      {
+        "command": "/System/Library/PrivateFrameworks/iCloudDriveCore.framework/Versions/A/Support/bird",
+        "cpu_percent": 4.2,
+        "memory_percent": 0.2,
+        "pid": 12733,
+        "system_process": true
+      },
+      {
+        "command": "/Applications/Cockpit Tools.app/Contents/MacOS/cockpit-tools",
+        "cpu_percent": 2.2,
+        "memory_percent": 0.5,
+        "pid": 35758,
+        "system_process": false
+      }
+    ]
+  },
+  "quick": {
+    "concurrency": [
+      1,
+      4,
+      16
+    ],
+    "runs": 1,
+    "task_count": 200
+  },
+  "report": {
+    "comparison": {
+      "latency": "(Python - Go) / Python",
+      "memory": "(Python - Go) / Python",
+      "throughput": "(Go - Python) / Python"
+    },
+    "requires_exact_functional_parity": true,
+    "summary": "median of five measured runs with min and max retained"
+  },
+  "rules": {
+    "duplicate_injection": "last of 10 items repeats item 0 title/content with a distinct URL",
+    "fake_io_ms_per_attempt": 5,
+    "fingerprint": "SHA-256 of lowercase normalized title plus content",
+    "latency": "shared queue release through terminal task update, including queue wait",
+    "max_attempts": 3,
+    "resources": "independent process user/system CPU and peak RSS from /usr/bin/time -l",
+    "retry_backoff_ms": 1,
+    "retry_injection": "task IDs divisible by 10 return one HTTP 503 before success",
+    "throughput": "all submitted tasks divided by internal wall time; failures remain in denominator"
+  },
+  "runner_git": {
+    "commit": "e3c809f4c0e9faeba8f43347064f6e893fa795de",
+    "dirty": true,
+    "status": [
+      "M docs/crawler-audit.md",
+      " M src/needradar/api/v1/tasks.py",
+      " M src/needradar/core/config.py",
+      " M src/needradar/crawlers/base.py",
+      " M src/needradar/crawlers/bilibili.py",
+      " M src/needradar/services/analysis_service.py",
+      " M src/needradar/services/pipeline_actions.py",
+      " M src/needradar/services/usage_service.py",
+      " M tests/integration/test_tasks_api.py",
+      " M tests/unit/test_analysis_service.py",
+      " M tests/unit/test_base_crawler.py",
+      " M tests/unit/test_usage_service.py",
+      "?? evaluation/phase4/",
+      "?? scripts/collector_benchmark_python.py",
+      "?? scripts/report_phase4_user_study.py",
+      "?? scripts/run_collector_comparison.py",
+      "?? scripts/run_phase4_stability.py",
+      "?? scripts/run_phase4_user_session.py",
+      "?? services/",
+      "?? src/needradar/services/collector_comparison.py",
+      "?? src/needradar/services/collector_scheduler.py",
+      "?? src/needradar/services/crawl_reliability.py",
+      "?? src/needradar/services/go_collector.py",
+      "?? src/needradar/services/phase4_stability.py",
+      "?? src/needradar/services/phase4_user_study.py",
+      "?? tests/unit/test_collector_benchmark_python.py",
+      "?? tests/unit/test_collector_comparison.py",
+      "?? tests/unit/test_collector_scheduler.py",
+      "?? tests/unit/test_crawl_reliability.py",
+      "?? tests/unit/test_go_collector.py",
+      "?? tests/unit/test_phase4_stability.py",
+      "?? tests/unit/test_phase4_user_session.py",
+      "?? tests/unit/test_phase4_user_study.py",
+      "?? tests/unit/test_run_collector_comparison.py"
+    ],
+    "status_sha256": "c770c61d1ce748ffa2dd8f9735b05160c63554db20df7cd4a86175d9f8077a1a"
+  },
+  "scenarios": [
+    "normal",
+    "retry_10pct",
+    "duplicate_10pct"
+  ],
+  "schema_version": 2,
+  "seed": 20260715,
+  "startup": {
+    "definition": "independent process runtime startup, runner imports, help parsing/output, and exit",
+    "measurement_runs": 5,
+    "order": "fixed-seed pairwise language interleaving",
+    "probe": "runner_help_path",
+    "resources": "high-resolution parent wall clock; user/system CPU and peak RSS from /usr/bin/time -l"
+  },
+  "unit": "in-process collection task scheduling"
+}

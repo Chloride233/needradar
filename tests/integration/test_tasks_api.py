@@ -1,14 +1,23 @@
 """Integration tests for tasks API endpoints."""
+
+import asyncio
+from unittest.mock import patch
+
 import pytest
+
+from needradar.models.crawl_task import CrawlTask, TaskStatus
 
 
 @pytest.mark.asyncio
 async def test_create_task(client):
     """POST /api/v1/tasks creates a crawl task."""
-    resp = await client.post("/api/v1/tasks", json={
-        "keyword": "test",
-        "platforms": ["github"],
-    })
+    resp = await client.post(
+        "/api/v1/tasks",
+        json={
+            "keyword": "test",
+            "platforms": ["github"],
+        },
+    )
     assert resp.status_code == 201
     data = resp.json()
     assert data["total"] >= 1
@@ -18,10 +27,13 @@ async def test_create_task(client):
 @pytest.mark.asyncio
 async def test_create_task_no_platforms(client):
     """POST /api/v1/tasks with no platforms returns 400."""
-    resp = await client.post("/api/v1/tasks", json={
-        "keyword": "test",
-        "platforms": [],
-    })
+    resp = await client.post(
+        "/api/v1/tasks",
+        json={
+            "keyword": "test",
+            "platforms": [],
+        },
+    )
     assert resp.status_code == 400
 
 
@@ -80,10 +92,13 @@ async def test_list_platforms(client):
 @pytest.mark.asyncio
 async def test_create_task_agent_mode(client):
     """POST /api/v1/tasks?mode=agent creates agent-mode pipeline."""
-    resp = await client.post("/api/v1/tasks?mode=agent", json={
-        "keyword": "agent-test",
-        "platforms": ["github"],
-    })
+    resp = await client.post(
+        "/api/v1/tasks?mode=agent",
+        json={
+            "keyword": "agent-test",
+            "platforms": ["github"],
+        },
+    )
     assert resp.status_code == 201
 
 
@@ -100,3 +115,45 @@ async def test_list_tasks_with_pagination(client):
     """GET /api/v1/tasks supports pagination."""
     resp = await client.get("/api/v1/tasks", params={"page": 1, "page_size": 5})
     assert resp.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_retry_task_reuses_failed_task(client, db_session):
+    task = CrawlTask(keyword="retry-test", platform="github", status=TaskStatus.FAILED, error_message="timeout")
+    db_session.add(task)
+    await db_session.commit()
+
+    with patch("needradar.api.v1.tasks.BackgroundTasks.add_task") as add_task:
+        response = await client.post(f"/api/v1/tasks/{task.id}/retry")
+
+    assert response.status_code == 200
+    assert response.json()["id"] == task.id
+    assert response.json()["status"] == "pending"
+    add_task.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_retry_task_rejects_non_failed_task(client, db_session):
+    task = CrawlTask(keyword="retry-test", platform="github", status=TaskStatus.PENDING)
+    db_session.add(task)
+    await db_session.commit()
+
+    response = await client.post(f"/api/v1/tasks/{task.id}/retry")
+
+    assert response.status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_concurrent_retry_schedules_pipeline_once(client, db_session):
+    task = CrawlTask(keyword="retry-test", platform="github", status=TaskStatus.FAILED, error_message="timeout")
+    db_session.add(task)
+    await db_session.commit()
+
+    with patch("needradar.api.v1.tasks.BackgroundTasks.add_task") as add_task:
+        responses = await asyncio.gather(
+            client.post(f"/api/v1/tasks/{task.id}/retry"),
+            client.post(f"/api/v1/tasks/{task.id}/retry"),
+        )
+
+    assert sorted(response.status_code for response in responses) == [200, 409]
+    add_task.assert_called_once()

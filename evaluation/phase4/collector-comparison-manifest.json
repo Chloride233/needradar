@@ -1,0 +1,179 @@
+{
+  "artifacts": {
+    "go_binary": "/private/tmp/needradar-collector-bench",
+    "go_binary_sha256": "d3e6b37eed3544a890cac81453f8273341a19c05361eae0a1b5dc2accdd3bcca",
+    "sources_sha256": {
+      "go_requester": "6043c0a96a950287db774bd95dbeecf9381078d7e30e7e2c390497ecb63cdd4b",
+      "go_runner": "1dd99f1525d4f72c54c1ab4ab16992b35822c16565c420bb93af07e85d0301ed",
+      "go_service": "492aa200d18fa7e21e555208258f8e3f6c1608081031ec916681b201dd8ba8bc",
+      "python_contract": "881c25f5c82a8a510b484af8f10a5de8d94ab7f86e4e645b19792ffc708e2ee5",
+      "python_dedup": "eb2202d7b9541c6deba8c3c089199f9a96ae064f95db7c7ef4ff35aa16c564ae",
+      "python_orchestrator": "ac7504babe4e83dac0607447b28445a4f165b109e0f518fb0b3512bb6268c05a",
+      "python_retry": "dcb7c3a6a9e8273c077de3d8682c90db1de91707dc66a52b291f2cebb675a68a",
+      "python_runner": "f5622c175d026eb74963feff7d9d9b81bf58d2a215fe82a63a5ff2d3eb72573c",
+      "python_scheduler": "02bf0e1ded8c8e12dafdd500310f7a4f32a1718d7485ebd38436ebc10972e179"
+    },
+    "workload": "evaluation/phase4/collector-comparison-workload.json",
+    "workload_sha256": "2f69c3a121d1beaefd56b9e0c08056d918e89a490fb432d48c8e52f6502661ce"
+  },
+  "environment": {
+    "architecture": "arm64",
+    "cpu": "Apple M4",
+    "go_version": "go version go1.26.5 darwin/arm64",
+    "gomaxprocs": 10,
+    "logical_cpus": 10,
+    "os": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python_version": "3.14.6"
+  },
+  "experiment_id": "needradar-collector-scheduler-v3-20260715",
+  "formal": {
+    "concurrency": [
+      1,
+      4,
+      16,
+      50
+    ],
+    "measurement_runs": 5,
+    "order": "fixed-seed shuffled combinations with pairwise language interleaving",
+    "task_count": 1000,
+    "warmup_runs": 3
+  },
+  "limitations": [
+    "Deterministic fake I/O does not model public platform latency, quotas, payload variance, or failures.",
+    "The comparison excludes SQLite, Vault, LLM, RAG, report generation, and content verification.",
+    "The Go service uses in-process state; this benchmark does not establish restart recovery or production SLA.",
+    "Results apply only to the frozen local machine, workload, runtime versions, and concurrency matrix.",
+    "The machine was not dedicated; macOS system and desktop processes are recorded in load snapshots but excluded from the user-workload refusal rule."
+  ],
+  "preparation_load_check": {
+    "known_high_load": false,
+    "policy": {
+      "named_process_cpu_percent": 10,
+      "non_system_process_cpu_percent": 40,
+      "system_processes_excluded": true
+    },
+    "suspicious": [],
+    "top_processes": [
+      {
+        "command": "/System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon",
+        "cpu_percent": 79.1,
+        "memory_percent": 0.6,
+        "pid": 467,
+        "system_process": true
+      },
+      {
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python scripts/run_collector_comparison.py --prepare",
+        "cpu_percent": 41.0,
+        "memory_percent": 0.4,
+        "pid": 46548,
+        "system_process": false
+      },
+      {
+        "command": "/Applications/ChatGPT.app/Contents/MacOS/ChatGPT",
+        "cpu_percent": 24.1,
+        "memory_percent": 2.1,
+        "pid": 25131,
+        "system_process": false
+      },
+      {
+        "command": "/System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow console",
+        "cpu_percent": 22.2,
+        "memory_percent": 0.2,
+        "pid": 470,
+        "system_process": true
+      },
+      {
+        "command": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/150.0.7871.115/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service) --type=gpu-process --user-data-dir=/Users/yang/Library/Application Support/Codex --st",
+        "cpu_percent": 20.5,
+        "memory_percent": 0.9,
+        "pid": 25140,
+        "system_process": false
+      },
+      {
+        "command": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/150.0.7871.115/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer) --type=renderer --user-data-dir=/Users/yang/Library/Application Support/Codex --sta",
+        "cpu_percent": 20.2,
+        "memory_percent": 3.0,
+        "pid": 25160,
+        "system_process": false
+      },
+      {
+        "command": "/Users/yang/Applications/GW.app/Contents/Frameworks/GW Helper (Renderer).app/Contents/MacOS/GW Helper (Renderer) --type=renderer --user-data-dir=/Users/yang/Library/Application Support/gw --app-path=/Users/yang/Applications/GW.app/Contents/",
+        "cpu_percent": 17.4,
+        "memory_percent": 1.0,
+        "pid": 1389,
+        "system_process": false
+      },
+      {
+        "command": "/System/Library/DriverExtensions/com.apple.AppleUserHIDDrivers.dext/com.apple.AppleUserHIDDrivers com.apple.driverkit.AppleUserHIDDrivers 0x100000f27 com.apple.AppleUserHIDDrivers",
+        "cpu_percent": 16.8,
+        "memory_percent": 0.0,
+        "pid": 583,
+        "system_process": true
+      },
+      {
+        "command": "/System/Library/CoreServices/UniversalControl.app/Contents/MacOS/UniversalControl",
+        "cpu_percent": 16.4,
+        "memory_percent": 0.1,
+        "pid": 75600,
+        "system_process": true
+      },
+      {
+        "command": "/System/Applications/Mail.app/Contents/MacOS/Mail",
+        "cpu_percent": 14.2,
+        "memory_percent": 0.3,
+        "pid": 16891,
+        "system_process": true
+      }
+    ]
+  },
+  "quick": {
+    "concurrency": [
+      1,
+      4,
+      16
+    ],
+    "runs": 1,
+    "task_count": 200
+  },
+  "report": {
+    "comparison": {
+      "latency": "(Python - Go) / Python",
+      "memory": "(Python - Go) / Python",
+      "throughput": "(Go - Python) / Python"
+    },
+    "requires_exact_functional_parity": true,
+    "summary": "median of five measured runs with min and max retained"
+  },
+  "rules": {
+    "duplicate_injection": "last of 10 items repeats item 0 title/content with a distinct URL",
+    "fake_io_ms_per_attempt": 5,
+    "fingerprint": "SHA-256 of lowercase normalized title plus content",
+    "latency": "shared queue release through terminal task update, including queue wait",
+    "max_attempts": 3,
+    "resources": "independent process user/system CPU and peak RSS from /usr/bin/time -l",
+    "retry_backoff_ms": 1,
+    "retry_injection": "task IDs divisible by 10 return one HTTP 503 before success",
+    "throughput": "all submitted tasks divided by internal wall time; failures remain in denominator"
+  },
+  "runner_git": {
+    "commit": "0fd056f3c97a5c4ff7111aaf2a964218c9a17c9d",
+    "dirty": false,
+    "status": [],
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "scenarios": [
+    "normal",
+    "retry_10pct",
+    "duplicate_10pct"
+  ],
+  "schema_version": 2,
+  "seed": 20260715,
+  "startup": {
+    "definition": "independent process runtime startup, runner imports, help parsing/output, and exit",
+    "measurement_runs": 5,
+    "order": "fixed-seed pairwise language interleaving",
+    "probe": "runner_help_path",
+    "resources": "high-resolution parent wall clock; user/system CPU and peak RSS from /usr/bin/time -l"
+  },
+  "unit": "in-process collection task scheduling"
+}

@@ -6,9 +6,13 @@ crawler is auto-discovered and has a `crawl()` implementation; it does not
 claim that the upstream service guarantees access.
 
 All keyword crawlers inherit the shared HTTP behavior in
-`src/needradar/crawlers/base.py`: HTTP 429 responses honor `Retry-After` when
-present and otherwise use exponential backoff, with at most three attempts.
-Upstream quotas can change independently of NeedRadar.
+`src/needradar/crawlers/base.py`: each request observes the configured minimum
+request interval (default 0.5 seconds); HTTP 429 responses honor `Retry-After`
+when present and otherwise use exponential backoff, with at most three
+attempts. The same request helper retries transient 5xx, timeout, and network
+failures; the pipeline does not add another retry layer. Failed tasks remain
+available for explicit same-ID requeue. Upstream quotas can change independently
+of NeedRadar.
 
 Support tiers use repository evidence rather than the existence of a crawler
 class alone:
@@ -40,10 +44,33 @@ helper, and is covered through the trending API/service tests rather than the
 keyword-crawler suite. This utility is experimental and does not change the
 keyword-platform counts above.
 
+## Optional Go collector
+
+`services/collector-go/` provides an opt-in collection and scheduling path for
+the three Full Support platforms: GitHub, Stack Overflow, and Juejin. The Go
+service has a bounded worker pool, platform-local rate limiting, at most three
+attempts for 429/5xx/timeout/network failures, `Retry-After` support, URL and
+normalized content SHA-256 deduplication, same-ID failed task retry, cancellation,
+SSE progress, health, and JSON runtime metrics. Its adapters and HTTP slice are
+verified against local fake providers; this does not establish public-platform
+availability, quota behavior, production throughput, or persistence across a Go
+service restart.
+
+Python remains the default collection backend and the owner of SQLite task
+records, cross-run incremental fingerprints, Vault writes, LLM/RAG/report work,
+and budget alerts. Set `NR_COLLECTOR_BACKEND=go` to opt in; the default
+`NR_COLLECTOR_GO_FALLBACK_TO_PYTHON=true` preserves the Python crawler when the
+Go service is unavailable.
+
 ## Reproduce
 
 ```bash
 .venv/bin/python -m needradar.cli stats
 .venv/bin/python -c "from needradar.crawlers.factory import available_platforms; print('\\n'.join(available_platforms()))"
 .venv/bin/python -m pytest -q tests/unit/test_crawler_audit.py tests/unit/test_factory.py tests/unit/test_crawlers.py tests/unit/test_csdn_crawler.py tests/unit/test_douban_crawler.py tests/unit/test_tieba_crawler.py tests/unit/test_xiaohongshu_crawler.py tests/unit/test_zhihu_crawler.py
+PYTHONPATH=src .venv/bin/python -m pytest -q tests/unit/test_crawl_reliability.py tests/unit/test_base_crawler.py
+cd services/collector-go && go test ./... && go test -race ./... && go vet ./...
+go test -run TestFakeProviderEndToEnd -v ./internal/collector
+cd ../.. && PYTHONPATH=src .venv/bin/python scripts/run_collector_comparison.py --quick
+PYTHONPATH=src .venv/bin/python scripts/run_collector_comparison.py --report-only
 ```
