@@ -64,8 +64,7 @@ class UsageService:
         )
         rows = (await self._db.execute(stmt)).all()
         return [
-            {"date": str(r.date), "requests": r.requests,
-             "tokens": int(r.tokens), "cost_cny": round(float(r.cost), 4)}
+            {"date": str(r.date), "requests": r.requests, "tokens": int(r.tokens), "cost_cny": round(float(r.cost), 4)}
             for r in rows
         ]
 
@@ -104,10 +103,14 @@ class UsageService:
         ]
 
     async def get_recent_records(
-        self, limit: int = 50, offset: int = 0,
-        model: str | None = None, call_type: str | None = None,
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        model: str | None = None,
+        call_type: str | None = None,
     ) -> dict:
         from sqlalchemy import and_
+
         conditions: list = []
         if model:
             conditions.append(LLMUsage.model.ilike(f"%{model}%"))
@@ -118,12 +121,7 @@ class UsageService:
         total_stmt = select(func.count()).select_from(LLMUsage).where(where_clause)
         total = (await self._db.execute(total_stmt)).scalar() or 0
 
-        stmt = (
-            select(LLMUsage)
-            .where(where_clause)
-            .order_by(LLMUsage.created_at.desc())
-            .limit(limit).offset(offset)
-        )
+        stmt = select(LLMUsage).where(where_clause).order_by(LLMUsage.created_at.desc()).limit(limit).offset(offset)
         rows = (await self._db.execute(stmt)).scalars().all()
         return {
             "items": rows,
@@ -133,36 +131,58 @@ class UsageService:
         }
 
     async def check_budget(self) -> dict:
-        alerts: list[dict] = []
         now = datetime.datetime.now(datetime.timezone.utc)
+        threshold = min(max(settings.budget_alert_threshold_percent, 0.0), 100.0)
 
-        if settings.budget_daily_limit > 0:
-            today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-            stmt = select(func.coalesce(func.sum(LLMUsage.cost_cny), 0)).where(
-                LLMUsage.created_at >= today_start,
-            )
-            spent = float((await self._db.execute(stmt)).scalar() or 0)
-            if spent >= settings.budget_daily_limit:
-                alerts.append({
-                    "level": "daily",
-                    "limit": settings.budget_daily_limit,
-                    "spent": round(spent, 4),
-                    "message": f"日预算已超限：¥{spent:.4f} / ¥{settings.budget_daily_limit}",
-                })
+        async def period(name: str, start: datetime.datetime, limit: float) -> tuple[dict, dict | None]:
+            stmt = select(
+                func.coalesce(func.sum(LLMUsage.input_tokens), 0).label("input_tokens"),
+                func.coalesce(func.sum(LLMUsage.output_tokens), 0).label("output_tokens"),
+                func.coalesce(func.sum(LLMUsage.cached_tokens), 0).label("cached_tokens"),
+                func.coalesce(func.sum(LLMUsage.total_tokens), 0).label("total_tokens"),
+                func.coalesce(func.sum(LLMUsage.cost_cny), 0).label("spent"),
+            ).where(LLMUsage.created_at >= start)
+            totals = (await self._db.execute(stmt)).one()
+            spent = round(float(totals.spent), 4)
+            ratio = round(spent / limit * 100, 1) if limit > 0 else None
+            report = {
+                "period": name,
+                "limit_cny": limit,
+                "spent_cny": spent,
+                "percent_used": ratio,
+                "input_tokens": int(totals.input_tokens),
+                "output_tokens": int(totals.output_tokens),
+                "cached_tokens": int(totals.cached_tokens),
+                "total_tokens": int(totals.total_tokens),
+            }
+            if ratio is None or ratio < threshold:
+                return report, None
+            severity = "exceeded" if ratio >= 100 else "warning"
+            return report, {
+                "level": name,
+                "severity": severity,
+                "limit": limit,
+                "spent": spent,
+                "percent_used": ratio,
+                "message": f"{name}预算{'已超限' if severity == 'exceeded' else '接近上限'}：¥{spent:.4f} / ¥{limit:.4f}",
+            }
 
-        if settings.budget_monthly_limit > 0:
-            month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            stmt = select(func.coalesce(func.sum(LLMUsage.cost_cny), 0)).where(
-                LLMUsage.created_at >= month_start,
-            )
-            spent = float((await self._db.execute(stmt)).scalar() or 0)
-            if spent >= settings.budget_monthly_limit:
-                alerts.append({
-                    "level": "monthly",
-                    "limit": settings.budget_monthly_limit,
-                    "spent": round(spent, 4),
-                    "message": f"月预算已超限：¥{spent:.4f} / ¥{settings.budget_monthly_limit}",
-                })
-
-        return {"alerts": alerts, "daily_limit": settings.budget_daily_limit,
-                "monthly_limit": settings.budget_monthly_limit}
+        daily, daily_alert = await period(
+            "daily",
+            now.replace(hour=0, minute=0, second=0, microsecond=0),
+            settings.budget_daily_limit,
+        )
+        monthly, monthly_alert = await period(
+            "monthly",
+            now.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
+            settings.budget_monthly_limit,
+        )
+        alerts = [alert for alert in (daily_alert, monthly_alert) if alert]
+        return {
+            "alerts": alerts,
+            "alert_threshold_percent": threshold,
+            "daily": daily,
+            "monthly": monthly,
+            "daily_limit": settings.budget_daily_limit,
+            "monthly_limit": settings.budget_monthly_limit,
+        }

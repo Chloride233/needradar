@@ -1,0 +1,16 @@
+{
+  "session_id": "phase4-owner-001",
+  "consent_confirmed": true,
+  "keyword": "上下文",
+  "platform": "github",
+  "max_items": 3,
+  "outcome": "failed",
+  "failure_stage": "extraction",
+  "failure_type": "ValueError",
+  "failure_note": "The first Flash response was truncated before complete structured JSON.",
+  "model_calls": 1,
+  "actual_cost_cny": null,
+  "cost_status": "unknown_lower_bound_after_process_exit",
+  "report_path": null,
+  "feedback_pending": false
+}

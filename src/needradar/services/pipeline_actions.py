@@ -44,14 +44,16 @@ async def _record_phase(run_id: int, phase: PhaseName, status: PhaseStatus, resu
             if result:
                 existing.result_json = json.dumps(result, ensure_ascii=False)
         else:
-            db.add(PipelinePhase(
-                pipeline_run_id=run_id,
-                phase=phase.value,
-                status=status.value,
-                started_at=now if status == PhaseStatus.RUNNING else None,
-                completed_at=now if status in (PhaseStatus.COMPLETED, PhaseStatus.FAILED) else None,
-                result_json=json.dumps(result, ensure_ascii=False) if result else None,
-            ))
+            db.add(
+                PipelinePhase(
+                    pipeline_run_id=run_id,
+                    phase=phase.value,
+                    status=status.value,
+                    started_at=now if status == PhaseStatus.RUNNING else None,
+                    completed_at=now if status in (PhaseStatus.COMPLETED, PhaseStatus.FAILED) else None,
+                    result_json=json.dumps(result, ensure_ascii=False) if result else None,
+                )
+            )
 
         await db.commit()
 
@@ -94,10 +96,8 @@ async def _update_run(run_id: int, **kwargs) -> None:
 
 async def crawl_action(run_id: int, keyword: str, platforms: list[str]) -> dict:
     """Crawl phase: fetch raw items from platforms, filter noise, create material gate."""
-    from sqlalchemy import select
-
     from needradar.crawlers.factory import create_crawler
-    from needradar.models.fingerprint import CrawlFingerprint
+    from needradar.services.crawl_reliability import filter_new_items, save_fingerprints
     from needradar.services.noise_filter import NoiseFilter
     from needradar.services.vault_store import vault
 
@@ -127,27 +127,29 @@ async def crawl_action(run_id: int, keyword: str, platforms: list[str]) -> dict:
                 raw_items = await asyncio.wait_for(crawler.crawl(keyword), timeout=30 * 60)
                 task.total_items = len(raw_items)
 
-                # Incremental filter
-                known_result = await db.execute(
-                    select(CrawlFingerprint.source_url).where(
-                        CrawlFingerprint.keyword == keyword,
-                        CrawlFingerprint.platform == task.platform,
-                    )
-                )
-                known = {row[0] for row in known_result.all()}
-                new_items = [item for item in raw_items if item.source_url not in known]
+                new_items, skipped = await filter_new_items(db, keyword, task.platform, raw_items)
                 task.new_items = len(new_items)
-                task.skipped_items = len(raw_items) - len(new_items)
+                task.skipped_items = skipped
 
-                for item in new_items:
-                    db.add(CrawlFingerprint(keyword=keyword, platform=task.platform, source_url=item.source_url))
+                save_fingerprints(db, keyword, task.platform, new_items)
+
+                logger.info(
+                    "crawl_done",
+                    platform=task.platform,
+                    total=len(raw_items),
+                    new=len(new_items),
+                    skipped=skipped,
+                )
 
                 for item in new_items:
                     try:
                         vault.archive_raw(
-                            platform=item.platform, keyword=keyword,
-                            title=item.title, source_url=item.source_url,
-                            content=item.content, tags=item.tags,
+                            platform=item.platform,
+                            keyword=keyword,
+                            title=item.title,
+                            source_url=item.source_url,
+                            content=item.content,
+                            tags=item.tags,
                         )
                     except Exception as e:
                         logger.warning("archive_raw_failed", url=item.source_url, error=str(e))
@@ -160,14 +162,16 @@ async def crawl_action(run_id: int, keyword: str, platforms: list[str]) -> dict:
                 task.filter_mode = "rule"
 
                 for f in clean:
-                    all_clean_items.append({
-                        "task_id": task.id,
-                        "platform": task.platform,
-                        "title": f.item.title,
-                        "source_url": f.item.source_url,
-                        "content_preview": f.item.content[:500],
-                        "approved": True,
-                    })
+                    all_clean_items.append(
+                        {
+                            "task_id": task.id,
+                            "platform": task.platform,
+                            "title": f.item.title,
+                            "source_url": f.item.source_url,
+                            "content_preview": f.item.content[:500],
+                            "approved": True,
+                        }
+                    )
 
                 await crawler.close()
             except Exception as e:
@@ -182,9 +186,14 @@ async def crawl_action(run_id: int, keyword: str, platforms: list[str]) -> dict:
         await db.commit()
 
     await _create_gate(run_id, GateType.MATERIAL, all_clean_items)
-    await _record_phase(run_id, PhaseName.CRAWLING, PhaseStatus.COMPLETED, {
-        "clean_items": len(all_clean_items),
-    })
+    await _record_phase(
+        run_id,
+        PhaseName.CRAWLING,
+        PhaseStatus.COMPLETED,
+        {
+            "clean_items": len(all_clean_items),
+        },
+    )
 
     return {"clean_items": len(all_clean_items)}
 
@@ -227,10 +236,12 @@ async def extract_action(run_id: int, keyword: str) -> dict:
         extraction_prompt = prompts.get("requirement_extraction", "")
 
         from needradar.vector import create_vector_store
+
         vs = create_vector_store()
         rag_retriever = None
         try:
             from needradar.services.rag_retriever import get_retriever
+
             rag_retriever = get_retriever()
         except Exception:
             pass
@@ -250,7 +261,10 @@ async def extract_action(run_id: int, keyword: str) -> dict:
                 if rag_retriever:
                     try:
                         rag_context = await rag_retriever.retrieve_context(
-                            query=f"{keyword} {raw_item.title}", n_results=3, min_score=0.2, max_chars=1500,
+                            query=f"{keyword} {raw_item.title}",
+                            n_results=3,
+                            min_score=0.2,
+                            max_chars=1500,
                         )
                     except Exception:
                         pass
@@ -261,7 +275,9 @@ async def extract_action(run_id: int, keyword: str) -> dict:
 
                 text = f"讨论标题：{raw_item.title}\n\n讨论内容：\n{raw_item.content}"
                 extracted: ExtractedRequirement = await llm.extract_structured(
-                    prompt=full_prompt, text=text, schema=ExtractedRequirement,
+                    prompt=full_prompt,
+                    text=text,
+                    schema=ExtractedRequirement,
                 )
 
                 # Dedup via vector store
@@ -279,6 +295,7 @@ async def extract_action(run_id: int, keyword: str) -> dict:
 
                 # Store new requirement
                 from datetime import date
+
                 req_meta = {
                     "标题": extracted.title,
                     "来源平台": raw_item.platform,
@@ -300,20 +317,27 @@ async def extract_action(run_id: int, keyword: str) -> dict:
                     metadatas=[{"platform": raw_item.platform, "keyword": keyword}],
                 )
 
-                extracted_requirements.append({
-                    "vault_path": str(req_path),
-                    "title": extracted.title,
-                    "sentiment": extracted.sentiment,
-                    "confidence": extracted.confidence,
-                    "approved": True,
-                })
+                extracted_requirements.append(
+                    {
+                        "vault_path": str(req_path),
+                        "title": extracted.title,
+                        "sentiment": extracted.sentiment,
+                        "confidence": extracted.confidence,
+                        "approved": True,
+                    }
+                )
             except Exception as e:
                 logger.warning("extract_failed", url=item_data.get("source_url"), error=str(e))
 
     await _create_gate(run_id, GateType.REQUIREMENT, extracted_requirements)
-    await _record_phase(run_id, PhaseName.EXTRACTING, PhaseStatus.COMPLETED, {
-        "extracted": len(extracted_requirements),
-    })
+    await _record_phase(
+        run_id,
+        PhaseName.EXTRACTING,
+        PhaseStatus.COMPLETED,
+        {
+            "extracted": len(extracted_requirements),
+        },
+    )
 
     return {"extracted": len(extracted_requirements)}
 
@@ -326,6 +350,7 @@ async def report_action(run_id: int, keyword: str) -> dict:
     report_path = None
     try:
         from needradar.services.report_service import get_report_service
+
         rs = get_report_service()
         report_path = await asyncio.wait_for(rs.generate_report(keyword), timeout=120)
     except asyncio.TimeoutError:
@@ -337,6 +362,7 @@ async def report_action(run_id: int, keyword: str) -> dict:
     if report_path:
         try:
             from needradar.services.content_verifier import get_verifier
+
             verifier = get_verifier()
             v_output = await verifier.verify_report(report_path.stem)
             verification_result = {
@@ -350,17 +376,24 @@ async def report_action(run_id: int, keyword: str) -> dict:
         except Exception as e:
             logger.warning("verify_failed", error=str(e))
 
-    gate_items = [{
-        "report_path": str(report_path) if report_path else None,
-        "report_title": report_path.stem if report_path else None,
-        "verification": verification_result,
-        "approved": True,
-    }]
+    gate_items = [
+        {
+            "report_path": str(report_path) if report_path else None,
+            "report_title": report_path.stem if report_path else None,
+            "verification": verification_result,
+            "approved": True,
+        }
+    ]
     await _create_gate(run_id, GateType.INSIGHT, gate_items)
-    await _record_phase(run_id, PhaseName.REPORTING, PhaseStatus.COMPLETED, {
-        "report_path": str(report_path) if report_path else None,
-        "verification": verification_result,
-    })
+    await _record_phase(
+        run_id,
+        PhaseName.REPORTING,
+        PhaseStatus.COMPLETED,
+        {
+            "report_path": str(report_path) if report_path else None,
+            "verification": verification_result,
+        },
+    )
 
     return {"report_path": str(report_path) if report_path else None}
 
@@ -392,6 +425,7 @@ async def distill_action(run_id: int) -> dict:
     try:
         async with async_session_factory() as db:
             from needradar.services.knowledge_distiller import KnowledgeDistiller
+
             distiller = KnowledgeDistiller(db)
             await distiller.distill_all(run_id)
     except Exception as e:

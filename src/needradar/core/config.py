@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -46,6 +48,17 @@ class Settings(BaseSettings):
     # Budget alerts (CNY)
     budget_daily_limit: float = 0.0  # 0 = disabled
     budget_monthly_limit: float = 0.0  # 0 = disabled
+    budget_alert_threshold_percent: float = 80.0
+
+    # Crawler reliability
+    crawler_min_request_interval_seconds: float = 0.5
+
+    # Optional Go collector; Python remains the default collection path
+    collector_backend: Literal["python", "go"] = "python"
+    collector_go_url: str = "http://127.0.0.1:8910"
+    collector_go_timeout_seconds: float = 1800.0
+    collector_go_poll_interval_seconds: float = 0.1
+    collector_go_fallback_to_python: bool = True
 
     # App
     debug: bool = False

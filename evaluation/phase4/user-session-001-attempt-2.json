@@ -1,0 +1,18 @@
+{
+  "session_id": "phase4-owner-001",
+  "consent_confirmed": true,
+  "keyword": "上下文",
+  "platform": "github",
+  "max_items": 1,
+  "started_at": "2026-07-14T09:06:16.451302+00:00",
+  "completed_at": "2026-07-14T09:06:46.831667+00:00",
+  "duration_seconds": 30.38,
+  "raw_items": 1,
+  "new_items": 1,
+  "skipped_items": 0,
+  "clean_items": 1,
+  "report_path": "/Users/yang/Documents/resume/projects/needradar/vault/03-分析车间/初稿打磨/需求洞察报告 — 上下文.md",
+  "actual_cost_cny": 0.006741,
+  "usage_records": 2,
+  "feedback_pending": true
+}

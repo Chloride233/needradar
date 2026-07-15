@@ -55,9 +55,9 @@ def wbi_sign(params: dict[str, Any], img_key: str, sub_key: str) -> dict[str, An
     return params
 
 
-async def fetch_wbi_keys(client: httpx.AsyncClient) -> tuple[str, str]:
-    resp = await client.get(WBI_KEYS_URL)
-    data = resp.json().get("data", {})
+def parse_wbi_keys(response: httpx.Response) -> tuple[str, str]:
+    """Extract signing keys from the public WBI response."""
+    data = response.json().get("data", {})
     wbi = data.get("wbi_img", {})
     img_key = wbi.get("img_url", "").rsplit("/", 1)[-1].split(".")[0]
     sub_key = wbi.get("sub_url", "").rsplit("/", 1)[-1].split(".")[0]
@@ -84,9 +84,8 @@ class BilibiliCrawler(BaseCrawler):
         return self._client
 
     async def _init_session(self) -> None:
-        client = await self._get_client()
         try:
-            await client.get("https://www.bilibili.com")
+            await self._request_with_retry("get", "https://www.bilibili.com")
         except Exception:
             pass
 
@@ -94,8 +93,8 @@ class BilibiliCrawler(BaseCrawler):
         # Cache keys for 10 minutes
         if self._img_key and self._sub_key and (time.time() - self._keys_ts < 600):
             return self._img_key, self._sub_key
-        client = await self._get_client()
-        self._img_key, self._sub_key = await fetch_wbi_keys(client)
+        response = await self._request_with_retry("get", WBI_KEYS_URL)
+        self._img_key, self._sub_key = parse_wbi_keys(response)
         self._keys_ts = time.time()
         logger.debug("wbi_keys_refreshed", img_key=self._img_key)
         return self._img_key, self._sub_key
