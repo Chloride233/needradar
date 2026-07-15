@@ -1,4 +1,6 @@
-from pydantic import Field
+from typing import Literal
+
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,6 +31,19 @@ class Settings(BaseSettings):
 
     # Vector database (LanceDB)
     lancedb_dir: str = "./data/lancedb"
+
+    # Optional SiliconFlow reranking (disabled by default)
+    siliconflow_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("NR_SILICONFLOW_API_KEY", "SILICONFLOW_API_KEY"),
+    )
+    rerank_mode: Literal["none", "bge", "qwen3"] = "none"
+    rerank_base_url: str = "https://api.siliconflow.cn/v1"
+    rerank_recall_k: int = Field(default=20, ge=1, le=20)
+    rerank_top_k: int = Field(default=3, ge=1, le=20)
+    rerank_relevance_threshold: float | None = Field(default=None, ge=0.0, le=1.0)
+    rerank_timeout_seconds: float = Field(default=10.0, gt=0.0)
+    rerank_max_attempts: int = Field(default=3, ge=1, le=3)
 
     # GitHub
     github_token: str = ""
