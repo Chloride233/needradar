@@ -1,0 +1,5 @@
+{
+  "evaluation/rerank/recall-audit/annotation-template.csv": "dbd1b69f1c9e19fa8ac99b592e119b1e2ac228f9494dfa3f221b7f7a79bafaff",
+  "evaluation/rerank/recall-audit/manifest.json": "072237de207a407bc9aa8d26d3e771ebabd465a7b97473331aebac25757b69c3",
+  "evaluation/rerank/recall-audit/pool.jsonl": "31937e19973541215efa4fdf25c17906faaf90a90daadf754a3cf11e33d5fb88"
+}

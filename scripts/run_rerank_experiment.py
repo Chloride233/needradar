@@ -83,7 +83,12 @@ def _sha256_bytes(value: bytes) -> str:
 
 
 def _sha256_file(path: Path) -> str:
-    return _sha256_bytes(path.read_bytes())
+    data = path.read_bytes()
+    # CSV artifacts are text-normalized by Git; hash a canonical CRLF form so
+    # manifests remain valid after checkout on platforms with different EOLs.
+    if path.suffix.lower() == ".csv":
+        data = data.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    return _sha256_bytes(data)
 
 
 def _hash_value(value: Any) -> str:
