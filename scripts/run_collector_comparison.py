@@ -168,14 +168,14 @@ def build_go_binary() -> None:
 
 
 def prepare() -> dict:
+    state = git_state()
     EVALUATION.mkdir(parents=True, exist_ok=True)
     workload = build_workload(task_count=1000, seed=SEED, items_per_task=10)
     WORKLOAD_PATH.write_text(pretty_json(workload), encoding="utf-8")
     build_go_binary()
-    state = git_state()
     manifest = {
         "schema_version": 2,
-        "experiment_id": "needradar-collector-scheduler-v2-20260715",
+        "experiment_id": "needradar-collector-scheduler-v3-20260715",
         "unit": "in-process collection task scheduling",
         "seed": SEED,
         "scenarios": list(SCENARIOS),

@@ -42,6 +42,34 @@ def test_startup_order_is_seeded_and_pairwise():
     assert all(pair[0][1] == pair[1][1] for pair in pairs)
 
 
+def test_prepare_captures_git_state_before_writing_artifacts(monkeypatch, tmp_path):
+    workload_path = tmp_path / "workload.json"
+    manifest_path = tmp_path / "manifest.json"
+    go_binary = tmp_path / "collector-bench"
+    clean_state = {"commit": "abc123", "dirty": False, "status_sha256": "status", "status": []}
+
+    def capture_git_state():
+        assert not workload_path.exists()
+        return clean_state
+
+    monkeypatch.setattr(comparison, "ROOT", tmp_path)
+    monkeypatch.setattr(comparison, "EVALUATION", tmp_path)
+    monkeypatch.setattr(comparison, "WORKLOAD_PATH", workload_path)
+    monkeypatch.setattr(comparison, "MANIFEST_PATH", manifest_path)
+    monkeypatch.setattr(comparison, "GO_BINARY", go_binary)
+    monkeypatch.setattr(comparison, "SOURCE_PATHS", {})
+    monkeypatch.setattr(comparison, "git_state", capture_git_state)
+    monkeypatch.setattr(comparison, "build_workload", lambda **_kwargs: {"tasks": []})
+    monkeypatch.setattr(comparison, "build_go_binary", lambda: go_binary.write_bytes(b"go"))
+    monkeypatch.setattr(comparison, "environment", lambda: {})
+    monkeypatch.setattr(comparison, "load_snapshot", lambda: {"known_high_load": False})
+
+    manifest = comparison.prepare()
+
+    assert manifest["experiment_id"] == "needradar-collector-scheduler-v3-20260715"
+    assert manifest["runner_git"] == clean_state
+
+
 def test_load_snapshot_rejects_unavailable_and_generic_high_load(monkeypatch):
     monkeypatch.setattr(comparison, "command_output", lambda *_args, **_kwargs: "")
     with pytest.raises(RuntimeError, match="load check unavailable"):
