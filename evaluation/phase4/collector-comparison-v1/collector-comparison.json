@@ -1,0 +1,1181 @@
+{
+  "combinations": [
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 5.556791804955761,
+        "p95_latency_reduction_percent": 5.609528992191695,
+        "p99_latency_reduction_percent": 5.573985570510715,
+        "peak_rss_reduction_percent": 68.19207880155962,
+        "throughput_increase_percent": 5.930005702576135
+      },
+      "concurrency": 1,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 3122.641,
+            "median": 3109.758,
+            "min": 3081.357
+          },
+          "p95_latency_ms": {
+            "max": 5920.405,
+            "median": 5901.227,
+            "min": 5868.327
+          },
+          "p99_latency_ms": {
+            "max": 6171.228,
+            "median": 6149.292,
+            "min": 6118.769
+          },
+          "peak_rss_bytes": {
+            "max": 26263552.0,
+            "median": 25395200.0,
+            "min": 24231936.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.03,
+            "min": 0.03
+          },
+          "throughput_tasks_per_second": {
+            "max": 161.83560743043108,
+            "median": 160.97148436240656,
+            "min": 160.44700319449214
+          },
+          "user_cpu_seconds": {
+            "max": 0.15,
+            "median": 0.14,
+            "min": 0.12
+          },
+          "wall_seconds": {
+            "max": 6.232587584,
+            "median": 6.212280417,
+            "min": 6.179109875
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 3308.7775000021793,
+            "median": 3292.7280419971794,
+            "min": 3230.2390409749933
+          },
+          "p95_latency_ms": {
+            "max": 6281.602083996404,
+            "median": 6251.9308750052005,
+            "min": 6185.508915979881
+          },
+          "p99_latency_ms": {
+            "max": 6545.5588339827955,
+            "median": 6512.285874981899,
+            "min": 6442.205375002231
+          },
+          "peak_rss_bytes": {
+            "max": 80084992.0,
+            "median": 79839232.0,
+            "min": 79724544.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.05,
+            "min": 0.05
+          },
+          "throughput_tasks_per_second": {
+            "max": 153.68304197113412,
+            "median": 151.96023383060373,
+            "min": 151.20512849195185
+          },
+          "user_cpu_seconds": {
+            "max": 0.73,
+            "median": 0.68,
+            "min": 0.58
+          },
+          "wall_seconds": {
+            "max": 6.613532292016316,
+            "median": 6.58066899998812,
+            "min": 6.506898791005369
+          }
+        }
+      },
+      "scenario": "normal"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 13.49171177330373,
+        "p95_latency_reduction_percent": 10.6791466425737,
+        "p99_latency_reduction_percent": 10.462194624576773,
+        "peak_rss_reduction_percent": 66.98770491803279,
+        "throughput_increase_percent": 11.747935470096094
+      },
+      "concurrency": 4,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 780.038,
+            "median": 774.716,
+            "min": 760.739
+          },
+          "p95_latency_ms": {
+            "max": 1488.95,
+            "median": 1474.459,
+            "min": 1462.083
+          },
+          "p99_latency_ms": {
+            "max": 1550.521,
+            "median": 1537.174,
+            "min": 1522.419
+          },
+          "peak_rss_bytes": {
+            "max": 26673152.0,
+            "median": 26394624.0,
+            "min": 25116672.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.02,
+            "median": 0.02,
+            "min": 0.01
+          },
+          "throughput_tasks_per_second": {
+            "max": 651.4513154552834,
+            "median": 645.630639638516,
+            "min": 639.3167150706031
+          },
+          "user_cpu_seconds": {
+            "max": 0.09,
+            "median": 0.08,
+            "min": 0.05
+          },
+          "wall_seconds": {
+            "max": 1.564169959,
+            "median": 1.5488732079999998,
+            "min": 1.5350341250000001
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 914.485290995799,
+            "median": 895.5396250239573,
+            "min": 834.2912090010941
+          },
+          "p95_latency_ms": {
+            "max": 1694.3014590069652,
+            "median": 1650.7444169837981,
+            "min": 1606.554750003852
+          },
+          "p99_latency_ms": {
+            "max": 1768.5465840040706,
+            "median": 1716.7876670137048,
+            "min": 1680.462958989665
+          },
+          "peak_rss_bytes": {
+            "max": 80003072.0,
+            "median": 79953920.0,
+            "min": 79855616.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.04,
+            "min": 0.03
+          },
+          "throughput_tasks_per_second": {
+            "max": 589.941917998531,
+            "median": 577.7562126069771,
+            "min": 560.604591296951
+          },
+          "user_cpu_seconds": {
+            "max": 0.5,
+            "median": 0.44,
+            "min": 0.41
+          },
+          "wall_seconds": {
+            "max": 1.783788458968047,
+            "median": 1.7308338329894468,
+            "min": 1.6950821250211447
+          }
+        }
+      },
+      "scenario": "normal"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 20.12923229956095,
+        "p95_latency_reduction_percent": 21.86212398543844,
+        "p99_latency_reduction_percent": 21.67689993879113,
+        "peak_rss_reduction_percent": 65.78461538461539,
+        "throughput_increase_percent": 27.450036490890145
+      },
+      "concurrency": 16,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 200.902,
+            "median": 199.895,
+            "min": 197.421
+          },
+          "p95_latency_ms": {
+            "max": 375.089,
+            "median": 372.88,
+            "min": 370.975
+          },
+          "p99_latency_ms": {
+            "max": 390.007,
+            "median": 385.472,
+            "min": 383.612
+          },
+          "peak_rss_bytes": {
+            "max": 28246016.0,
+            "median": 27328512.0,
+            "min": 26443776.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.01,
+            "min": 0.01
+          },
+          "throughput_tasks_per_second": {
+            "max": 2564.808708551489,
+            "median": 2552.2512313195693,
+            "min": 2521.9880600863557
+          },
+          "user_cpu_seconds": {
+            "max": 0.07,
+            "median": 0.06,
+            "min": 0.04
+          },
+          "wall_seconds": {
+            "max": 0.396512583,
+            "median": 0.391810958,
+            "min": 0.389892625
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 254.039500025101,
+            "median": 250.27304200921208,
+            "min": 247.13025003438815
+          },
+          "p95_latency_ms": {
+            "max": 502.26495903916657,
+            "median": 477.20774996560067,
+            "min": 464.63825000682846
+          },
+          "p99_latency_ms": {
+            "max": 519.6361670386977,
+            "median": 492.1562089584768,
+            "min": 479.8111249692738
+          },
+          "peak_rss_bytes": {
+            "max": 80068608.0,
+            "median": 79872000.0,
+            "min": 79708160.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.03,
+            "min": 0.03
+          },
+          "throughput_tasks_per_second": {
+            "max": 2053.5985821144563,
+            "median": 2002.5504123743415,
+            "min": 1895.5968419975898
+          },
+          "user_cpu_seconds": {
+            "max": 0.39,
+            "median": 0.35,
+            "min": 0.31
+          },
+          "wall_seconds": {
+            "max": 0.5275383340194821,
+            "median": 0.49936320894630626,
+            "min": 0.48695008299546316
+          }
+        }
+      },
+      "scenario": "normal"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 34.04401296795099,
+        "p95_latency_reduction_percent": 36.10688396840687,
+        "p99_latency_reduction_percent": 35.729046863422795,
+        "peak_rss_reduction_percent": 65.36095159967186,
+        "throughput_increase_percent": 56.06010555698065
+      },
+      "concurrency": 50,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 62.914,
+            "median": 61.696,
+            "min": 59.721
+          },
+          "p95_latency_ms": {
+            "max": 117.222,
+            "median": 116.025,
+            "min": 113.532
+          },
+          "p99_latency_ms": {
+            "max": 123.382,
+            "median": 122.495,
+            "min": 119.427
+          },
+          "peak_rss_bytes": {
+            "max": 27754496.0,
+            "median": 27672576.0,
+            "min": 27426816.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.0,
+            "min": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 8367.871163703441,
+            "median": 8152.448105571203,
+            "min": 8101.164621805798
+          },
+          "user_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.04,
+            "min": 0.04
+          },
+          "wall_seconds": {
+            "max": 0.123439042,
+            "median": 0.122662541,
+            "min": 0.119504708
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 93.81225000834092,
+            "median": 93.54116703616455,
+            "min": 92.86333300406113
+          },
+          "p95_latency_ms": {
+            "max": 183.23899997631088,
+            "median": 181.59233295591548,
+            "min": 175.27274996973574
+          },
+          "p99_latency_ms": {
+            "max": 192.8894579759799,
+            "median": 190.59154100250453,
+            "min": 183.65199997788295
+          },
+          "peak_rss_bytes": {
+            "max": 80068608.0,
+            "median": 79888384.0,
+            "min": 79675392.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.03,
+            "median": 0.03,
+            "min": 0.03
+          },
+          "throughput_tasks_per_second": {
+            "max": 5421.243024984449,
+            "median": 5223.915539769119,
+            "min": 5159.658086292457
+          },
+          "user_cpu_seconds": {
+            "max": 0.3,
+            "median": 0.3,
+            "min": 0.29
+          },
+          "wall_seconds": {
+            "max": 0.19381129200337455,
+            "median": 0.19142729096347466,
+            "min": 0.18445954099297523
+          }
+        }
+      },
+      "scenario": "normal"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 5.135840826241054,
+        "p95_latency_reduction_percent": 5.525909920758615,
+        "p99_latency_reduction_percent": 5.41358705069619,
+        "peak_rss_reduction_percent": 68.35079071677963,
+        "throughput_increase_percent": 5.82876212882782
+      },
+      "concurrency": 1,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 3490.6,
+            "median": 3478.752,
+            "min": 3464.971
+          },
+          "p95_latency_ms": {
+            "max": 6622.187,
+            "median": 6594.344,
+            "min": 6577.605
+          },
+          "p99_latency_ms": {
+            "max": 6899.102,
+            "median": 6874.247,
+            "min": 6855.175
+          },
+          "peak_rss_bytes": {
+            "max": 26050560.0,
+            "median": 25247744.0,
+            "min": 23674880.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.04,
+            "min": 0.03
+          },
+          "throughput_tasks_per_second": {
+            "max": 144.37469101560268,
+            "median": 144.1084164947134,
+            "min": 143.5141394755672
+          },
+          "user_cpu_seconds": {
+            "max": 0.15,
+            "median": 0.15,
+            "min": 0.11
+          },
+          "wall_seconds": {
+            "max": 6.967954542,
+            "median": 6.939219959,
+            "min": 6.92642175
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 3689.818583021406,
+            "median": 3667.087791953236,
+            "min": 3624.416916980408
+          },
+          "p95_latency_ms": {
+            "max": 7014.994291006587,
+            "median": 6980.055583990179,
+            "min": 6914.235957956407
+          },
+          "p99_latency_ms": {
+            "max": 7305.359291029163,
+            "median": 7267.689708969556,
+            "min": 7206.152250000741
+          },
+          "peak_rss_bytes": {
+            "max": 80084992.0,
+            "median": 79773696.0,
+            "min": 79593472.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.06,
+            "median": 0.05,
+            "min": 0.04
+          },
+          "throughput_tasks_per_second": {
+            "max": 137.41273889752043,
+            "median": 136.17131448564697,
+            "min": 135.48699777950435
+          },
+          "user_cpu_seconds": {
+            "max": 0.76,
+            "median": 0.72,
+            "min": 0.64
+          },
+          "wall_seconds": {
+            "max": 7.380782041000202,
+            "median": 7.343690584006254,
+            "min": 7.277345666952897
+          }
+        }
+      },
+      "scenario": "retry_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 12.38955975450094,
+        "p95_latency_reduction_percent": 11.327420383722925,
+        "p99_latency_reduction_percent": 11.44157195638294,
+        "peak_rss_reduction_percent": 67.16540274646444,
+        "throughput_increase_percent": 13.024524001397724
+      },
+      "concurrency": 4,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 847.288,
+            "median": 842.893,
+            "min": 835.722
+          },
+          "p95_latency_ms": {
+            "max": 1606.063,
+            "median": 1597.043,
+            "min": 1587.124
+          },
+          "p99_latency_ms": {
+            "max": 1673.541,
+            "median": 1664.383,
+            "min": 1652.847
+          },
+          "peak_rss_bytes": {
+            "max": 26542080.0,
+            "median": 26247168.0,
+            "min": 25903104.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.02,
+            "median": 0.02,
+            "min": 0.02
+          },
+          "throughput_tasks_per_second": {
+            "max": 598.1087055095904,
+            "median": 593.9650037304715,
+            "min": 590.3618120919677
+          },
+          "user_cpu_seconds": {
+            "max": 0.1,
+            "median": 0.09,
+            "min": 0.08
+          },
+          "wall_seconds": {
+            "max": 1.6938765,
+            "median": 1.683600875,
+            "min": 1.671936875
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 970.5149580258876,
+            "median": 962.0919580338523,
+            "min": 915.7983750337735
+          },
+          "p95_latency_ms": {
+            "max": 1831.4055830123834,
+            "median": 1801.0562080307864,
+            "min": 1771.244250005111
+          },
+          "p99_latency_ms": {
+            "max": 1911.1315830377862,
+            "median": 1879.4179580290802,
+            "min": 1856.5210420056246
+          },
+          "peak_rss_bytes": {
+            "max": 80183296.0,
+            "median": 79937536.0,
+            "min": 79757312.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.04,
+            "min": 0.03
+          },
+          "throughput_tasks_per_second": {
+            "max": 532.4804416626711,
+            "median": 525.5186951489627,
+            "min": 516.7309295142647
+          },
+          "user_cpu_seconds": {
+            "max": 0.53,
+            "median": 0.5,
+            "min": 0.45
+          },
+          "wall_seconds": {
+            "max": 1.9352431659935974,
+            "median": 1.9028818750521168,
+            "min": 1.8780032499926165
+          }
+        }
+      },
+      "scenario": "retry_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 23.115966405803125,
+        "p95_latency_reduction_percent": 23.140175880075653,
+        "p99_latency_reduction_percent": 23.198571762623963,
+        "peak_rss_reduction_percent": 66.72809172809173,
+        "throughput_increase_percent": 30.02500931839919
+      },
+      "concurrency": 16,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 209.912,
+            "median": 207.914,
+            "min": 191.227
+          },
+          "p95_latency_ms": {
+            "max": 395.104,
+            "median": 390.311,
+            "min": 369.262
+          },
+          "p99_latency_ms": {
+            "max": 412.581,
+            "median": 408.261,
+            "min": 387.385
+          },
+          "peak_rss_bytes": {
+            "max": 27688960.0,
+            "median": 26624000.0,
+            "min": 26492928.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.01,
+            "min": 0.01
+          },
+          "throughput_tasks_per_second": {
+            "max": 2535.6247351460725,
+            "median": 2405.028676383473,
+            "min": 2380.1280745964887
+          },
+          "user_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.05,
+            "min": 0.04
+          },
+          "wall_seconds": {
+            "max": 0.420145458,
+            "median": 0.415795458,
+            "min": 0.394380125
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 271.94133400917053,
+            "median": 270.42545803124085,
+            "min": 245.77070900704712
+          },
+          "p95_latency_ms": {
+            "max": 531.4776249579154,
+            "median": 507.82187504228204,
+            "min": 478.89970894902945
+          },
+          "p99_latency_ms": {
+            "max": 556.5391249838285,
+            "median": 531.5799580421299,
+            "min": 500.380958954338
+          },
+          "peak_rss_bytes": {
+            "max": 80052224.0,
+            "median": 80019456.0,
+            "min": 79953920.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.03,
+            "median": 0.03,
+            "min": 0.03
+          },
+          "throughput_tasks_per_second": {
+            "max": 1964.9814100791893,
+            "median": 1849.6662211299295,
+            "min": 1768.4040574208082
+          },
+          "user_cpu_seconds": {
+            "max": 0.39,
+            "median": 0.37,
+            "min": 0.33
+          },
+          "wall_seconds": {
+            "max": 0.5654816249734722,
+            "median": 0.5406380830099806,
+            "min": 0.5089106669765897
+          }
+        }
+      },
+      "scenario": "retry_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 33.73833123261556,
+        "p95_latency_reduction_percent": 35.64482748518017,
+        "p99_latency_reduction_percent": 35.51599751959634,
+        "peak_rss_reduction_percent": 65.50594018844735,
+        "throughput_increase_percent": 51.97591171035945
+      },
+      "concurrency": 50,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 66.886,
+            "median": 66.203,
+            "min": 63.821
+          },
+          "p95_latency_ms": {
+            "max": 126.574,
+            "median": 125.239,
+            "min": 123.592
+          },
+          "p99_latency_ms": {
+            "max": 132.646,
+            "median": 131.147,
+            "min": 129.57
+          },
+          "peak_rss_bytes": {
+            "max": 27770880.0,
+            "median": 27590656.0,
+            "min": 27099136.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.01,
+            "min": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 7321.300775508785,
+            "median": 7220.853136432799,
+            "min": 7142.580827016007
+          },
+          "user_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.04,
+            "min": 0.04
+          },
+          "wall_seconds": {
+            "max": 0.140005416,
+            "median": 0.138487791,
+            "min": 0.13658775
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 103.73820801032707,
+            "median": 99.91145896492526,
+            "min": 99.6852500247769
+          },
+          "p95_latency_ms": {
+            "max": 197.2014589700848,
+            "median": 194.60595800774172,
+            "min": 181.3906249590218
+          },
+          "p99_latency_ms": {
+            "max": 206.63983398117125,
+            "median": 203.3791249850765,
+            "min": 187.8193329903297
+          },
+          "peak_rss_bytes": {
+            "max": 80134144.0,
+            "median": 79986688.0,
+            "min": 79839232.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.03,
+            "median": 0.03,
+            "min": 0.02
+          },
+          "throughput_tasks_per_second": {
+            "max": 5134.784894336879,
+            "median": 4751.314241295378,
+            "min": 4678.132770986051
+          },
+          "user_cpu_seconds": {
+            "max": 0.31,
+            "median": 0.31,
+            "min": 0.29
+          },
+          "wall_seconds": {
+            "max": 0.21376049995888025,
+            "median": 0.21046808297978714,
+            "min": 0.19475012499606237
+          }
+        }
+      },
+      "scenario": "retry_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 4.922379192845781,
+        "p95_latency_reduction_percent": 5.6464484750571655,
+        "p99_latency_reduction_percent": 5.729921800523069,
+        "peak_rss_reduction_percent": 69.02564102564102,
+        "throughput_increase_percent": 6.000350219738794
+      },
+      "concurrency": 1,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 3115.942,
+            "median": 3098.45,
+            "min": 3050.552
+          },
+          "p95_latency_ms": {
+            "max": 5908.529,
+            "median": 5888.639,
+            "min": 5800.99
+          },
+          "p99_latency_ms": {
+            "max": 6160.38,
+            "median": 6134.646,
+            "min": 6054.172
+          },
+          "peak_rss_bytes": {
+            "max": 26001408.0,
+            "median": 24739840.0,
+            "min": 24002560.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.03,
+            "min": 0.02
+          },
+          "throughput_tasks_per_second": {
+            "max": 161.92867306834262,
+            "median": 161.28745236637388,
+            "min": 160.69156615929577
+          },
+          "user_cpu_seconds": {
+            "max": 0.14,
+            "median": 0.11,
+            "min": 0.08
+          },
+          "wall_seconds": {
+            "max": 6.223101958,
+            "median": 6.200110333,
+            "min": 6.175558541
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 3324.973458016757,
+            "median": 3258.863625000231,
+            "min": 3214.8097089957446
+          },
+          "p95_latency_ms": {
+            "max": 6292.165791033767,
+            "median": 6241.035874991212,
+            "min": 6194.752042007167
+          },
+          "p99_latency_ms": {
+            "max": 6567.819208023138,
+            "median": 6507.521916995756,
+            "min": 6471.419167006388
+          },
+          "peak_rss_bytes": {
+            "max": 80134144.0,
+            "median": 79872000.0,
+            "min": 79544320.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.05,
+            "min": 0.05
+          },
+          "throughput_tasks_per_second": {
+            "max": 152.89737564471523,
+            "median": 152.15747120837327,
+            "min": 150.67327506891084
+          },
+          "user_cpu_seconds": {
+            "max": 0.73,
+            "median": 0.66,
+            "min": 0.66
+          },
+          "wall_seconds": {
+            "max": 6.636877041019034,
+            "median": 6.572138666990213,
+            "min": 6.540334624995012
+          }
+        }
+      },
+      "scenario": "duplicate_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 9.885697936257557,
+        "p95_latency_reduction_percent": 10.199274680530596,
+        "p99_latency_reduction_percent": 10.296284970775748,
+        "peak_rss_reduction_percent": 66.91960623461854,
+        "throughput_increase_percent": 11.40106541660751
+      },
+      "concurrency": 4,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 785.215,
+            "median": 774.512,
+            "min": 768.893
+          },
+          "p95_latency_ms": {
+            "max": 1489.448,
+            "median": 1482.886,
+            "min": 1471.921
+          },
+          "p99_latency_ms": {
+            "max": 1550.428,
+            "median": 1545.284,
+            "min": 1534.749
+          },
+          "peak_rss_bytes": {
+            "max": 27049984.0,
+            "median": 26427392.0,
+            "min": 25067520.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.02,
+            "median": 0.02,
+            "min": 0.01
+          },
+          "throughput_tasks_per_second": {
+            "max": 646.6033200170767,
+            "median": 641.5569303585943,
+            "min": 639.3102948692344
+          },
+          "user_cpu_seconds": {
+            "max": 0.1,
+            "median": 0.09,
+            "min": 0.06
+          },
+          "wall_seconds": {
+            "max": 1.5641856669999998,
+            "median": 1.5587081249999999,
+            "min": 1.54654325
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 892.5096250022762,
+            "median": 859.4773329677992,
+            "min": 840.6487499596551
+          },
+          "p95_latency_ms": {
+            "max": 1706.794166995678,
+            "median": 1651.3073749956675,
+            "min": 1607.4731249827892
+          },
+          "p99_latency_ms": {
+            "max": 1779.1684590047225,
+            "median": 1722.6532920030877,
+            "min": 1682.6923749758862
+          },
+          "peak_rss_bytes": {
+            "max": 80003072.0,
+            "median": 79888384.0,
+            "min": 79790080.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.04,
+            "min": 0.04
+          },
+          "throughput_tasks_per_second": {
+            "max": 588.264923647792,
+            "median": 575.8983793910394,
+            "min": 557.5745690019124
+          },
+          "user_cpu_seconds": {
+            "max": 0.51,
+            "median": 0.48,
+            "min": 0.4
+          },
+          "wall_seconds": {
+            "max": 1.7934820840018801,
+            "median": 1.736417457985226,
+            "min": 1.699914374970831
+          }
+        }
+      },
+      "scenario": "duplicate_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 16.86413554757242,
+        "p95_latency_reduction_percent": 21.45854734124387,
+        "p99_latency_reduction_percent": 21.994446496113188,
+        "peak_rss_reduction_percent": 65.9840262133934,
+        "throughput_increase_percent": 28.236500154660295
+      },
+      "concurrency": 16,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 199.708,
+            "median": 199.16,
+            "min": 198.14
+          },
+          "p95_latency_ms": {
+            "max": 373.728,
+            "median": 371.968,
+            "min": 370.536
+          },
+          "p99_latency_ms": {
+            "max": 386.286,
+            "median": 384.753,
+            "min": 383.058
+          },
+          "peak_rss_bytes": {
+            "max": 27508736.0,
+            "median": 27213824.0,
+            "min": 26787840.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.01,
+            "min": 0.01
+          },
+          "throughput_tasks_per_second": {
+            "max": 2568.432130630828,
+            "median": 2557.1019533016515,
+            "min": 2546.970108440436
+          },
+          "user_cpu_seconds": {
+            "max": 0.07,
+            "median": 0.06,
+            "min": 0.06
+          },
+          "wall_seconds": {
+            "max": 0.392623375,
+            "median": 0.391067708,
+            "min": 0.389342583
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 247.89183295797557,
+            "median": 239.55966695211828,
+            "min": 231.22375004459172
+          },
+          "p95_latency_ms": {
+            "max": 492.3900829744525,
+            "median": 473.5944999847561,
+            "min": 448.2574160210788
+          },
+          "p99_latency_ms": {
+            "max": 511.52358297258615,
+            "median": 493.2379589881748,
+            "min": 467.1448330045678
+          },
+          "peak_rss_bytes": {
+            "max": 80068608.0,
+            "median": 80003072.0,
+            "min": 79642624.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.03,
+            "median": 0.03,
+            "min": 0.02
+          },
+          "throughput_tasks_per_second": {
+            "max": 2103.5804792892345,
+            "median": 1994.051576748933,
+            "min": 1920.7680010744575
+          },
+          "user_cpu_seconds": {
+            "max": 0.38,
+            "median": 0.37,
+            "min": 0.33
+          },
+          "wall_seconds": {
+            "max": 0.5206250830087811,
+            "median": 0.5014915419742465,
+            "min": 0.4753799580503255
+          }
+        }
+      },
+      "scenario": "duplicate_10pct"
+    },
+    {
+      "comparison": {
+        "p50_latency_reduction_percent": 34.30840622495474,
+        "p95_latency_reduction_percent": 35.14269455080956,
+        "p99_latency_reduction_percent": 34.974109574680234,
+        "peak_rss_reduction_percent": 66.09995903318313,
+        "throughput_increase_percent": 54.40725447382372
+      },
+      "concurrency": 50,
+      "metrics": {
+        "go": {
+          "p50_latency_ms": {
+            "max": 62.301,
+            "median": 61.287,
+            "min": 60.558
+          },
+          "p95_latency_ms": {
+            "max": 118.371,
+            "median": 116.867,
+            "min": 115.283
+          },
+          "p99_latency_ms": {
+            "max": 124.616,
+            "median": 123.046,
+            "min": 121.429
+          },
+          "peak_rss_bytes": {
+            "max": 27508736.0,
+            "median": 27115520.0,
+            "min": 26968064.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.01,
+            "median": 0.0,
+            "min": 0.0
+          },
+          "throughput_tasks_per_second": {
+            "max": 8232.03363187462,
+            "median": 8123.597811168058,
+            "min": 8021.039185784312
+          },
+          "user_cpu_seconds": {
+            "max": 0.05,
+            "median": 0.04,
+            "min": 0.04
+          },
+          "wall_seconds": {
+            "max": 0.124672125,
+            "median": 0.123098167,
+            "min": 0.121476666
+          }
+        },
+        "python": {
+          "p50_latency_ms": {
+            "max": 93.73695799149573,
+            "median": 93.29504199558869,
+            "min": 91.09716699458659
+          },
+          "p95_latency_ms": {
+            "max": 182.64433299191296,
+            "median": 180.1909579662606,
+            "min": 176.777291984763
+          },
+          "p99_latency_ms": {
+            "max": 192.07295798696578,
+            "median": 189.22616698546335,
+            "min": 184.79033297626302
+          },
+          "peak_rss_bytes": {
+            "max": 80183296.0,
+            "median": 79986688.0,
+            "min": 79724544.0
+          },
+          "system_cpu_seconds": {
+            "max": 0.04,
+            "median": 0.03,
+            "min": 0.02
+          },
+          "throughput_tasks_per_second": {
+            "max": 5383.465368490659,
+            "median": 5261.150351290801,
+            "min": 5181.181620254348
+          },
+          "user_cpu_seconds": {
+            "max": 0.31,
+            "median": 0.3,
+            "min": 0.3
+          },
+          "wall_seconds": {
+            "max": 0.19300616602413356,
+            "median": 0.19007249997230247,
+            "min": 0.18575395800871775
+          }
+        }
+      },
+      "scenario": "duplicate_10pct"
+    }
+  ],
+  "experiment_id": "needradar-collector-scheduler-v1-20260715",
+  "functional_equivalence": true,
+  "limitations": [
+    "Deterministic fake I/O does not model public platform latency, quotas, payload variance, or failures.",
+    "The comparison excludes SQLite, Vault, LLM, RAG, report generation, and content verification.",
+    "The Go service uses in-process state; this benchmark does not establish restart recovery or production SLA.",
+    "Results apply only to the frozen local machine, workload, runtime versions, and concurrency matrix."
+  ],
+  "manifest_sha256": "ec61ad74c6382e7d1e952fe975ed1c0a60fc181e362606dc9966b1cea55522ee",
+  "measurement_runs_per_combination": 5,
+  "runs_sha256": "efe68548b5dd4a78c791164b15f217db19e3b991f9c705a52018e021f61549ca",
+  "schema_version": 1,
+  "task_count": 1000
+}
