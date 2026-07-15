@@ -1,0 +1,13 @@
+{
+  "evaluation/rerank/pilot/annotation-template.csv": "d99fa34691be36a12d35fea589203ec1505ecc9d2c62a6c8a8320575f6bab321",
+  "evaluation/rerank/pilot/batch-1-candidates.jsonl": "5607e92d63c5b6ff6387dc528b73ec79ca2e5739c5ea5e4511bbe8578365e9fa",
+  "evaluation/rerank/pilot/labels-adjudicated.csv": "904cfbce9a25e439e9ce3cfa2026f183911abacbf49035520b201e911ee29af7",
+  "evaluation/rerank/pilot/labels-adjudicated.manifest.json": "ff44a27fc0feac672dff4b7f84cbf76d84f90c389f39ecbac0f9f37521137bc3",
+  "evaluation/rerank/pilot/manifest.json": "7d1d1355f204570e05541d45a47ecd72cd7ed39f0f2630478545d2cddd6360d9",
+  "evaluation/rerank/pilot/pool.jsonl": "76606921bbf4831b0f2d235267565b5271ec13b922461c5ec31a2f99486fb6d0",
+  "evaluation/rerank/pilot/report.json": "808e5f42363411e1846e4cd4e189d5a35746f31dbbe887f1867f706c0dedc0df",
+  "evaluation/rerank/pilot/report.md": "8f934c7f3a6379a6b9569fb9f8db2929eb1bc73bab6b03d76dddc14f560d4ce7",
+  "evaluation/rerank/pilot/reviewer-retest.csv": "2426cec278773619a4eb08551e78b5f94548cc83a1eab1f6027a57ef9c4b376f",
+  "evaluation/rerank/pilot/reviewer-single.csv": "00a40ebe0129c06883b27370acdd1945e96f3c7d63fb3f045c60d5b7d1b40ebc",
+  "evaluation/rerank/pilot/selection.json": "a554383a2ad76d0dff0158dcab4f923f7144516cd1a7f721c1399e2d0505debb"
+}

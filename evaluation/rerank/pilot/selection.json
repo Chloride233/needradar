@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "candidate_snapshot_path": "evaluation/rerank/candidates.jsonl",
+  "candidate_snapshot_sha256": "5fb066c57c4a1d734dabddc243795f5176ccb1f7c609142b33a0578f5043e977",
+  "eligible_split": "test",
+  "stratification": [
+    "platform",
+    "query_language"
+  ],
+  "batches": {
+    "1": {
+      "query_count": 30,
+      "query_ids": [
+        "07ab0993f57c069a",
+        "0c0777faef880046",
+        "10b971546306e791",
+        "18e35c69b64beb96",
+        "1d255f54c5ec9397",
+        "21a7df23e4293d46",
+        "24edc9aeaa101200",
+        "2897c1ce1053d860",
+        "3a56a85dc3c8879f",
+        "40fb2bbfa5030d4a",
+        "42e99aa365014fe6",
+        "59fb0597c5784d04",
+        "5a98004ced487ac6",
+        "5b5acb35134ef28c",
+        "5eeedcd230d7e6e0",
+        "72aaacb68337d2dd",
+        "758f71a26e6d0c88",
+        "7ac11c7d8fdbb5a1",
+        "93e55f016fc13f53",
+        "a41b7e051fa5b105",
+        "b024a1d7fa7f2aa7",
+        "b225c344c63dd460",
+        "b800edaa5bfca8a0",
+        "c78f2dca03fe1a90",
+        "d8c7c3d251404b2b",
+        "dbd3b745c3c2491a",
+        "dfac444c539d8f70",
+        "e4171dd61eeca138",
+        "e51827c29ba7e2d9",
+        "f017ac0e207e5581"
+      ],
+      "selection_sha256": "950fde9b6b50aec1dbe29cc7285f1bfd97bddfa87b702be84b57a65aa969d38a",
+      "strata": {
+        "github/non_cjk": 10,
+        "juejin/cjk": 3,
+        "juejin/mixed": 7,
+        "stackoverflow/non_cjk": 10
+      },
+      "snapshot_path": "evaluation/rerank/pilot/batch-1-candidates.jsonl",
+      "snapshot_sha256": "5607e92d63c5b6ff6387dc528b73ec79ca2e5739c5ea5e4511bbe8578365e9fa"
+    }
+  },
+  "updated_at": "2026-07-15T07:14:27.302795+00:00"
+}

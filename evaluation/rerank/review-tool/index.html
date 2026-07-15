@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>NeedRadar 相关性盲审</title>
+    <link rel="stylesheet" href="/review.css" />
+  </head>
+  <body>
+    <div id="loading" class="loading" role="status">正在验证冻结标注包...</div>
+
+    <main id="app" class="app" hidden>
+      <header class="topbar">
+        <div class="brand-block">
+          <strong>NeedRadar</strong>
+          <span>相关性盲审</span>
+        </div>
+
+        <div class="stage-block" aria-label="审查阶段">
+          <span id="stageLabel" class="stage-label"></span>
+          <span id="progressText" class="progress-text"></span>
+          <div class="progress-track" aria-hidden="true">
+            <span id="progressBar" class="progress-bar"></span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button id="importButton" class="button secondary" type="button">导入进度</button>
+          <button id="exportProgressButton" class="button secondary" type="button">导出进度</button>
+          <input id="progressFile" type="file" accept="application/json,.json" hidden />
+        </div>
+      </header>
+
+      <div id="integrityBand" class="integrity-band">
+        <span id="sourceSummary"></span>
+        <code id="sourceHash"></code>
+      </div>
+
+      <section id="reviewWorkspace" class="review-workspace" aria-live="polite">
+        <aside id="queryRail" class="query-rail" aria-label="查询列表">
+          <div class="rail-heading">
+            <strong>查询</strong>
+            <span id="querySummary"></span>
+          </div>
+          <div id="queryList" class="query-list"></div>
+        </aside>
+
+        <article class="review-content">
+          <section class="query-context">
+            <span id="queryIndex" class="eyebrow"></span>
+            <h1 id="queryText"></h1>
+          </section>
+
+          <section class="candidate-content">
+            <div class="candidate-meta">
+              <span id="candidatePlatform" class="platform"></span>
+              <code id="candidateId"></code>
+            </div>
+            <h2 id="candidateTitle"></h2>
+            <div id="candidateExcerpt" class="candidate-excerpt"></div>
+          </section>
+        </article>
+
+        <aside class="decision-rail" aria-label="相关性判断">
+          <div id="comparisonPanel" class="comparison-panel" hidden>
+            <div><span>首轮</span><strong id="firstGrade"></strong></div>
+            <div><span>重测</span><strong id="retestGrade"></strong></div>
+          </div>
+
+          <fieldset class="grade-fieldset">
+            <legend id="gradeLegend">相关性</legend>
+            <button class="grade-button grade-0" data-grade="0" type="button">
+              <strong>0</strong><span>不相关</span>
+            </button>
+            <button class="grade-button grade-1" data-grade="1" type="button">
+              <strong>1</strong><span>部分相关</span>
+            </button>
+            <button class="grade-button grade-2" data-grade="2" type="button">
+              <strong>2</strong><span>高度相关</span>
+            </button>
+          </fieldset>
+
+          <label id="uncertainLabel" class="toggle-row">
+            <input id="uncertainInput" type="checkbox" />
+            <span>不确定</span>
+          </label>
+
+          <label class="notes-field">
+            <span id="notesLabel">备注</span>
+            <textarea id="notesInput" rows="5" maxlength="2000"></textarea>
+          </label>
+
+          <button id="adjudicateButton" class="button primary full" type="button" hidden>裁决并继续</button>
+
+          <div class="navigation-row">
+            <button id="previousButton" class="icon-button" type="button" title="上一条" aria-label="上一条">←</button>
+            <span id="itemPosition"></span>
+            <button id="nextButton" class="icon-button" type="button" title="下一条" aria-label="下一条">→</button>
+          </div>
+
+          <button id="stageActionButton" class="button primary full" type="button" disabled></button>
+        </aside>
+      </section>
+
+      <section id="stagePanel" class="stage-panel" hidden>
+        <p id="stageEyebrow" class="eyebrow"></p>
+        <h1 id="stageTitle"></h1>
+        <p id="stageDescription"></p>
+        <dl id="stageMetrics" class="metric-grid"></dl>
+        <div id="stageDownloads" class="download-actions" hidden>
+          <button id="downloadFirstButton" class="button secondary" type="button">首轮 CSV</button>
+          <button id="downloadRetestButton" class="button secondary" type="button">重测 CSV</button>
+          <button id="downloadFinalButton" class="button primary" type="button">完整证据包</button>
+        </div>
+        <button id="panelActionButton" class="button primary" type="button"></button>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="/review.js"></script>
+  </body>
+</html>
