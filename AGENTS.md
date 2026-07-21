@@ -41,7 +41,7 @@ vault/                    # Obsidian vault（内容存储）
   05-工作日志/             # 每日工作日志（日期命名）
   06-关系图谱/             # Mermaid 需求关系图
 src/needradar/
-  api/v1/                 # REST API 路由（12 个模块）
+  api/v1/                 # REST API 路由（18 个已注册模块）
   core/                   # 配置、数据库、日志、安全
   crawlers/               # 各平台爬虫（插件化自动发现）
   llm/                    # LLM 调用层（provider, pricing, presets, sanitizer）
@@ -52,7 +52,7 @@ src/needradar/
   vector/                 # LanceDB 向量存储（去重/检索/RAG）
   cli.py                  # CLI 一键管道
 frontend/                 # Vue 3 + Naive UI 前端（TypeScript）
-  src/views/              # 12 个页面组件
+  src/views/              # 16 个页面组件
   src/composables/        # Vue composables (useAgent, useReveal)
   src/styles/             # Design tokens (CSS variables)
   src/i18n/               # 国际化（zh/en）
@@ -77,8 +77,8 @@ scripts/                  # 开发辅助脚本
 - 数据库：SQLite（WAL 模式），文件位于 `data/needradar.db`
 - LLM 配置持久化：`data/llm_config.json`
 - 修改后端代码后建议手动重启 uvicorn（Windows 下 `--reload` 不稳定）
-- 支持平台：GitHub / StackOverflow / 掘金 / B站（插件化自动发现，新增爬虫无需改配置）
-- 前端审计规则：每次前端改动后需 Playwright CLI 验证（参见 memory/frontend_testing_rule）
+- 关键词采集平台：3 个 Full Support、6 个 Experimental；以 `docs/crawler-audit.md` 为权威清单
+- 前端审计规则：每次前端改动后需用 Playwright 验证受影响的流程和视口
 
 ### macOS 工作副本
 

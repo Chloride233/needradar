@@ -2,7 +2,6 @@
 
 感谢你对 NeedRadar 的关注！欢迎贡献代码、报告问题或建议新功能。
 
-<!-- AUTO-GENERATED: scripts-reference -->
 ## 常用命令
 
 | 命令 | 说明 |
@@ -28,13 +27,11 @@
 | `NR_LANCEDB_DIR` | 否 | LanceDB 持久化路径 | `./data/lancedb` |
 | `NR_DATABASE_URL` | 否 | PostgreSQL 连接串（生产用） | `postgresql+asyncpg://...` |
 
-<!-- /AUTO-GENERATED -->
-
 ## 快速开始
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/NeedRadar.git
-cd NeedRadar
+git clone https://github.com/Chloride233/needradar.git
+cd needradar
 cp .env.example .env
 # 编辑 .env，填入 NR_DEEPSEEK_API_KEY
 pip install -e ".[dev]"
@@ -53,7 +50,7 @@ npm run dev
 
 ```
 src/needradar/
-  api/v1/          # REST API 路由（dashboard, tasks, reports, requirements, scheduler, trending, verification, usage, llm_config, prompt_optimizer）
+  api/v1/          # REST API 路由（18 个已注册模块）
   core/            # 配置、数据库、日志、安全中间件
   crawlers/        # 各平台爬虫（插件化自动发现）
   llm/             # LLM 调用层（provider, pricing, presets, sanitizer）
@@ -65,7 +62,7 @@ src/needradar/
   cli.py           # 一键管道 CLI
   main.py          # FastAPI 入口
 frontend/          # Vue 3 + Naive UI（TypeScript）
-  src/views/       # 11 个页面组件
+  src/views/       # 16 个页面组件
   src/i18n/        # 国际化（zh/en）
   src/api/         # API 客户端
 config/            # prompts.yaml, prompt_test_cases.yaml 等
@@ -81,12 +78,8 @@ vault/             # Obsidian vault（内容存储）
 
 ## 支持的数据源
 
-| 平台 | Crawler | 自动发现 |
-|------|---------|----------|
-| GitHub Discussions | `GithubCrawler` | ✅ |
-| Stack Overflow | `StackOverflowCrawler` | ✅ |
-| 掘金 | `JuejinCrawler` | ✅ |
-| Bilibili | `BilibiliCrawler` | ✅ |
+NeedRadar 当前有 3 个 Full Support 和 6 个 Experimental 关键词采集平台。认证、
+限流、支持等级和测试覆盖以 [crawler audit](docs/crawler-audit.md) 为准。
 
 ## 如何贡献
 

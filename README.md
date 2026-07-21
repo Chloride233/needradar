@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 🔍 NeedRadar
 
@@ -52,7 +52,7 @@ Most teams build features based on intuition. NeedRadar replaces that with a sys
 
 ```bash
 # Clone
-git clone https://github.com/YOUR_USERNAME/needradar.git
+git clone https://github.com/Chloride233/needradar.git
 cd needradar
 
 # Backend
@@ -137,7 +137,7 @@ python -m needradar.cli stats
 ```
 needradar/
 ├── src/needradar/
-│   ├── api/v1/           # REST API (16 modules)
+│   ├── api/v1/           # REST API (18 route modules)
 │   ├── crawlers/         # Platform crawlers (plugin-based)
 │   ├── llm/              # LLM layer (provider, pricing, sanitizer)
 │   ├── models/           # SQLAlchemy models
@@ -150,7 +150,7 @@ needradar/
 │   ├── vector/           # LanceDB vector store
 │   └── cli.py            # CLI entry point
 ├── frontend/
-│   ├── src/views/        # 12 page components
+│   ├── src/views/        # 16 page components
 │   ├── src/composables/  # Vue composables (useAgent, useReveal)
 │   └── src/styles/       # Design tokens (Apple-inspired)
 ├── config/
@@ -248,4 +248,3 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR
 **NeedRadar** — *Every AI product direction, backed by data.*
 
 </div>
-]]>
