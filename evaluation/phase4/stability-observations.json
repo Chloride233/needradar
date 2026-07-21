@@ -1,0 +1,157 @@
+{
+  "generated_at": "2026-07-14T08:56:13.600859+00:00",
+  "plan": {
+    "schema_version": 1,
+    "keyword": "AI agent",
+    "platforms": [
+      "github",
+      "stackoverflow",
+      "juejin"
+    ],
+    "runs_per_platform": 3,
+    "max_items_per_request": 20,
+    "planned_requests": 9,
+    "stores": [
+      "platform",
+      "run",
+      "status",
+      "elapsed_seconds",
+      "item_count",
+      "unique_item_count",
+      "duplicate_item_count",
+      "error_type"
+    ],
+    "does_not_store": [
+      "author",
+      "source_url",
+      "title",
+      "content",
+      "tags"
+    ]
+  },
+  "plan_sha256": "e84946f623633b45f50fd0c19a14928e6d8d9c52f60f58d2b85eb0f19bd667ff",
+  "observations": [
+    {
+      "platform": "github",
+      "run": 1,
+      "status": "success",
+      "elapsed_seconds": 1.103,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    },
+    {
+      "platform": "stackoverflow",
+      "run": 1,
+      "status": "success",
+      "elapsed_seconds": 0.697,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    },
+    {
+      "platform": "juejin",
+      "run": 1,
+      "status": "success",
+      "elapsed_seconds": 0.452,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    },
+    {
+      "platform": "github",
+      "run": 2,
+      "status": "success",
+      "elapsed_seconds": 0.228,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    },
+    {
+      "platform": "stackoverflow",
+      "run": 2,
+      "status": "success",
+      "elapsed_seconds": 1.344,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    },
+    {
+      "platform": "juejin",
+      "run": 2,
+      "status": "success",
+      "elapsed_seconds": 0.369,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    },
+    {
+      "platform": "github",
+      "run": 3,
+      "status": "success",
+      "elapsed_seconds": 0.229,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    },
+    {
+      "platform": "stackoverflow",
+      "run": 3,
+      "status": "success",
+      "elapsed_seconds": 0.563,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    },
+    {
+      "platform": "juejin",
+      "run": 3,
+      "status": "success",
+      "elapsed_seconds": 0.298,
+      "item_count": 20,
+      "unique_item_count": 20,
+      "duplicate_item_count": 0,
+      "error_type": null
+    }
+  ],
+  "summary": {
+    "observations": 9,
+    "platforms": {
+      "github": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "median_elapsed_seconds": 0.229,
+        "items": 60,
+        "duplicate_items": 0,
+        "errors": {}
+      },
+      "juejin": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "median_elapsed_seconds": 0.369,
+        "items": 60,
+        "duplicate_items": 0,
+        "errors": {}
+      },
+      "stackoverflow": {
+        "attempts": 3,
+        "successes": 3,
+        "success_rate": 1.0,
+        "median_elapsed_seconds": 0.697,
+        "items": 60,
+        "duplicate_items": 0,
+        "errors": {}
+      }
+    }
+  }
+}

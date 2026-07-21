@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-07-15T07:21:01.929150+00:00",
+  "candidate_snapshot_sha256": "5fb066c57c4a1d734dabddc243795f5176ccb1f7c609142b33a0578f5043e977",
+  "selection_path": "evaluation/rerank/pilot/selection.json",
+  "selection_sha256": "a554383a2ad76d0dff0158dcab4f923f7144516cd1a7f721c1399e2d0505debb",
+  "top_k": 3,
+  "models": [
+    "BAAI/bge-reranker-v2-m3",
+    "Qwen/Qwen3-Reranker-0.6B"
+  ],
+  "review_method": "single_expert_blind_test_retest",
+  "unsupported_claims": [
+    "MRR@10",
+    "nDCG@10",
+    "full Recall@3",
+    "gate calibration"
+  ],
+  "executions": [
+    {
+      "started_at": "2026-07-15T07:18:46.610571+00:00",
+      "finished_at": "2026-07-15T07:19:51.058647+00:00",
+      "status": "completed",
+      "stop_reason": null,
+      "modes": [
+        "bge",
+        "qwen3"
+      ],
+      "query_count": 30,
+      "selection_sha256": "950fde9b6b50aec1dbe29cc7285f1bfd97bddfa87b702be84b57a65aa969d38a",
+      "candidate_snapshot_sha256": "5607e92d63c5b6ff6387dc528b73ec79ca2e5739c5ea5e4511bbe8578365e9fa",
+      "request_options_sha256": "9ec4096e2fe9f95384c264b71e648d4602c59b4f31f33dc840e0d0ea2ba90a4e",
+      "completed": 60,
+      "resumed": 0,
+      "failures": 0,
+      "provider_attempts": 60,
+      "actual_cost_cny": 0.01968701,
+      "hard_budget_cny": 0.07
+    }
+  ],
+  "pool": {
+    "through_batch": 1,
+    "query_count": 30,
+    "candidate_count": 192,
+    "candidate_count_per_query": {
+      "minimum": 4,
+      "maximum": 8,
+      "mean": 6.4
+    },
+    "pool_path": "evaluation/rerank/pilot/pool.jsonl",
+    "pool_sha256": "76606921bbf4831b0f2d235267565b5271ec13b922461c5ec31a2f99486fb6d0",
+    "annotation_path": "evaluation/rerank/pilot/annotation-template.csv",
+    "annotation_sha256": "d99fa34691be36a12d35fea589203ec1505ecc9d2c62a6c8a8320575f6bab321",
+    "overlap": [
+      {
+        "query_id": "07ab0993f57c069a",
+        "pool_size": 7,
+        "baseline_bge": 0,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "0c0777faef880046",
+        "pool_size": 6,
+        "baseline_bge": 2,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "10b971546306e791",
+        "pool_size": 8,
+        "baseline_bge": 0,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "18e35c69b64beb96",
+        "pool_size": 7,
+        "baseline_bge": 0,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "1d255f54c5ec9397",
+        "pool_size": 7,
+        "baseline_bge": 1,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "21a7df23e4293d46",
+        "pool_size": 6,
+        "baseline_bge": 1,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "24edc9aeaa101200",
+        "pool_size": 6,
+        "baseline_bge": 1,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "2897c1ce1053d860",
+        "pool_size": 8,
+        "baseline_bge": 1,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 0
+      },
+      {
+        "query_id": "3a56a85dc3c8879f",
+        "pool_size": 6,
+        "baseline_bge": 1,
+        "baseline_qwen3": 2,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "40fb2bbfa5030d4a",
+        "pool_size": 7,
+        "baseline_bge": 1,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "42e99aa365014fe6",
+        "pool_size": 5,
+        "baseline_bge": 2,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "59fb0597c5784d04",
+        "pool_size": 6,
+        "baseline_bge": 1,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "5a98004ced487ac6",
+        "pool_size": 7,
+        "baseline_bge": 0,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "5b5acb35134ef28c",
+        "pool_size": 5,
+        "baseline_bge": 2,
+        "baseline_qwen3": 2,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "5eeedcd230d7e6e0",
+        "pool_size": 4,
+        "baseline_bge": 2,
+        "baseline_qwen3": 2,
+        "bge_qwen3": 3
+      },
+      {
+        "query_id": "72aaacb68337d2dd",
+        "pool_size": 8,
+        "baseline_bge": 0,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "758f71a26e6d0c88",
+        "pool_size": 8,
+        "baseline_bge": 0,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "7ac11c7d8fdbb5a1",
+        "pool_size": 4,
+        "baseline_bge": 2,
+        "baseline_qwen3": 2,
+        "bge_qwen3": 3
+      },
+      {
+        "query_id": "93e55f016fc13f53",
+        "pool_size": 6,
+        "baseline_bge": 0,
+        "baseline_qwen3": 2,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "a41b7e051fa5b105",
+        "pool_size": 6,
+        "baseline_bge": 1,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "b024a1d7fa7f2aa7",
+        "pool_size": 5,
+        "baseline_bge": 2,
+        "baseline_qwen3": 2,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "b225c344c63dd460",
+        "pool_size": 8,
+        "baseline_bge": 0,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 0
+      },
+      {
+        "query_id": "b800edaa5bfca8a0",
+        "pool_size": 6,
+        "baseline_bge": 1,
+        "baseline_qwen3": 2,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "c78f2dca03fe1a90",
+        "pool_size": 7,
+        "baseline_bge": 0,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "d8c7c3d251404b2b",
+        "pool_size": 7,
+        "baseline_bge": 0,
+        "baseline_qwen3": 2,
+        "bge_qwen3": 0
+      },
+      {
+        "query_id": "dbd3b745c3c2491a",
+        "pool_size": 6,
+        "baseline_bge": 0,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "dfac444c539d8f70",
+        "pool_size": 6,
+        "baseline_bge": 1,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 2
+      },
+      {
+        "query_id": "e4171dd61eeca138",
+        "pool_size": 6,
+        "baseline_bge": 2,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "e51827c29ba7e2d9",
+        "pool_size": 7,
+        "baseline_bge": 1,
+        "baseline_qwen3": 1,
+        "bge_qwen3": 1
+      },
+      {
+        "query_id": "f017ac0e207e5581",
+        "pool_size": 7,
+        "baseline_bge": 0,
+        "baseline_qwen3": 0,
+        "bge_qwen3": 2
+      }
+    ]
+  }
+}

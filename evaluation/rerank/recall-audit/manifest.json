@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "protocol_version": "rerank-recall-top20-coverage-audit-v1",
+  "scope": {
+    "query_count": 12,
+    "query_ids": [
+      "10b971546306e791",
+      "24edc9aeaa101200",
+      "59fb0597c5784d04",
+      "5b5acb35134ef28c",
+      "72aaacb68337d2dd",
+      "93e55f016fc13f53",
+      "a41b7e051fa5b105",
+      "b225c344c63dd460",
+      "b800edaa5bfca8a0",
+      "c78f2dca03fe1a90",
+      "d8c7c3d251404b2b",
+      "dfac444c539d8f70"
+    ],
+    "source_candidate_positions": 240,
+    "deduplicated_candidates": 240,
+    "duplicate_positions": 0
+  },
+  "sources": {
+    "candidate_snapshot_path": "evaluation/rerank/candidates.jsonl",
+    "candidate_snapshot_sha256": "5fb066c57c4a1d734dabddc243795f5176ccb1f7c609142b33a0578f5043e977",
+    "pilot_report_path": "evaluation/rerank/pilot/report.json",
+    "pilot_report_sha256": "808e5f42363411e1846e4cd4e189d5a35746f31dbbe887f1867f706c0dedc0df",
+    "pilot_pool_path": "evaluation/rerank/pilot/pool.jsonl",
+    "pilot_pool_sha256": "76606921bbf4831b0f2d235267565b5271ec13b922461c5ec31a2f99486fb6d0",
+    "pilot_labels_path": "evaluation/rerank/pilot/labels-adjudicated.csv",
+    "pilot_labels_sha256": "904cfbce9a25e439e9ce3cfa2026f183911abacbf49035520b201e911ee29af7",
+    "pilot_review_method": "single_expert_blind_test_retest"
+  },
+  "deduplication": {
+    "rule": "nfkc-casefold-html-unescape-whitespace-v1",
+    "noise_duplicate_rate_threshold": 0.2,
+    "representative": "lowest original_rank, then document_id"
+  },
+  "classification": {
+    "rank_failure": "relevant candidate in frozen Top-20 but none in the original judged Top-3 union",
+    "coverage_failure": "no relevant candidate in the deduplicated frozen Top-20",
+    "corpus_noise_failure": "overlapping contributor when duplicate rate meets the frozen threshold",
+    "unresolved": "incomplete labels or conflicting evidence"
+  },
+  "review": {
+    "method": "single_expert_blind_test_retest",
+    "rubric": [
+      0,
+      1,
+      2
+    ],
+    "system_blinded": true
+  },
+  "artifacts": {
+    "pool_path": "evaluation/rerank/recall-audit/pool.jsonl",
+    "pool_sha256": "31937e19973541215efa4fdf25c17906faaf90a90daadf754a3cf11e33d5fb88",
+    "annotation_path": "evaluation/rerank/recall-audit/annotation-template.csv",
+    "annotation_sha256": "dbd1b69f1c9e19fa8ac99b592e119b1e2ac228f9494dfa3f221b7f7a79bafaff"
+  },
+  "limitations": [
+    "Coverage failure means no relevant document in the frozen Top-20, not absence from the full corpus.",
+    "Exact normalized duplicate detection does not identify semantic near-duplicates.",
+    "This audit does not change retrieval weights, corpus contents, or Rerank model selection."
+  ]
+}

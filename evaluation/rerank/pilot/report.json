@@ -1,0 +1,455 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-15T09:57:16.882168+00:00",
+  "pilot_scope": {
+    "through_batch": 1,
+    "query_count": 30,
+    "judged_pool_candidate_count": 192,
+    "top_k": 3,
+    "recall_definition": "pooled relevant documents in the judged three-system Top-3 union"
+  },
+  "label_status": "single_expert_test_retest_validated",
+  "label_provenance": {
+    "schema_version": 2,
+    "labels_path": "labels-adjudicated.csv",
+    "labels_sha256": "904cfbce9a25e439e9ce3cfa2026f183911abacbf49035520b201e911ee29af7",
+    "first_pass_path": "reviewer-single.csv",
+    "first_pass_sha256": "00a40ebe0129c06883b27370acdd1945e96f3c7d63fb3f045c60d5b7d1b40ebc",
+    "retest_path": "reviewer-retest.csv",
+    "retest_sha256": "2426cec278773619a4eb08551e78b5f94548cc83a1eab1f6027a57ef9c4b376f",
+    "source_template_sha256": "d99fa34691be36a12d35fea589203ec1505ecc9d2c62a6c8a8320575f6bab321",
+    "protocol_version": "single-expert-blind-test-retest-v1",
+    "review_method": "single_expert_blind_test_retest",
+    "reviewer_count": 1,
+    "independent_review": false,
+    "system_blinded": true,
+    "adjudicated": true,
+    "all_disagreements_adjudicated": true,
+    "candidate_count": 192,
+    "retest_fraction": 0.1,
+    "retest_sample_count": 20,
+    "retest_delay_hours": 0.0006494444444444445,
+    "exact_agreement": 0.95,
+    "weighted_kappa": 0.84375,
+    "disagreement_count": 1,
+    "acceptance": {
+      "exact_agreement_minimum": 0.85,
+      "weighted_kappa_minimum": 0.8,
+      "passed": true
+    },
+    "first_pass_completed_at": "2026-07-15T07:37:27.645Z",
+    "retest_started_at": "2026-07-15T07:37:29.983Z",
+    "retest_completed_at": "2026-07-15T07:47:09.480Z",
+    "completed_at": "2026-07-15T07:47:41.780Z"
+  },
+  "system": {
+    "BAAI/bge-reranker-v2-m3": {
+      "successful_queries": 30,
+      "failed_queries": 0,
+      "success_rate": 1.0,
+      "latency_p50_ms": 413.03499999999997,
+      "latency_p95_ms": 868.9153999999993,
+      "input_tokens": 272986,
+      "output_tokens": 0,
+      "total_tokens": 272986,
+      "actual_cost_cny": 0.0,
+      "cost_per_successful_query_cny": 0.0,
+      "retry_count": 0
+    },
+    "Qwen/Qwen3-Reranker-0.6B": {
+      "successful_queries": 30,
+      "failed_queries": 0,
+      "success_rate": 1.0,
+      "latency_p50_ms": 421.368,
+      "latency_p95_ms": 500.5683,
+      "input_tokens": 281243,
+      "output_tokens": 0,
+      "total_tokens": 281243,
+      "actual_cost_cny": 0.01968701,
+      "cost_per_successful_query_cny": 0.0006562336666666667,
+      "retry_count": 0
+    }
+  },
+  "quality": {
+    "none": {
+      "valid_queries": 30,
+      "mrr_at_3": 0.26666666666666666,
+      "ndcg_at_3": 0.23647901364908466,
+      "pooled_recall_at_3": 0.23095238095238096,
+      "precision_at_3": 0.16666666666666666,
+      "irrelevant_top3_rate": 0.8333333333333334
+    },
+    "BAAI/bge-reranker-v2-m3": {
+      "valid_queries": 30,
+      "mrr_at_3": 0.3777777777777778,
+      "ndcg_at_3": 0.34604454056411516,
+      "pooled_recall_at_3": 0.380952380952381,
+      "precision_at_3": 0.27777777777777773,
+      "irrelevant_top3_rate": 0.7222222222222222
+    },
+    "Qwen/Qwen3-Reranker-0.6B": {
+      "valid_queries": 30,
+      "mrr_at_3": 0.46111111111111114,
+      "ndcg_at_3": 0.41695679536348124,
+      "pooled_recall_at_3": 0.4392857142857143,
+      "precision_at_3": 0.3,
+      "irrelevant_top3_rate": 0.7
+    }
+  },
+  "comparisons": {
+    "BAAI/bge-reranker-v2-m3_vs_none": {
+      "metric": "ndcg_at_3",
+      "query_count": 30,
+      "wins": 8,
+      "ties": 19,
+      "losses": 3,
+      "bootstrap": {
+        "mean": 0.10956552691503048,
+        "confidence_level": 0.95,
+        "interval": [
+          -0.035377866810881814,
+          0.25581138664107295
+        ],
+        "samples": 10000,
+        "seed": 20260715
+      }
+    },
+    "Qwen/Qwen3-Reranker-0.6B_vs_none": {
+      "metric": "ndcg_at_3",
+      "query_count": 30,
+      "wins": 13,
+      "ties": 12,
+      "losses": 5,
+      "bootstrap": {
+        "mean": 0.18047778171439655,
+        "confidence_level": 0.95,
+        "interval": [
+          -0.0012188631263786334,
+          0.35035466106588203
+        ],
+        "samples": 10000,
+        "seed": 20260715
+      }
+    },
+    "BAAI/bge-reranker-v2-m3_vs_Qwen/Qwen3-Reranker-0.6B": {
+      "metric": "ndcg_at_3",
+      "query_count": 30,
+      "wins": 5,
+      "ties": 19,
+      "losses": 6,
+      "bootstrap": {
+        "mean": -0.07091225479936607,
+        "confidence_level": 0.95,
+        "interval": [
+          -0.20078722550870912,
+          0.048659122158054395
+        ],
+        "samples": 10000,
+        "seed": 20260715
+      }
+    }
+  },
+  "slices": {
+    "platform": {
+      "github": {
+        "none": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.1,
+          "ndcg_at_3": 0.07039180890341348,
+          "pooled_recall_at_3": 0.06666666666666667,
+          "precision_at_3": 0.06666666666666667,
+          "irrelevant_top3_rate": 0.9333333333333333
+        },
+        "BAAI/bge-reranker-v2-m3": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.2,
+          "ndcg_at_3": 0.2,
+          "pooled_recall_at_3": 0.2,
+          "precision_at_3": 0.16666666666666666,
+          "irrelevant_top3_rate": 0.8333333333333334
+        },
+        "Qwen/Qwen3-Reranker-0.6B": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.25,
+          "ndcg_at_3": 0.26309297535714576,
+          "pooled_recall_at_3": 0.3,
+          "precision_at_3": 0.2,
+          "irrelevant_top3_rate": 0.8
+        }
+      },
+      "juejin": {
+        "none": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.6,
+          "ndcg_at_3": 0.5066096163249677,
+          "pooled_recall_at_3": 0.4261904761904762,
+          "precision_at_3": 0.3333333333333333,
+          "irrelevant_top3_rate": 0.6666666666666666
+        },
+        "BAAI/bge-reranker-v2-m3": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.6,
+          "ndcg_at_3": 0.4556980059734726,
+          "pooled_recall_at_3": 0.4428571428571429,
+          "precision_at_3": 0.4,
+          "irrelevant_top3_rate": 0.6
+        },
+        "Qwen/Qwen3-Reranker-0.6B": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.6,
+          "ndcg_at_3": 0.4594630909538358,
+          "pooled_recall_at_3": 0.4011904761904762,
+          "precision_at_3": 0.4333333333333333,
+          "irrelevant_top3_rate": 0.5666666666666667
+        }
+      },
+      "stackoverflow": {
+        "none": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.1,
+          "ndcg_at_3": 0.13243561571887283,
+          "pooled_recall_at_3": 0.2,
+          "precision_at_3": 0.1,
+          "irrelevant_top3_rate": 0.9
+        },
+        "BAAI/bge-reranker-v2-m3": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.33333333333333337,
+          "ndcg_at_3": 0.38243561571887286,
+          "pooled_recall_at_3": 0.5,
+          "precision_at_3": 0.26666666666666666,
+          "irrelevant_top3_rate": 0.7333333333333333
+        },
+        "Qwen/Qwen3-Reranker-0.6B": {
+          "valid_queries": 10,
+          "mrr_at_3": 0.5333333333333333,
+          "ndcg_at_3": 0.5283143197794621,
+          "pooled_recall_at_3": 0.6166666666666667,
+          "precision_at_3": 0.26666666666666666,
+          "irrelevant_top3_rate": 0.7333333333333333
+        }
+      }
+    },
+    "query_language": {
+      "non_cjk": {
+        "none": {
+          "valid_queries": 20,
+          "mrr_at_3": 0.1,
+          "ndcg_at_3": 0.10141371231114316,
+          "pooled_recall_at_3": 0.13333333333333333,
+          "precision_at_3": 0.08333333333333333,
+          "irrelevant_top3_rate": 0.9166666666666666
+        },
+        "BAAI/bge-reranker-v2-m3": {
+          "valid_queries": 20,
+          "mrr_at_3": 0.26666666666666666,
+          "ndcg_at_3": 0.2912178078594364,
+          "pooled_recall_at_3": 0.35,
+          "precision_at_3": 0.21666666666666665,
+          "irrelevant_top3_rate": 0.7833333333333333
+        },
+        "Qwen/Qwen3-Reranker-0.6B": {
+          "valid_queries": 20,
+          "mrr_at_3": 0.39166666666666666,
+          "ndcg_at_3": 0.3957036475683039,
+          "pooled_recall_at_3": 0.4583333333333333,
+          "precision_at_3": 0.2333333333333333,
+          "irrelevant_top3_rate": 0.7666666666666666
+        }
+      },
+      "mixed": {
+        "none": {
+          "valid_queries": 7,
+          "mrr_at_3": 0.5714285714285714,
+          "ndcg_at_3": 0.4635403498051277,
+          "pooled_recall_at_3": 0.40476190476190477,
+          "precision_at_3": 0.2857142857142857,
+          "irrelevant_top3_rate": 0.7142857142857143
+        },
+        "BAAI/bge-reranker-v2-m3": {
+          "valid_queries": 7,
+          "mrr_at_3": 0.5714285714285714,
+          "ndcg_at_3": 0.46796741865852975,
+          "pooled_recall_at_3": 0.4761904761904762,
+          "precision_at_3": 0.3333333333333333,
+          "irrelevant_top3_rate": 0.6666666666666666
+        },
+        "Qwen/Qwen3-Reranker-0.6B": {
+          "valid_queries": 7,
+          "mrr_at_3": 0.5714285714285714,
+          "ndcg_at_3": 0.47334611148762,
+          "pooled_recall_at_3": 0.41666666666666663,
+          "precision_at_3": 0.38095238095238093,
+          "irrelevant_top3_rate": 0.619047619047619
+        }
+      },
+      "cjk": {
+        "none": {
+          "valid_queries": 3,
+          "mrr_at_3": 0.6666666666666666,
+          "ndcg_at_3": 0.6071045715379276,
+          "pooled_recall_at_3": 0.4761904761904762,
+          "precision_at_3": 0.4444444444444444,
+          "irrelevant_top3_rate": 0.5555555555555555
+        },
+        "BAAI/bge-reranker-v2-m3": {
+          "valid_queries": 3,
+          "mrr_at_3": 0.6666666666666666,
+          "ndcg_at_3": 0.42706937637500597,
+          "pooled_recall_at_3": 0.36507936507936506,
+          "precision_at_3": 0.5555555555555555,
+          "irrelevant_top3_rate": 0.4444444444444444
+        },
+        "Qwen/Qwen3-Reranker-0.6B": {
+          "valid_queries": 3,
+          "mrr_at_3": 0.6666666666666666,
+          "ndcg_at_3": 0.42706937637500597,
+          "pooled_recall_at_3": 0.36507936507936506,
+          "precision_at_3": 0.5555555555555555,
+          "irrelevant_top3_rate": 0.4444444444444444
+        }
+      }
+    }
+  },
+  "coverage": {
+    "grade_counts": {
+      "0": 153,
+      "1": 25,
+      "2": 14
+    },
+    "answerable_queries": 18,
+    "all_zero_queries": 12,
+    "answerable_query_rate": 0.6,
+    "all_zero_query_ids": [
+      "10b971546306e791",
+      "24edc9aeaa101200",
+      "59fb0597c5784d04",
+      "5b5acb35134ef28c",
+      "72aaacb68337d2dd",
+      "93e55f016fc13f53",
+      "a41b7e051fa5b105",
+      "b225c344c63dd460",
+      "b800edaa5bfca8a0",
+      "c78f2dca03fe1a90",
+      "d8c7c3d251404b2b",
+      "dfac444c539d8f70"
+    ],
+    "platforms": {
+      "github": {
+        "queries": 10,
+        "answerable_queries": 3
+      },
+      "juejin": {
+        "queries": 10,
+        "answerable_queries": 8
+      },
+      "stackoverflow": {
+        "queries": 10,
+        "answerable_queries": 7
+      }
+    }
+  },
+  "post_hoc_answerable_sensitivity": {
+    "status": "post_hoc_sensitivity_not_primary_decision_evidence",
+    "query_count": 18,
+    "quality": {
+      "none": {
+        "valid_queries": 18,
+        "mrr_at_3": 0.4444444444444444,
+        "ndcg_at_3": 0.3941316894151411,
+        "pooled_recall_at_3": 0.38492063492063494,
+        "precision_at_3": 0.2777777777777778,
+        "irrelevant_top3_rate": 0.7222222222222222
+      },
+      "BAAI/bge-reranker-v2-m3": {
+        "valid_queries": 18,
+        "mrr_at_3": 0.6296296296296297,
+        "ndcg_at_3": 0.5767409009401919,
+        "pooled_recall_at_3": 0.6349206349206349,
+        "precision_at_3": 0.4629629629629629,
+        "irrelevant_top3_rate": 0.537037037037037
+      },
+      "Qwen/Qwen3-Reranker-0.6B": {
+        "valid_queries": 18,
+        "mrr_at_3": 0.7685185185185186,
+        "ndcg_at_3": 0.6949279922724687,
+        "pooled_recall_at_3": 0.7321428571428572,
+        "precision_at_3": 0.5,
+        "irrelevant_top3_rate": 0.5
+      }
+    },
+    "comparisons": {
+      "BAAI/bge-reranker-v2-m3_vs_none": {
+        "metric": "ndcg_at_3",
+        "query_count": 18,
+        "wins": 8,
+        "ties": 7,
+        "losses": 3,
+        "bootstrap": {
+          "mean": 0.1826092115250508,
+          "confidence_level": 0.95,
+          "interval": [
+            -0.05511351166395174,
+            0.41340660192998036
+          ],
+          "samples": 10000,
+          "seed": 20260715
+        }
+      },
+      "Qwen/Qwen3-Reranker-0.6B_vs_none": {
+        "metric": "ndcg_at_3",
+        "query_count": 18,
+        "wins": 13,
+        "ties": 0,
+        "losses": 5,
+        "bootstrap": {
+          "mean": 0.30079630285732756,
+          "confidence_level": 0.95,
+          "interval": [
+            0.008816714802366706,
+            0.567155857727743
+          ],
+          "samples": 10000,
+          "seed": 20260715
+        }
+      },
+      "BAAI/bge-reranker-v2-m3_vs_Qwen/Qwen3-Reranker-0.6B": {
+        "metric": "ndcg_at_3",
+        "query_count": 18,
+        "wins": 5,
+        "ties": 7,
+        "losses": 6,
+        "bootstrap": {
+          "mean": -0.11818709133227677,
+          "confidence_level": 0.95,
+          "interval": [
+            -0.3350405101358067,
+            0.07934548902836296
+          ],
+          "samples": 10000,
+          "seed": 20260715
+        }
+      }
+    }
+  },
+  "selection": {
+    "status": "inconclusive_add_batch",
+    "selected_model_id": null,
+    "reason": "Pilot uncertainty or a quality/system tradeoff remains; Batch 2 may be proposed but not executed automatically."
+  },
+  "limitations": [
+    "This pilot evaluates only the frozen three-system Top-3 union.",
+    "Pooled Recall@3 is not recall against all Recall Top-20 candidates.",
+    "MRR@10, nDCG@10, and relevance-gate calibration are not supported by this pilot.",
+    "Single-expert test-retest labels are not multi-reviewer consensus.",
+    "Retest began after 0.000649 hours, so agreement measures immediate self-consistency rather than delayed temporal stability."
+  ],
+  "slice_regressions": {
+    "BAAI/bge-reranker-v2-m3": [
+      "platform:juejin"
+    ],
+    "Qwen/Qwen3-Reranker-0.6B": [
+      "platform:juejin"
+    ]
+  }
+}

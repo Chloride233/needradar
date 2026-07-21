@@ -182,8 +182,7 @@ class Phase3CorpusRetriever:
         min_score: float = 0.2,
         max_chars: int = 1500,
     ) -> str:
-        await self._ensure_index()
-        results = await self._get_vector_store().query([query], n_results=n_results)
+        results = await self.retrieve(query, n_results=n_results)
         parts = []
         total_chars = 0
         for result in results:
@@ -203,3 +202,17 @@ class Phase3CorpusRetriever:
         if not parts:
             return ""
         return "## Held-out RAG context\n\n" + "\n\n---\n\n".join(parts)
+
+    async def retrieve(self, query: str, n_results: int = 20) -> list[Any]:
+        """Return structured frozen-corpus candidates for offline experiments."""
+        await self._ensure_index()
+        return await self._get_vector_store().query([query], n_results=n_results)
+
+    async def retrieve_hybrid(self, query: str, n_results: int = 20) -> list[Any]:
+        """Return hybrid dense and lexical candidates for rerank experiments."""
+        await self._ensure_index()
+        vector_store = self._get_vector_store()
+        hybrid_query = getattr(vector_store, "hybrid_query", None)
+        if not callable(hybrid_query):
+            raise RuntimeError("frozen corpus vector store does not support hybrid recall")
+        return await hybrid_query([query], n_results=n_results)

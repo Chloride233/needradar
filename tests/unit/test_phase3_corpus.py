@@ -133,6 +133,9 @@ class FakeVectorStore:
             )
         ]
 
+    async def hybrid_query(self, query_texts, n_results=10):
+        return await self.query(query_texts, n_results=n_results)
+
 
 @pytest.mark.asyncio
 async def test_frozen_retriever_indexes_corpus_and_exposes_provenance(tmp_path):
@@ -159,6 +162,8 @@ async def test_frozen_retriever_indexes_corpus_and_exposes_provenance(tmp_path):
         max_chars=1500,
     )
     provenance = retriever.get_provenance()
+    candidates = await retriever.retrieve("CSV export", n_results=20)
+    hybrid_candidates = await retriever.retrieve_hybrid("CSV export", n_results=20)
 
     assert "Teams need reliable exports" in context
     assert len(vector_store.rows) == 1
@@ -166,3 +171,5 @@ async def test_frozen_retriever_indexes_corpus_and_exposes_provenance(tmp_path):
     assert provenance["corpus_records"] == 1
     assert provenance["table_name"].startswith("phase3_rag_")
     assert provenance["embedding_backend"] == "injected"
+    assert candidates[0].id == "new"
+    assert hybrid_candidates[0].id == "new"

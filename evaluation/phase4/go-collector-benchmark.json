@@ -1,0 +1,16 @@
+{
+  "benchmark": "local_fake_platform",
+  "concurrency": 4,
+  "elapsed_ms": 251.125,
+  "failures": 0,
+  "fake_latency_ms": 5,
+  "go_version": "go1.26.5",
+  "gomaxprocs": 10,
+  "heap_alloc_delta_bytes": 611352,
+  "p50_ms": 125.542,
+  "p95_ms": 240.995,
+  "peak_heap_alloc_bytes": 850928,
+  "tasks": 200,
+  "throughput_tasks_per_second": 796.4133524671641,
+  "total_alloc_delta_bytes": 611352
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 2,
+  "labels_path": "evaluation/rerank/labels-adjudicated.csv",
+  "labels_sha256": null,
+  "review_method": null,
+  "reviewer_count": null,
+  "independent_review": null,
+  "system_blinded": true,
+  "adjudicated": false,
+  "exact_agreement": null,
+  "weighted_kappa": null,
+  "accepted_review_methods": [
+    "dual_independent_blind",
+    "single_expert_blind_test_retest"
+  ],
+  "completed_at": null
+}

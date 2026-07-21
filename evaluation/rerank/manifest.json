@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-15T04:23:48.937359+00:00",
+  "data": {
+    "query_path": "evaluation/phase2/discussions.jsonl",
+    "query_sha256": "573a7baa310f0a6f37a2ec0dc4b28bd73103b1216469fba177ae37ff8738779c",
+    "corpus_path": "evaluation/phase3/rag-corpus.jsonl",
+    "corpus_sha256": "aae92eead080126322d41926faddbdfa94f19ceb36681b03b28f5171353026fb",
+    "candidate_snapshot_path": "evaluation/rerank/candidates.jsonl",
+    "candidate_snapshot_sha256": "5fb066c57c4a1d734dabddc243795f5176ccb1f7c609142b33a0578f5043e977",
+    "recall_latency_path": "evaluation/rerank/recall-latency.jsonl",
+    "recall_latency_sha256": "90e8afdd0974d8234db912588d002f76e20d0b2285a009a7f96a549383508418",
+    "annotation_path": "evaluation/rerank/annotation-template.csv",
+    "annotation_sha256": "7b61ece9418c5bb23847cb79d336c0f21d5571b6729e865ef0898b9b2302ef4e",
+    "labels_manifest_template_path": "evaluation/rerank/labels-manifest-template.json",
+    "labels_manifest_template_sha256": "11a8e1676487d30a2b2d7075844581cae67a8301f7a4b1038e6d1e7e4c668556",
+    "query_count": 100,
+    "candidate_count": 2000,
+    "split_counts": {
+      "dev": 35,
+      "test": 65
+    },
+    "relevance_labels": "missing_human_labels",
+    "label_provenance": "annotation template only; no agent-generated relevance gold",
+    "expected_adjudicated_label_path": "evaluation/rerank/labels-adjudicated.csv",
+    "expected_adjudicated_label_manifest_path": "evaluation/rerank/labels-adjudicated.manifest.json"
+  },
+  "recall": {
+    "method": "hybrid_dense_cosine_lexical_ngram_rrf",
+    "claimed_hybrid": true,
+    "top_k": 20,
+    "fusion": {
+      "method": "reciprocal_rank_fusion",
+      "rrf_k": 60
+    },
+    "latency_ms": {
+      "p50": 10.879,
+      "p95": 12.538949999999993,
+      "measurement": "single local frozen-corpus pass with a warm table"
+    },
+    "provenance": {
+      "corpus_sha256": "aae92eead080126322d41926faddbdfa94f19ceb36681b03b28f5171353026fb",
+      "corpus_records": 150,
+      "table_name": "phase3_rag_aae92eead080_75045f16",
+      "embedding_backend": "fallback-sha256-bow-384"
+    }
+  },
+  "api": {
+    "base_url": "https://api.siliconflow.cn/v1",
+    "documentation": "https://docs.siliconflow.cn/cn/api-reference/rerank/create-rerank",
+    "models": [
+      "BAAI/bge-reranker-v2-m3",
+      "Qwen/Qwen3-Reranker-0.6B"
+    ],
+    "provider_model_revision": null,
+    "model_drift_risk": "Provider does not expose an immutable model revision in the documented response."
+  },
+  "request": {
+    "production_top_k": 3,
+    "experiment_top_k": 20,
+    "return_documents": false,
+    "timeout_seconds": 10.0,
+    "max_attempts": 3,
+    "max_document_chars": 2000,
+    "gate_calibration": "per-model on dev split; test split is evaluation-only"
+  },
+  "pricing": {
+    "currency": "CNY",
+    "per_million_input_tokens": {
+      "BAAI/bge-reranker-v2-m3": 0.0,
+      "Qwen/Qwen3-Reranker-0.6B": 0.07
+    },
+    "evidence_url": "https://www.siliconflow.cn/pricing",
+    "observed_at": "2026-07-15",
+    "proposed_hard_budget_cny": 0.23,
+    "approved": false
+  },
+  "metrics": {
+    "quality": [
+      "MRR@10",
+      "nDCG@10",
+      "candidate Recall@3",
+      "Precision@3",
+      "irrelevant Top-3 rate",
+      "platform/query-language/candidate-length slices"
+    ],
+    "system": [
+      "API P50/P95 latency",
+      "success rate and failure types",
+      "input/output/total tokens",
+      "actual and per-query cost",
+      "retry count",
+      "estimated downstream context token change"
+    ]
+  },
+  "decision_rules": [
+    "A reranker must improve test-split ranking quality over the no-rerank baseline.",
+    "Material unexplained regression in a supported slice blocks promotion.",
+    "When quality is close, prefer lower P95 latency, cost, and failure rate.",
+    "Pareto tradeoffs remain explicit; no business SLA is invented.",
+    "Insufficient evidence keeps BGE as production candidate, not an optimum claim.",
+    "If neither model beats baseline, keep reranking disabled."
+  ],
+  "code": {
+    "commit": "e3c809f4c0e9faeba8f43347064f6e893fa795de",
+    "dirty": true,
+    "diff_status": [
+      " M .env.example",
+      " M src/needradar/core/config.py",
+      " M src/needradar/services/phase3_corpus.py",
+      " M src/needradar/services/rag_retriever.py",
+      " M src/needradar/vector/lancedb_store.py",
+      " M tests/unit/test_config.py",
+      " M tests/unit/test_phase3_corpus.py",
+      " M tests/unit/test_rag_retriever.py",
+      "?? evaluation/rerank/",
+      "?? scripts/run_rerank_experiment.py",
+      "?? src/needradar/services/reranker.py",
+      "?? tests/unit/test_hybrid_recall.py",
+      "?? tests/unit/test_rerank_experiment.py",
+      "?? tests/unit/test_reranker.py"
+    ]
+  },
+  "executions": [
+    {
+      "started_at": "2026-07-15T04:47:59.783913+00:00",
+      "finished_at": "2026-07-15T04:48:01.271958+00:00",
+      "status": "completed",
+      "stop_reason": null,
+      "modes": [
+        "bge",
+        "qwen3"
+      ],
+      "query_count": 1,
+      "selection_sha256": "9a7fe9c37a75711a445db3d5d82a6fa5b3b3a670a2b36df52b7af3fffa2f0377",
+      "candidate_snapshot_sha256": "5fb066c57c4a1d734dabddc243795f5176ccb1f7c609142b33a0578f5043e977",
+      "request_options_sha256": "9ec4096e2fe9f95384c264b71e648d4602c59b4f31f33dc840e0d0ea2ba90a4e",
+      "completed": 2,
+      "resumed": 0,
+      "failures": 0,
+      "provider_attempts": 2,
+      "actual_cost_cny": 0.0008274,
+      "hard_budget_cny": 0.003
+    }
+  ]
+}
